@@ -1,0 +1,325 @@
+/* Global Colors: row layout + circular swatches (Colors section only) */
+
+#accordion-section-trove_section_color > .accordion-section-title {
+	font-weight: 600;
+}
+
+/*
+ * Two-column grid (label | swatch) — avoids flex-wrap pushing swatches to the left when
+ * the row is narrow; flex-wrap + space-between caused “broken column” misalignment.
+ */
+#sub-accordion-section-trove_section_color li.customize-control-color,
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	column-gap: 12px;
+	row-gap: 8px;
+	margin-bottom: 4px;
+}
+
+#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-title,
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color > .customize-control-title {
+	float: none;
+	width: auto;
+	max-width: none;
+	min-width: 0;
+	margin: 0;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.4;
+	color: #50575e;
+}
+
+#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-description,
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color .customize-control-description {
+	grid-column: 1 / -1;
+	margin-top: 0;
+}
+
+/* WP color control order: title → description → .customize-control-content (picker). Pin picker to row 1 / col 2. */
+#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-title {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-description {
+	grid-row: 2;
+}
+
+#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-content {
+	grid-column: 2;
+	grid-row: 1;
+	justify-self: end;
+}
+
+/* Dual: title → swatches → description */
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color > .customize-control-title {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color .trove-dual-color__swatches {
+	grid-column: 2;
+	grid-row: 1;
+	justify-self: end;
+}
+
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color .customize-control-description {
+	grid-row: 2;
+}
+
+/* Core color control: push picker to the right; narrow box so holder does not stretch the row */
+#sub-accordion-section-trove_section_color li.customize-control-color .wp-picker-container {
+	position: relative;
+	margin: 0;
+	width: auto !important;
+	flex: 0 0 auto;
+	max-width: 36px;
+}
+
+#sub-accordion-section-trove_section_color li.customize-control-color .wp-color-result {
+	width: 28px;
+	height: 28px;
+	min-height: 28px;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+#sub-accordion-section-trove_section_color li.customize-control-color .wp-color-result-text {
+	display: none;
+}
+
+#sub-accordion-section-trove_section_color li.customize-control-color .wp-color-result::after {
+	display: none;
+}
+
+/* Dual swatches */
+#sub-accordion-section-trove_section_color .trove-dual-color__swatches {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	gap: 8px;
+	overflow: visible;
+}
+
+#sub-accordion-section-trove_section_color .trove-dual-color__pill {
+	display: block;
+	line-height: 0;
+	overflow: visible;
+}
+
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-picker-container {
+	margin: 0;
+	width: auto !important;
+	flex: 0 0 auto;
+	max-width: 36px;
+}
+
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-color-result {
+	width: 28px;
+	height: 28px;
+	min-height: 28px;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-color-result-text {
+	display: none;
+}
+
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-color-result::after {
+	display: none;
+}
+
+/* Swatch hover tooltips (any section using wpColorPicker in Customizer) */
+#customize-theme-controls .wp-picker-container {
+	position: relative;
+}
+
+#customize-theme-controls .trove-cz-swatch-tooltip {
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 6px 11px;
+	background: #2c3338;
+	color: #fff;
+	font-size: 12px;
+	font-style: italic;
+	font-weight: 400;
+	line-height: 1.2;
+	border-radius: 4px;
+	white-space: nowrap;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity 0.12s ease, visibility 0.12s ease;
+	z-index: 100002;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+#customize-theme-controls .wp-picker-container:hover .trove-cz-swatch-tooltip {
+	opacity: 1;
+	visibility: visible;
+}
+
+#customize-theme-controls .trove-cz-swatch-tooltip::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border: 5px solid transparent;
+	border-top-color: #2c3338;
+}
+
+/* Holder must never participate in flex row layout (popover floats over UI) */
+#customize-theme-controls .wp-picker-container:not(.wp-picker-active):not(.wp-picker-open) .wp-picker-holder {
+	display: none !important;
+}
+
+#customize-theme-controls .wp-picker-container .wp-picker-holder {
+	position: absolute;
+	left: 0;
+	top: 100%;
+	float: none;
+	width: auto;
+	min-width: 260px;
+	margin: 0;
+	z-index: 100001;
+	/* Removed from flow until JS applies fixed when open */
+}
+
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-picker-container {
+	position: relative !important;
+}
+
+/* One white card: holder wraps Iris + hex row (fixed positioning in customizer-color-popover.js) */
+#customize-theme-controls .wp-picker-holder.trove-cz-float-holder {
+	padding: 12px;
+	margin: 0 !important;
+	background: #fff;
+	border: none;
+	border-radius: 8px;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.12),
+		0 0 0 1px rgba(0, 0, 0, 0.06);
+	overflow: visible;
+}
+
+/* Caret aims at --trove-cz-arrow-x (swatch center), set in customizer-color-popover.js */
+#customize-theme-controls .wp-picker-holder.trove-cz-float-holder::before {
+	content: "";
+	position: absolute;
+	left: var(--trove-cz-arrow-x, 50%);
+	top: 0;
+	z-index: 3;
+	width: 0;
+	height: 0;
+	margin: 0;
+	transform: translate(-50%, -100%);
+	border-style: solid;
+	border-width: 0 9px 9px 9px;
+	border-color: transparent transparent #fff transparent;
+	filter: drop-shadow(0 -2px 3px rgba(0, 0, 0, 0.12));
+	pointer-events: none;
+}
+
+/* Popup opens above the swatch: caret on bottom, points down */
+#customize-theme-controls .wp-picker-holder.trove-cz-float-holder--above::before {
+	top: auto;
+	bottom: 0;
+	transform: translate(-50%, 100%);
+	border-width: 9px 9px 0 9px;
+	border-color: #fff transparent transparent transparent;
+	box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.08);
+	filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.12));
+}
+
+#customize-theme-controls .wp-picker-holder.trove-cz-float-holder .iris-picker {
+	position: relative;
+	z-index: 2;
+	margin-top: 0 !important;
+	/* Do not zero padding-bottom: Iris sets it when palettes are on (strip height matches left column). */
+	padding-top: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	border: none !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+
+#customize-theme-controls .wp-picker-holder .iris-picker,
+#customize-theme-controls .wp-picker-holder .iris-picker * {
+	box-sizing: content-box;
+}
+
+#customize-theme-controls .wp-picker-holder.trove-cz-float-holder .iris-picker .iris-picker-inner {
+	border-radius: 4px;
+}
+
+/* When Gutenberg picker is mounted, hide Iris UI and use component layout. */
+#customize-theme-controls .wp-picker-holder.trove-cz-gb-mounted .iris-picker {
+	display: none !important;
+}
+
+#customize-theme-controls .wp-picker-holder .trove-cz-gb-picker {
+	width: 100%;
+}
+
+#customize-theme-controls .wp-picker-holder.trove-cz-gb-mounted {
+	min-width: 0;
+}
+
+/* Stretch Gutenberg picker to popup width (remove right-side empty gutter). */
+#customize-theme-controls .wp-picker-holder .trove-cz-gb-picker .components-color-picker,
+#customize-theme-controls .wp-picker-holder .trove-cz-gb-picker .components-color-picker__body,
+#customize-theme-controls .wp-picker-holder .trove-cz-gb-picker .components-color-picker__inputs-wrapper {
+	width: 100% !important;
+	max-width: none !important;
+	box-sizing: border-box;
+}
+
+/* Same single-card look before fixed positioning is applied (absolute fallback) */
+#customize-theme-controls .wp-picker-container.trove-cz-input-in-holder .wp-picker-holder:not(.trove-cz-float-holder) {
+	padding: 12px;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.12),
+		0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+#customize-theme-controls .wp-picker-container.trove-cz-input-in-holder .wp-picker-holder:not(.trove-cz-float-holder) .iris-picker {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	border: none !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+
+#customize-theme-controls .wp-picker-container.wp-picker-active .trove-cz-swatch-tooltip,
+#customize-theme-controls .wp-picker-container.wp-picker-open .trove-cz-swatch-tooltip {
+	opacity: 0 !important;
+	visibility: hidden !important;
+}
+
+/* Layout like native strip-only picker: hide presets + hex/default row */
+#customize-theme-controls .wp-picker-holder .iris-palette-container,
+#customize-theme-controls .wp-picker-container.trove-cz-input-in-holder .wp-picker-holder .wp-picker-input-wrap {
+	display: none !important;
+}
+
+#accordion-section-trove_section_color,
+#sub-accordion-section-trove_section_color {
+	overflow: visible !important;
+}

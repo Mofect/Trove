@@ -1,0 +1,236 @@
+/**
+ * Trove Customizer — subsection title (Heading_Control, type trove_heading).
+ * Generic: any section may use the same markup/classes.
+ */
+
+#customize-theme-controls li.customize-control-trove_heading {
+	float: none;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	min-height: 0;
+}
+
+#customize-theme-controls .trove-cz-heading-row {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	margin: 0 0 15px 0;
+	padding: 12px 0 15px;
+	border-bottom: 1px solid #ddd;
+	position: relative;
+}
+
+#customize-theme-controls .trove-cz-heading-row .trove-cz-inline-heading {
+	flex: 1;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: none;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.3;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #1d2327;
+}
+
+#customize-theme-controls .trove-cz-heading-menu-wrap {
+	position: relative;
+	flex-shrink: 0;
+	margin-left: auto;
+}
+
+#customize-theme-controls .trove-cz-heading-menu__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	margin: 0 3px 0 0;
+	padding: 0;
+	border: none;
+	border-radius: 50px;
+	cursor: pointer;
+	background: url(data:image/png;base64,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) no-repeat center center / 100%;
+}
+
+#customize-theme-controls .trove-cz-heading-menu__toggle:hover,
+#customize-theme-controls .trove-cz-heading-menu__toggle:focus-visible {
+	outline: none;
+}
+
+#customize-theme-controls .trove-cz-heading-menu {
+	position: absolute;
+	top: calc(100% + 4px);
+	right: -10px;
+	z-index: 500100;
+	min-width: 260px;
+	max-width: min(320px, calc(100vw - 48px));
+	padding: 20px;
+	margin: 0;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 10px;
+	box-shadow:
+		0 8px 24px rgba(0, 0, 0, 0.1),
+		0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+#customize-theme-controls .trove-cz-heading-menu[hidden] {
+	display: none !important;
+}
+
+#customize-theme-controls .trove-cz-heading-menu__list {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#customize-theme-controls .trove-cz-heading-menu__item {
+	margin: 0;
+	padding: 0;
+}
+
+#customize-theme-controls .trove-cz-saved-row {
+	display: flex;
+	align-items: stretch;
+	gap: 4px;
+	width: 100%;
+}
+
+#customize-theme-controls .trove-cz-saved-row .trove-cz-scheme-item--saved {
+	flex: 1;
+	min-width: 0;
+}
+
+#customize-theme-controls .trove-cz-scheme-delete {
+	flex: 0 0 auto;
+	align-self: flex-start;
+	width: 28px;
+	height: 28px;
+	margin: 26px 4px 0 0;
+	padding: 0;
+	border: none;
+	border-radius: 4px;
+	background: transparent;
+	color: #787c82;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+#customize-theme-controls .trove-cz-scheme-delete:hover,
+#customize-theme-controls .trove-cz-scheme-delete:focus-visible {
+	color: #d63638;
+	outline: none;
+}
+
+#customize-theme-controls .trove-cz-scheme-delete__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+}
+
+#customize-theme-controls .trove-cz-scheme-item {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 8px;
+	width: 100%;
+	margin: 0;
+	padding: 10px 12px;
+	border: none;
+	border-radius: 0;
+	background: transparent;
+	text-align: left;
+	cursor: pointer;
+	color: #1d2327;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.3;
+}
+
+#customize-theme-controls .trove-cz-scheme-item:hover,
+#customize-theme-controls .trove-cz-scheme-item:focus-visible {
+	background: rgba(6, 79, 255, 0.06);
+	outline: none;
+}
+
+#customize-theme-controls .trove-cz-scheme-item--selected {
+	background: rgba(6, 79, 255, 0.1);
+	border-radius: 5px;
+	box-shadow: inset 0 0 0 1px rgba(6, 79, 255, 0.35);
+}
+
+#customize-theme-controls .trove-cz-scheme-item--selected:hover,
+#customize-theme-controls .trove-cz-scheme-item--selected:focus-visible {
+	background: rgba(6, 79, 255, 0.12);
+}
+
+#customize-theme-controls .trove-cz-scheme-item__label {
+	display: block;
+}
+
+#customize-theme-controls .trove-cz-scheme-item__swatches {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 6px;
+}
+
+#customize-theme-controls .trove-cz-scheme-swatch {
+	flex: 0 0 auto;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+#customize-theme-controls .trove-cz-heading-menu__footer {
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid #e8e8e8;
+}
+
+#customize-theme-controls .trove-cz-scheme-add {
+	display: block;
+	width: 100%;
+	margin: 0;
+	padding: 4px 0;
+	border: none;
+	border-radius: 5px;
+	background: none;
+	text-align: center;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.35;
+	cursor: pointer;
+}
+
+#customize-theme-controls .trove-cz-scheme-add:before {
+	content: '+';
+}
+
+#customize-theme-controls .trove-cz-scheme-add:hover,
+#customize-theme-controls .trove-cz-scheme-add:focus-visible {
+	text-decoration: underline;
+	outline: none;
+}
+
+#customize-theme-controls .trove-cz-inline-heading {
+	margin: 0 0 15px;
+	padding: 12px 0 15px;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.3;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #1d2327;
+	border-bottom: 1px solid #ddd;
+}

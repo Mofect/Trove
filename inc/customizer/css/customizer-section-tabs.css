@@ -1,0 +1,87 @@
+/* Section tab bar — full bleed vs accordion padding (12px); inactive gray; active blue top */
+
+/*
+ * Pane section content uses padding: 12px — pull this control edge-to-edge so tabs span full width.
+ */
+#customize-theme-controls li.customize-control-trove_section_tabs {
+	float: none !important;
+	clear: both;
+	width: calc(100% + 24px) !important;
+	max-width: none !important;
+	box-sizing: border-box;
+	margin: 12px -12px 10px -12px !important;
+	padding: 0 !important;
+	background: #f0f0f1;
+}
+
+.customize-control-trove_section_tabs .customize-control-title,
+.customize-control-trove_section_tabs .description {
+	display: none;
+}
+
+.trove-cz-section-tabs {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	justify-content: stretch;
+	width: 100%;
+	min-width: 100%;
+	box-sizing: border-box;
+	background: #f0f0f1;
+}
+
+/*
+ * Inactive: slightly darker than strip (#f0f0f1).
+ */
+#customize-theme-controls .customize-control-trove_section_tabs .trove-cz-section-tab {
+	flex: 1 1 0%;
+	min-width: 0;
+	width: auto;
+	margin: 0;
+	padding: 11px 14px 12px;
+	border: none;
+	border-top: 4px solid transparent;
+	border-radius: 0;
+	background-color: #e4e5e7 !important;
+	color: #1d2327;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.35;
+	cursor: pointer;
+	box-shadow: none;
+	text-align: center;
+	-webkit-font-smoothing: antialiased;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.trove-cz-section-tab + .trove-cz-section-tab {
+	border-left: 1px solid #dcdcde;
+}
+
+#customize-theme-controls .customize-control-trove_section_tabs .trove-cz-section-tab:hover:not(.is-active),
+#customize-theme-controls .customize-control-trove_section_tabs .trove-cz-section-tab:focus:not(.is-active) {
+	background-color: #dcdcde !important;
+	color: #1d2327;
+	outline: none;
+}
+
+.trove-cz-section-tab:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: -2px;
+}
+
+#customize-theme-controls .customize-control-trove_section_tabs .trove-cz-section-tab.is-active {
+	position: relative;
+	z-index: 1;
+	color: #1d2327;
+	border-top: 2px solid #2271b1;
+	border-bottom: none;
+	box-shadow: 0 1px 0 transparent;
+	background-color: transparent !important;
+}
+
+/* Controls hidden for inactive tabs */
+#customize-theme-controls .trove-cz-tab-hidden {
+	display: none !important;
+}

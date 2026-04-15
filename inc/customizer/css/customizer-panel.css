@@ -1,0 +1,73 @@
+#customize-controls .customize-info {
+    margin-bottom: -1px !important;
+}
+
+.control-section .accordion-section-title, .customize-pane-child .accordion-section-title {
+    background: transparent !important;
+    font-weight: 400 !important;
+}
+
+.nav-menus-php .item-edit:before, .widget-top .widget-action .toggle-indicator:before, .wp-customizer .accordion-section-title:after, .wp-customizer .control-section .accordion-section-title:after {
+    font-size: 14px;
+}
+
+.control-section .accordion-section-title:after, .customize-pane-child .accordion-section-title:after {
+    top: calc(50% - 7px);
+}
+
+/* trove-group-title: marker control keeps the section in the sidebar; hide it in the pane */
+li.customize-control-trove_group_marker {
+	display: none !important;
+}
+
+/* Static heading row (no button, no chevron) */
+.trove-cz-group-title-section {
+	pointer-events: none;
+	user-select: none;
+}
+
+.trove-cz-group-title-section .trove-cz-group-title__text {
+	margin: 10px 0 0;
+	padding: 16px 14px 8px;
+	font-size: 12px;
+	font-weight: 700 !important;
+	line-height: 1.3;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: #000;
+	cursor: default;
+	background: transparent !important;
+}
+
+.wp-customizer .trove-cz-group-title-section .accordion-section-title:after,
+.trove-cz-group-title-section .trove-cz-group-title__text:after {
+	display: none !important;
+	content: none !important;
+}
+
+.trove-cz-group-title__extra {
+	margin: 0;
+	padding: 0 14px 8px;
+}
+
+/*
+ * Core uses overflow: auto on these panes, which allows horizontal scroll when inner
+ * content is wider than the sidebar (e.g. full-bleed section tabs: calc(100% + 24px),
+ * Iris picker min-width, nowrap tooltips). Hide horizontal overflow; keep vertical scroll.
+ */
+#customize-theme-controls .customize-pane-parent,
+#customize-theme-controls .customize-pane-child.open,
+#customize-theme-controls .customize-pane-child.current-panel {
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#customize-theme-controls .customize-pane-child.open,
+#customize-theme-controls .customize-pane-child.current-panel {
+	min-width: 0;
+}
+
+#customize-theme-controls .accordion-section-content {
+	min-width: 0;
+	box-sizing: border-box;
+}

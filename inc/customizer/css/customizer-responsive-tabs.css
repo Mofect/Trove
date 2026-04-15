@@ -1,0 +1,84 @@
+/* Responsive tab control (Customizer sidebar) */
+
+.trove-responsive-tabs-control .trove-r-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	flex-wrap: nowrap;
+	margin-bottom: 4px;
+}
+
+.trove-responsive-tabs-control .trove-r-heading .customize-control-title {
+	flex: 1 1 auto;
+	margin: 0;
+	min-width: 0;
+}
+
+.trove-r-device-tabs {
+	display: flex;
+	align-items: flex-end;
+	gap: 2px;
+	flex: 0 0 auto;
+}
+
+.trove-r-tab {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	padding: 4px 6px;
+	border: none;
+	background: transparent;
+	color: #787c82;
+	cursor: pointer;
+	border-radius: 2px;
+	line-height: 0;
+	position: relative;
+	box-shadow: none;
+}
+
+.trove-r-tab:hover,
+.trove-r-tab:focus {
+	color: #1d2327;
+	outline: none;
+}
+
+.trove-r-tab.is-active {
+	color: #1d2327;
+}
+
+.trove-r-tab.is-active::after {
+	content: "";
+	position: absolute;
+	left: 4px;
+	right: 4px;
+	bottom: 0;
+	height: 2px;
+	background: #1d2327;
+	border-radius: 1px;
+}
+
+.trove-r-icon {
+	display: block;
+	vertical-align: middle;
+}
+
+.trove-r-field-wrap {
+	margin-top: 6px;
+}
+
+.trove-r-field-wrap .trove-r-checkbox-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 400;
+}
+
+.trove-r-field-wrap .wp-picker-container {
+	width: 100%;
+}
+
+.trove-r-field-wrap .wp-picker-container .wp-color-result {
+	margin-bottom: 0;
+}
