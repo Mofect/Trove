@@ -74,6 +74,14 @@ function enqueue_styles() {
 		array( 'trove-fonts' ),
 		TROVE_THEME_VERSION
 	);
+
+	wp_enqueue_script(
+		'trove-header-sticky',
+		get_template_directory_uri() . '/assets/js/header-sticky.js',
+		array(),
+		TROVE_THEME_VERSION,
+		true
+	);
 }
 add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_styles' );
 

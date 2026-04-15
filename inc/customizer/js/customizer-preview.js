@@ -81,6 +81,26 @@
 		header.classList.toggle( 'trove-header-has-border', !! enabled );
 	}
 
+	function applyHeaderSticky( newVal ) {
+		var header = getHeaderEl();
+		var sticky = newVal ? String( newVal ).trim() : 'none';
+		var allowed = { none: true, on_scroll_up: true, always: true };
+		if ( ! header ) {
+			return;
+		}
+
+		Array.prototype.slice.call( header.classList ).forEach( function ( cls ) {
+			if ( cls.indexOf( 'trove-header-sticky-' ) === 0 ) {
+				header.classList.remove( cls );
+			}
+		} );
+
+		if ( !allowed[ sticky ] ) {
+			sticky = 'none';
+		}
+		header.classList.add( 'trove-header-sticky-' + sticky );
+	}
+
 	function bindHeaderSettings() {
 		if ( typeof wp === 'undefined' || ! wp.customize ) {
 			return;
@@ -97,6 +117,14 @@
 		wp.customize( 'trove_header_bottom_border', function ( value ) {
 			function onChange( newVal ) {
 				applyHeaderBorder( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_header_sticky', function ( value ) {
+			function onChange( newVal ) {
+				applyHeaderSticky( newVal );
 			}
 			value.bind( onChange );
 			onChange( value.get() );

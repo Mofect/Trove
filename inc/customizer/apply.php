@@ -201,7 +201,7 @@ function enqueue_customizer_preview_scripts() {
 	wp_enqueue_script(
 		'trove-customizer-preview',
 		$uri . '/inc/customizer/js/customizer-preview.js',
-		array( 'jquery', 'customize-preview' ),
+		array( 'customize-preview' ),
 		$ver,
 		true
 	);
@@ -236,6 +236,15 @@ function get_header_classnames() {
 	if ( '' !== $layout && in_array( $layout, $allowed, true ) ) {
 		$classes[] = 'trove-header__' . $layout;
 	}
+
+	$sticky_allowed = array( 'none', 'on_scroll_up', 'always' );
+	$sticky         = get_theme_mod( 'trove_header_sticky', 'none' );
+	$sticky         = is_string( $sticky ) ? sanitize_key( $sticky ) : 'none';
+	if ( ! in_array( $sticky, $sticky_allowed, true ) ) {
+		$sticky = 'none';
+	}
+	$classes[] = 'trove-header-sticky-' . $sticky;
+
 	return apply_filters( 'trove_header_classnames', $classes );
 }
 

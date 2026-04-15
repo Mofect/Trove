@@ -150,6 +150,23 @@ main {
 	padding-bottom: 20px;
 }
 
+.site-header.trove-header-sticky-always,
+.site-header.trove-header-sticky-on_scroll_up {
+	position: sticky;
+	top: 0;
+	z-index: 501;
+	background: #fff;
+}
+
+.site-header.trove-header-sticky-on_scroll_up {
+	transition: transform 0.2s ease;
+	will-change: transform;
+}
+
+.site-header.trove-header-sticky-on_scroll_up:not(.is-at-top):not(.is-sticky-visible) {
+	transform: translateY(calc(-100% - 1px));
+}
+
 .site-header__inner {
 	max-width: var(--trove-wide);
 	margin-left: auto;
