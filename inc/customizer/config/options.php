@@ -140,9 +140,13 @@ function get_options() {
 					'label'   => __( 'Layout', 'trove' ),
 					'options' => require __DIR__ . '/header/layout.php',
 				),
-				'styles' => array(
-					'label'   => __( 'Styles', 'trove' ),
-					'options' => require __DIR__ . '/header/styles.php',
+				'search' => array(
+					'label'   => __( 'Search', 'trove' ),
+					'options' => require __DIR__ . '/header/search.php',
+				),
+				'advanced' => array(
+					'label'   => __( 'Advanced', 'trove' ),
+					'options' => require __DIR__ . '/header/advanced.php',
 				)
 			),
 		),

@@ -78,30 +78,6 @@ function enqueue_styles() {
 add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_styles' );
 
 /**
- * Primary menu: max visible top-level links; overflow goes behind a ⋯ control (see assets/js/primary-menu-overflow.js).
- */
-function enqueue_primary_menu_overflow_script() {
-	wp_enqueue_script(
-		'trove-primary-menu-overflow',
-		get_template_directory_uri() . '/assets/js/primary-menu-overflow.js',
-		array(),
-		TROVE_THEME_VERSION,
-		true
-	);
-	wp_localize_script(
-		'trove-primary-menu-overflow',
-		'trovePrimaryNav',
-		array(
-			'maxVisible' => (int) apply_filters( 'trove_primary_nav_max_visible', 8 ),
-			'i18n'       => array(
-				'more' => esc_html__( 'More menu items', 'trove' ),
-			),
-		)
-	);
-}
-add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_primary_menu_overflow_script' );
-
-/**
  * Registers custom block style variations (for block editor content).
  */
 function register_block_styles() {

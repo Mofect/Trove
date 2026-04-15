@@ -18,15 +18,15 @@ return array(
 		'choices'     => array(
 			'horizontal-left-logo' => array(
 				'label' => __( 'Left logo', 'trove' ),
-				'url'   => 'https://lh3.googleusercontent.com/75MNgqxGh5M4JP_e5i5TxFrMvtYfK9x0vNuZj964jdMg2AfFkSmFteslLOrkELWgECnj5T1aYKBJ74I1lGlT-A',
+				'url'   => get_template_directory_uri() . '/inc/customizer/img/header-1.png',
 			),
 			'horizontal-centered-logo' => array(
 				'label' => __( 'Centered logo', 'trove' ),
-				'url'   => 'https://www.gstatic.com/acx/play/console//brt/play_console_ui_20260412_2240_RC00/main/play.console.ui.common.images/promotional_content/play_console_new_tools_image.png',
+				'url'   => get_template_directory_uri() . '/inc/customizer/img/header-2.png',
 			),
 			'horizontal-right-logo' => array(
 				'label' => __( 'Right logo', 'trove' ),
-				'url'   => 'https://www.gstatic.com/acx/play/console//brt/play_console_ui_20260412_2240_RC00/main/play.console.ui.common.images/promotional_content/play_console_new_tools_image.png',
+				'url'   => get_template_directory_uri() . '/inc/customizer/img/header-3.png',
 			)
 		),
 		'sanitize_callback' => 'sanitize_text_field',

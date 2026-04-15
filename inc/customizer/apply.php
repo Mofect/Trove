@@ -200,7 +200,7 @@ function enqueue_customizer_preview_scripts() {
 
 	wp_enqueue_script(
 		'trove-customizer-preview',
-		$uri . '/assets/js/customizer-preview.js',
+		$uri . '/inc/customizer/js/customizer-preview.js',
 		array( 'jquery', 'customize-preview' ),
 		$ver,
 		true

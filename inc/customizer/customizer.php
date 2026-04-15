@@ -298,7 +298,7 @@ function enqueue_customizer_ui_assets() {
 
 	wp_enqueue_script(
 		'trove-customizer-responsive-tabs',
-		$dir . '/assets/js/customizer-responsive-tabs.js',
+		$dir . '/inc/customizer/js/customizer-responsive-tabs.js',
 		array( 'jquery', 'customize-controls', 'wp-color-picker' ),
 		$ver,
 		true
@@ -306,7 +306,7 @@ function enqueue_customizer_ui_assets() {
 
 	wp_enqueue_script(
 		'trove-customizer-section-tabs',
-		$dir . '/assets/js/customizer-section-tabs.js',
+		$dir . '/inc/customizer/js/customizer-section-tabs.js',
 		array( 'jquery', 'customize-controls', 'trove-customizer-responsive-tabs' ),
 		$ver,
 		true
@@ -314,7 +314,7 @@ function enqueue_customizer_ui_assets() {
 
 	wp_enqueue_script(
 		'trove-customizer-color-schemes-menu',
-		$dir . '/assets/js/customizer-color-schemes-menu.js',
+		$dir . '/inc/customizer/js/customizer-color-schemes-menu.js',
 		array( 'jquery', 'customize-controls' ),
 		$ver,
 		true
@@ -337,7 +337,7 @@ function enqueue_customizer_ui_assets() {
 
 	wp_enqueue_script(
 		'trove-customizer-color-pair',
-		$dir . '/assets/js/customizer-color-pair.js',
+		$dir . '/inc/customizer/js/customizer-color-pair.js',
 		array( 'jquery', 'customize-controls', 'wp-color-picker' ),
 		$ver,
 		true
@@ -345,7 +345,7 @@ function enqueue_customizer_ui_assets() {
 
 	wp_enqueue_script(
 		'trove-customizer-swatch-hints',
-		$dir . '/assets/js/customizer-swatch-hints.js',
+		$dir . '/inc/customizer/js/customizer-swatch-hints.js',
 		array( 'jquery', 'customize-controls', 'trove-customizer-color-pair' ),
 		$ver,
 		true
@@ -361,7 +361,7 @@ function enqueue_customizer_ui_assets() {
 
 	wp_enqueue_script(
 		'trove-customizer-color-popover',
-		$dir . '/assets/js/customizer-color-popover.js',
+		$dir . '/inc/customizer/js/customizer-color-popover.js',
 		array( 'jquery', 'customize-controls', 'wp-color-picker', 'trove-customizer-swatch-hints' ),
 		$ver,
 		true
@@ -369,7 +369,7 @@ function enqueue_customizer_ui_assets() {
 
 	wp_enqueue_script(
 		'trove-customizer-gutenberg-color-picker',
-		$dir . '/assets/js/customizer-gutenberg-color-picker.js',
+		$dir . '/inc/customizer/js/customizer-gutenberg-color-picker.js',
 		array( 'jquery', 'customize-controls', 'wp-color-picker', 'wp-element', 'wp-components', 'trove-customizer-color-popover' ),
 		$ver,
 		true

@@ -1,6 +1,6 @@
 <?php
 /**
- * Customizer fields: Header → Style → Icons tab.
+ * Customizer fields: Header → advanced features.
  *
  * @package Trove
  */
