@@ -325,6 +325,9 @@ body.has-custom-logo .site-header__tagline {
 }
 .site-header.trove-header__horizontal-centered-logo .site-header__brand {
 	order: 2;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 }
 .site-header.trove-header__horizontal-centered-logo .site-header__woo {
 	order: 3;
