@@ -15,6 +15,7 @@ return array(
 		'description' => __( 'Image radio control — pick a layout thumbnail.', 'trove' ),
 		'type'        => 'image_radio',
 		'default'     => 'horizontal-left-logo',
+		'transport'   => 'postMessage',
 		'choices'     => array(
 			'horizontal-left-logo' => array(
 				'label' => __( 'Left logo', 'trove' ),
@@ -35,6 +36,7 @@ return array(
 		'label'             => __( 'Show bottom border', 'trove' ),
 		'type'              => 'switch',
 		'default'           => false,
+		'transport'         => 'postMessage',
 		'sanitize_callback' => 'wp_validate_boolean',
 	),
 );

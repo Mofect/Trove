@@ -1,5 +1,5 @@
 /**
- * Trove Customizer live preview (postMessage) — Global Colors → :root variables.
+ * Trove Customizer live preview (postMessage).
  */
 ( function () {
 	'use strict';
@@ -40,13 +40,80 @@
 		} );
 	}
 
+	function getHeaderEl() {
+		return document.querySelector( 'header.site-header' );
+	}
+
+	function applyHeaderLayout( newVal ) {
+		var header = getHeaderEl();
+		var layout = newVal ? String( newVal ).trim() : '';
+		if ( ! header ) {
+			return;
+		}
+
+		/* Clear current layout classes (legacy + current naming). */
+		Array.prototype.slice.call( header.classList ).forEach( function ( cls ) {
+			if (
+				cls.indexOf( 'trove-header__horizontal-' ) === 0 ||
+				cls.indexOf( 'trove-header-layout-horizontal-' ) === 0
+			) {
+				header.classList.remove( cls );
+			}
+		} );
+
+		if ( layout ) {
+			header.classList.add( 'trove-header__' + layout );
+		}
+	}
+
+	function applyHeaderBorder( newVal ) {
+		var header = getHeaderEl();
+		var enabled =
+			newVal === true ||
+			newVal === 1 ||
+			newVal === '1' ||
+			newVal === 'true';
+
+		if ( ! header ) {
+			return;
+		}
+
+		header.classList.toggle( 'trove-header-has-border', !! enabled );
+	}
+
+	function bindHeaderSettings() {
+		if ( typeof wp === 'undefined' || ! wp.customize ) {
+			return;
+		}
+
+		wp.customize( 'trove_header_layout', function ( value ) {
+			function onChange( newVal ) {
+				applyHeaderLayout( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_header_bottom_border', function ( value ) {
+			function onChange( newVal ) {
+				applyHeaderBorder( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+	}
+
 	/*
 	 * Run after customize-preview.js has run its jQuery ready handler (same tick, later registration),
 	 * so theme_mod settings exist before we attach listeners.
 	 */
 	if ( typeof jQuery !== 'undefined' ) {
-		jQuery( bindGlobalColors );
+		jQuery( function () {
+			bindGlobalColors();
+			bindHeaderSettings();
+		} );
 	} else {
 		bindGlobalColors();
+		bindHeaderSettings();
 	}
 } )();
