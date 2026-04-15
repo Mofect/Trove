@@ -1,21 +1,28 @@
 /**
  * Hover tooltips on color swatches (Global Colors).
  */
-( function ( $ ) {
+( function () {
 	'use strict';
 
-	function appendTooltip( $container, text ) {
-		if ( ! text || ! $container.length ) {
+	function appendTooltip( container, text ) {
+		var existing;
+		var btn;
+		if ( ! text || ! container ) {
 			return;
 		}
-		if ( $container.find( '.trove-cz-swatch-tooltip' ).length ) {
+		existing = container.querySelector( '.trove-cz-swatch-tooltip' );
+		if ( existing ) {
 			return;
 		}
-		$container.append(
-			$( '<span class="trove-cz-swatch-tooltip" role="tooltip" />' ).text( text )
-		);
-		var $btn = $container.find( '.wp-color-result' ).first();
-		$btn.attr( 'aria-label', text );
+		existing = document.createElement( 'span' );
+		existing.className = 'trove-cz-swatch-tooltip';
+		existing.setAttribute( 'role', 'tooltip' );
+		existing.textContent = text;
+		container.appendChild( existing );
+		btn = container.querySelector( '.wp-color-result' );
+		if ( btn ) {
+			btn.setAttribute( 'aria-label', text );
+		}
 	}
 
 	function applyHints( hints ) {
@@ -23,18 +30,18 @@
 			var hint = hints[ controlId ];
 			wp.customize.control( controlId, function ( control ) {
 				if ( typeof hint === 'string' && hint ) {
-					control.container.find( '.wp-picker-container' ).each( function () {
-						appendTooltip( $( this ), hint );
+					control.container[ 0 ].querySelectorAll( '.wp-picker-container' ).forEach( function ( el ) {
+						appendTooltip( el, hint );
 					} );
 					return;
 				}
 				if ( hint && typeof hint === 'object' ) {
-					var $pickers = control.container.find( '.wp-picker-container' );
+					var pickers = control.container[ 0 ].querySelectorAll( '.wp-picker-container' );
 					if ( hint.left ) {
-						appendTooltip( $pickers.eq( 0 ), hint.left );
+						appendTooltip( pickers[ 0 ], hint.left );
 					}
 					if ( hint.right ) {
-						appendTooltip( $pickers.eq( 1 ), hint.right );
+						appendTooltip( pickers[ 1 ], hint.right );
 					}
 				}
 			} );
@@ -53,4 +60,4 @@
 		/* After wpColorPicker runs (customizer-color-pair.js). */
 		setTimeout( init, 120 );
 	} );
-}( jQuery ) );
+} )();

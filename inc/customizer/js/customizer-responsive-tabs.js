@@ -1,7 +1,7 @@
 /**
  * Trove Customizer: responsive tab control — single input, switch active theme_mod by device.
  */
-(function ($, api) {
+(function ( api ) {
 	"use strict";
 
 	/**
@@ -37,12 +37,8 @@
 		}
 	}
 
-	function parseSettings($root) {
-		var parsed = $root.data("settings");
-		if (parsed && typeof parsed === "object") {
-			return parsed;
-		}
-		var raw = $root.attr("data-settings");
+	function parseSettings(root) {
+		var raw = root.getAttribute("data-settings");
 		if (!raw) {
 			return null;
 		}
@@ -53,15 +49,15 @@
 		}
 	}
 
-	function initOne($root) {
-		var fieldType = $root.data("field-type") || "text";
-		var settingsMap = parseSettings($root);
+	function initOne(root) {
+		var fieldType = root.getAttribute("data-field-type") || "text";
+		var settingsMap = parseSettings(root);
 		if (!settingsMap || !settingsMap.pc || !settingsMap.tablet || !settingsMap.phone) {
 			return;
 		}
 
-		var $input = $root.find(".trove-r-active-input");
-		var $tabs = $root.find(".trove-r-tab");
+		var input = root.querySelector(".trove-r-active-input");
+		var tabs = root.querySelectorAll(".trove-r-tab");
 		var active = "pc";
 		var colorPickerInited = false;
 		var settings = {};
@@ -69,31 +65,24 @@
 
 		function readInputValue() {
 			if (fieldType === "checkbox") {
-				return $input.prop("checked");
+				return !!input.checked;
 			}
 			if (fieldType === "number") {
-				var n = parseFloat($input.val(), 10);
+				var n = parseFloat(input.value, 10);
 				return isNaN(n) ? 0 : n;
 			}
-			return $input.val();
+			return input.value;
 		}
 
 		function writeInputValue(v) {
 			if (fieldType === "checkbox") {
-				$input.prop("checked", !!v);
+				input.checked = !!v;
 				return;
 			}
 			if (v === null || typeof v === "undefined") {
 				v = "";
 			}
-			$input.val(v);
-			if (fieldType === "color" && colorPickerInited && $.fn.wpColorPicker) {
-				try {
-					$input.wpColorPicker("color", v || "");
-				} catch (err) {
-					// Iris may throw if value empty.
-				}
-			}
+			input.value = v;
 		}
 
 		function getSetting(device) {
@@ -122,77 +111,78 @@
 			}
 			commit();
 			active = device;
-			$tabs.removeClass("is-active").attr("aria-selected", "false");
-			$tabs.filter('[data-device="' + device + '"]').addClass("is-active").attr("aria-selected", "true");
+			tabs.forEach(function (tab) {
+				var on = tab.getAttribute("data-device") === device;
+				tab.classList.toggle("is-active", on);
+				tab.setAttribute("aria-selected", on ? "true" : "false");
+			});
 			load(device);
 			setCustomizerPreviewDevice(device);
 		}
 
 		function initColorPicker() {
-			if (fieldType !== "color" || colorPickerInited || !$input.length || !$.fn.wpColorPicker) {
+			if (fieldType !== "color" || colorPickerInited) {
 				return;
 			}
 			colorPickerInited = true;
-			$input.wpColorPicker({
-				change: function (event, ui) {
-					if (ui && ui.color) {
-						var s = getSetting(active);
-						if (s) {
-							s.set(ui.color.toString());
-						}
-					}
-				},
-				clear: function () {
-					var s = getSetting(active);
-					if (s) {
-						s.set("");
-					}
-				},
-			});
 		}
 
 		function wireUi() {
-			$tabs.on("click", function (e) {
-				e.preventDefault();
-				var d = $(this).data("device");
-				if (d) {
-					activate(d);
-				}
+			tabs.forEach(function (tab) {
+				tab.addEventListener("click", function (e) {
+					e.preventDefault();
+					var d = tab.getAttribute("data-device");
+					if (d) {
+						activate(d);
+					}
+				});
 			});
 
 			if (fieldType === "checkbox") {
-				$input.on("change", function () {
+				input.addEventListener("change", function () {
 					var s = getSetting(active);
 					if (s) {
-						s.set($input.prop("checked"));
+						s.set(!!input.checked);
 					}
 				});
 			} else if (fieldType === "select") {
-				$input.on("change", function () {
+				input.addEventListener("change", function () {
 					var s = getSetting(active);
 					if (s) {
-						s.set($input.val());
+						s.set(input.value);
 					}
 				});
 			} else if (fieldType === "number") {
-				$input.on("change input", function () {
+				input.addEventListener("change", function () {
+					var s = getSetting(active);
+					if (s) {
+						s.set(readInputValue());
+					}
+				});
+				input.addEventListener("input", function () {
 					var s = getSetting(active);
 					if (s) {
 						s.set(readInputValue());
 					}
 				});
 			} else if (fieldType === "text") {
-				$input.on("input change", function () {
+				input.addEventListener("input", function () {
 					var s = getSetting(active);
 					if (s) {
-						s.set($input.val());
+						s.set(input.value);
+					}
+				});
+				input.addEventListener("change", function () {
+					var s = getSetting(active);
+					if (s) {
+						s.set(input.value);
 					}
 				});
 			} else if (fieldType === "color") {
-				$input.on("change", function () {
+				input.addEventListener("change", function () {
 					var s = getSetting(active);
 					if (s) {
-						s.set($input.val());
+						s.set(input.value);
 					}
 				});
 			}
@@ -229,9 +219,11 @@
 		});
 	}
 
-	$(function () {
-		$(".trove-responsive-tabs-control").each(function () {
-			initOne($(this));
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", function () {
+			document.querySelectorAll(".trove-responsive-tabs-control").forEach(initOne);
 		});
-	});
-})(jQuery, wp.customize);
+	} else {
+		document.querySelectorAll(".trove-responsive-tabs-control").forEach(initOne);
+	}
+})(wp.customize);

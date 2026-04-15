@@ -103,12 +103,8 @@
 		} );
 	}
 
-	/*
-	 * Run after customize-preview.js has run its jQuery ready handler (same tick, later registration),
-	 * so theme_mod settings exist before we attach listeners.
-	 */
-	if ( typeof jQuery !== 'undefined' ) {
-		jQuery( function () {
+	if ( document.readyState === 'loading' ) {
+		document.addEventListener( 'DOMContentLoaded', function () {
 			bindGlobalColors();
 			bindHeaderSettings();
 		} );
