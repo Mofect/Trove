@@ -1,0 +1,22 @@
+.trove-cz-number-unit {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	gap: 8px;
+	flex-wrap: nowrap;
+	margin-top: 6px;
+}
+
+.trove-cz-number-unit__input {
+	flex: 1 1 auto;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.trove-cz-number-unit__unit {
+	flex: 0 0 88px;
+	max-width: 100%;
+	min-height: 30px;
+	font-size: 13px;
+	line-height: 1.4;
+}

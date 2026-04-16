@@ -10,6 +10,7 @@ namespace Trove\Customizer;
 defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/config/options.php';
+require_once __DIR__ . '/google-fonts.php';
 require_once __DIR__ . '/responsive.php';
 require_once __DIR__ . '/class-options-registry.php';
 require_once __DIR__ . '/class-manager.php';
@@ -291,6 +292,28 @@ function enqueue_customizer_ui_assets() {
 		$ver
 	);
 
+	wp_register_style(
+		'select2',
+		'https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css',
+		array(),
+		'4.0.13'
+	);
+	wp_enqueue_style( 'select2' );
+
+	wp_enqueue_style(
+		'trove-customizer-google-font',
+		$dir . '/inc/customizer/css/customizer-google-font.css',
+		array( 'customize-controls', 'select2' ),
+		$ver
+	);
+
+	wp_enqueue_style(
+		'trove-customizer-number-unit',
+		$dir . '/inc/customizer/css/customizer-number-unit.css',
+		array( 'customize-controls' ),
+		$ver
+	);
+
 	wp_enqueue_style( 'wp-color-picker' );
 	wp_enqueue_style( 'wp-components' );
 	wp_enqueue_script( 'wp-element' );
@@ -318,6 +341,52 @@ function enqueue_customizer_ui_assets() {
 		array( 'customize-controls' ),
 		$ver,
 		true
+	);
+
+	wp_register_script(
+		'select2',
+		'https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js',
+		array( 'jquery' ),
+		'4.0.13',
+		true
+	);
+	wp_enqueue_script( 'select2' );
+
+	wp_enqueue_script(
+		'trove-customizer-google-font-select2',
+		$dir . '/inc/customizer/js/customizer-google-font-select2.js',
+		array( 'jquery', 'customize-controls', 'select2' ),
+		$ver,
+		true
+	);
+
+	wp_localize_script(
+		'trove-customizer-google-font-select2',
+		'troveGoogleFontSelect2',
+		array(
+			'families' => \Trove\Customizer\get_google_font_family_names(),
+			'i18n'     => array(
+				'search' => __( 'Search…', 'trove' ),
+				'system' => __( 'System UI', 'trove' ),
+			),
+		)
+	);
+
+	wp_enqueue_script(
+		'trove-customizer-font-weight',
+		$dir . '/inc/customizer/js/customizer-font-weight.js',
+		array( 'jquery', 'customize-controls', 'trove-customizer-google-font-select2' ),
+		$ver,
+		true
+	);
+
+	wp_localize_script(
+		'trove-customizer-font-weight',
+		'troveFontWeightMap',
+		array(
+			'map'    => \Trove\Customizer\get_font_weight_map_for_customizer(),
+			'labels' => \Trove\Customizer\trove_font_weight_choice_labels(),
+		)
 	);
 
 	wp_localize_script(
@@ -383,3 +452,6 @@ function enqueue_customizer_ui_assets() {
 }
 
 require_once __DIR__ . '/apply.php';
+
+add_action( 'after_setup_theme', __NAMESPACE__ . '\\migrate_legacy_font_theme_mod', 5 );
+add_action( 'after_setup_theme', __NAMESPACE__ . '\\migrate_stored_google_font_slug_to_family_name', 6 );

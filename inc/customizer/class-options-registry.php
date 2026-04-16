@@ -485,6 +485,102 @@ final class Options_Registry {
 			return;
 		}
 
+		if ( 'google_font' === $type ) {
+			$def = isset( $field['default'] ) ? (string) $field['default'] : 'Instrument Sans';
+			$def = \Trove\Customizer\sanitize_google_font_family( $def );
+
+			$wp_customize->add_setting(
+				$setting_id,
+				array(
+					'default'           => $def,
+					'transport'         => isset( $field['transport'] ) ? $field['transport'] : 'refresh',
+					'sanitize_callback' => 'Trove\\Customizer\\sanitize_google_font_family',
+				)
+			);
+
+			$wp_customize->add_control(
+				new Google_Font_Control(
+					$wp_customize,
+					$setting_id,
+					array(
+						'label'       => isset( $field['label'] ) ? $field['label'] : '',
+						'description' => isset( $field['description'] ) ? $field['description'] : '',
+						'section'     => $section_id,
+						'priority'    => $control_priority,
+					)
+				)
+			);
+			if ( null !== $tab_slug && '' !== $tab_slug ) {
+				$this->remember_control_tab( $section_id, $setting_id, $tab_slug );
+			}
+			return;
+		}
+
+		if ( 'number_unit' === $type ) {
+			$unit_key = isset( $field['unit_setting'] ) ? (string) $field['unit_setting'] : '';
+			if ( '' === $unit_key ) {
+				return;
+			}
+
+			$num_default = isset( $field['number_default'] ) ? $field['number_default'] : 16;
+			if ( isset( $field['default'] ) && is_array( $field['default'] ) && isset( $field['default']['number'] ) ) {
+				$num_default = $field['default']['number'];
+			}
+
+			$unit_default = isset( $field['unit_default'] ) ? $field['unit_default'] : 'px';
+			if ( isset( $field['default'] ) && is_array( $field['default'] ) && isset( $field['default']['unit'] ) ) {
+				$unit_default = $field['default']['unit'];
+			}
+
+			$transport = isset( $field['transport'] ) ? $field['transport'] : 'refresh';
+
+			$num_sanitize = isset( $field['sanitize_callback'] ) ? $field['sanitize_callback'] : array( $this, 'sanitize_by_type' );
+			$unit_sanitize = isset( $field['unit_sanitize_callback'] ) ? $field['unit_sanitize_callback'] : array( $this, 'sanitize_by_type' );
+
+			$wp_customize->add_setting(
+				$setting_id,
+				array(
+					'default'           => $num_default,
+					'transport'         => $transport,
+					'sanitize_callback' => $num_sanitize,
+				)
+			);
+
+			$wp_customize->add_setting(
+				$unit_key,
+				array(
+					'default'           => $unit_default,
+					'transport'         => $transport,
+					'sanitize_callback' => $unit_sanitize,
+				)
+			);
+
+			$unit_choices = isset( $field['unit_choices'] ) && is_array( $field['unit_choices'] ) ? $field['unit_choices'] : array();
+
+			$wp_customize->add_control(
+				new Number_Unit_Control(
+					$wp_customize,
+					$setting_id,
+					array(
+						'label'              => isset( $field['label'] ) ? $field['label'] : '',
+						'description'        => isset( $field['description'] ) ? $field['description'] : '',
+						'section'            => $section_id,
+						'priority'           => $control_priority,
+						'settings'           => array(
+							'default' => $setting_id,
+							'unit'    => $unit_key,
+						),
+						'number_input_attrs' => isset( $field['input_attrs'] ) && is_array( $field['input_attrs'] ) ? $field['input_attrs'] : array(),
+						'unit_choices'       => $unit_choices,
+					)
+				)
+			);
+			if ( null !== $tab_slug && '' !== $tab_slug ) {
+				$this->remember_control_tab( $section_id, $setting_id, $tab_slug );
+			}
+			return;
+		}
+
 		$setting_args = array(
 			'default'   => $default,
 			'transport' => isset( $field['transport'] ) ? $field['transport'] : 'refresh',

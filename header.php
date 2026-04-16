@@ -10,47 +10,24 @@
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		:root {
+			--trove-body-font-family: "<?php echo get_theme_mod( 'trove_font_base_stack', 'instrument_sans' ); ?>", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			--trove-body-font-size: <?php echo get_theme_mod( 'trove_font_base_size', '16px' ); ?>;
+			--trove-body-font-weight: <?php echo get_theme_mod( 'trove_font_base_weight', '400' ); ?>;
+			--trove-body-line-height: <?php echo get_theme_mod( 'trove_font_base_line_height', '1.5' ); ?>;
+		}
+	</style>
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
-<header class="<?php \Trove\Customizer\the_header_class_attr(); ?>" role="banner">
-	<div class="site-header__inner">
-		<div class="site-header__brand">
-			<?php
-			if ( has_custom_logo() ) {
-				the_custom_logo();
-			} else {
-			?>
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-header__title-link"><?php bloginfo( 'name' ); ?></a>
-			<?php } ?>
-		</div>
-		<nav class="site-header__nav" aria-label="<?php esc_attr_e( 'Primary menu', 'trove' ); ?>">
-			<?php
-			if ( has_nav_menu( 'primary' ) ) {
-				wp_nav_menu(
-					array(
-						'theme_location' => 'primary',
-						'menu_class'     => 'primary-menu',
-						'container'      => false,
-					)
-				);
-			} else {
-				wp_page_menu(
-					array(
-						'menu_class' => 'primary-menu',
-					)
-				);
-			}
-			?>
-		</nav>
-		<?php if ( class_exists( 'WooCommerce' ) ) : ?>
-			<div class="site-header__woo">
-				<?php
-				echo do_blocks( '<!-- wp:woocommerce/customer-account {"iconClass":"wc-block-customer-account__account-icon","displayStyle":"icon_only"} /-->' );
-				echo do_blocks( '<!-- wp:woocommerce/mini-cart /-->' );
-				?>
-			</div>
-		<?php endif; ?>
-	</div>
-</header>
+<?php 
+$layout = get_theme_mod( 'trove_header_layout', 'horizontal-left-logo' );
+$layout = is_string( $layout ) ? sanitize_key( $layout ) : 'horizontal-left-logo';
+
+if ( 'vertical-centered-logo' === $layout || 'vertical-left-logo' === $layout ) {
+	get_template_part( 'template-parts/header-vertical' );
+} else {
+	get_template_part( 'template-parts/header-horizontal' );
+}

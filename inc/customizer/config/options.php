@@ -62,6 +62,27 @@
  *   ],
  *
  * Image radio (2×2 card grid; each choice: image URL, pattern slug, or svg markup):
+ * Number + unit on one row (two theme_mods: value + unit_setting):
+ *   'trove_font_size' => [
+ *     'label' => __( 'Base font size', 'trove' ),
+ *     'type' => 'number_unit',
+ *     'unit_setting' => 'trove_font_base_size_unit',
+ *     'number_default' => 16,
+ *     'unit_default' => 'px',
+ *     'unit_choices' => [ 'px' => 'px', 'rem' => 'rem' ],
+ *     'sanitize_callback' => '...',
+ *     'unit_sanitize_callback' => '...',
+ *     'transport' => 'postMessage',
+ *   ],
+ *
+ * Google Font (Select2 + full catalog from bundled metadata; theme_mod = family name or system):
+ *   'trove_font' => [
+ *     'label'   => __( 'Body font', 'trove' ),
+ *     'type'    => 'google_font',
+ *     'default' => 'Instrument Sans',
+ *     'transport' => 'postMessage',
+ *   ],
+ *
  *   'trove_foo' => [
  *     'label'   => __( 'Layout', 'trove' ),
  *     'type'    => 'image_radio',
@@ -224,13 +245,4 @@ function get_options() {
 	 * @param array $merged Options tree.
 	 */
 	return apply_filters( 'trove_customizer_options', $merged );
-}
-
-/**
- * @param string $value Raw font key.
- * @return string
- */
-function sanitize_font_stack( $value ) {
-	$allowed = array( 'inter', 'system' );
-	return in_array( $value, $allowed, true ) ? $value : 'inter';
 }

@@ -61,6 +61,138 @@ function trove_global_color_scheme_setting_keys() {
 }
 
 /**
+ * Body typography → :root CSS variables (--trove_font_base_*).
+ *
+ * @return array<string, array{var:string, default:string, mode:string}>
+ */
+function trove_typography_theme_mod_definitions() {
+	return array(
+		'trove_font_base_weight' => array(
+			'var'     => '--trove_font_base_weight',
+			'default' => '400',
+			'mode'    => 'weight',
+		),
+	);
+}
+
+/**
+ * @param mixed $value Raw numeric size.
+ * @return float
+ */
+function trove_sanitize_font_base_size( $value ) {
+	$f = is_numeric( $value ) ? (float) $value : 16;
+	return max( 0.25, min( 500, round( $f, 4 ) ) );
+}
+
+/**
+ * @param mixed $value Raw unit slug.
+ * @return string px|rem|em
+ */
+function trove_sanitize_font_base_size_unit( $value ) {
+	$allowed = array( 'px', 'rem', 'em' );
+	$v       = is_string( $value ) ? strtolower( trim( $value ) ) : 'px';
+	return in_array( $v, $allowed, true ) ? $v : 'px';
+}
+
+/**
+ * @param mixed $value Raw weight.
+ * @return int
+ */
+function trove_sanitize_font_base_weight( $value ) {
+	$n       = absint( $value );
+	$n       = max( 1, min( 1000, $n ) );
+	$allowed = get_font_weight_values_for_family( trove_effective_google_font_family_during_save() );
+	return trove_nearest_font_weight( $n, $allowed );
+}
+
+/**
+ * @param mixed $value Raw line-height number.
+ * @return float
+ */
+function trove_sanitize_font_base_line_height( $value ) {
+	$f = is_numeric( $value ) ? (float) $value : 1.5;
+	return max( 0.25, min( 500, round( $f, 4 ) ) );
+}
+
+/**
+ * @param mixed $value Raw unit slug.
+ * @return string
+ */
+function trove_sanitize_font_base_line_height_unit( $value ) {
+	$allowed = array( 'unitless', 'px', 'rem', 'em', '%' );
+	$v       = is_string( $value ) ? trim( $value ) : 'unitless';
+	return in_array( $v, $allowed, true ) ? $v : 'unitless';
+}
+
+/**
+ * @param float $f Numeric value.
+ * @return string Trimmed for CSS (no trailing zeros).
+ */
+function trove_format_css_float_string( $f ) {
+	$s = rtrim( rtrim( sprintf( '%.4F', (float) $f ), '0' ), '.' );
+	return '' !== $s ? $s : '0';
+}
+
+/**
+ * @return string e.g. 16px, 1rem
+ */
+function trove_font_base_size_css_value() {
+	$unit = trove_sanitize_font_base_size_unit( get_theme_mod( 'trove_font_base_size_unit', 'px' ) );
+	$raw  = get_theme_mod( 'trove_font_base_size', 16 );
+	$v    = is_numeric( $raw ) ? (float) $raw : 16;
+	$v    = trove_sanitize_font_base_size( $v );
+
+	if ( 'px' === $unit ) {
+		$n = (int) round( $v );
+		$n = max( 10, min( 32, $n ) );
+		return $n . 'px';
+	}
+	if ( 'rem' === $unit || 'em' === $unit ) {
+		$f = max( 0.5, min( 2.5, $v ) );
+		return trove_format_css_float_string( $f ) . $unit;
+	}
+	return '16px';
+}
+
+/**
+ * @return string e.g. 400
+ */
+function trove_font_base_weight_css_value() {
+	$v       = get_theme_mod( 'trove_font_base_weight', 400 );
+	$n       = absint( $v );
+	$allowed = get_font_weight_values_for_family( get_font_family_setting() );
+	return (string) trove_nearest_font_weight( $n, $allowed );
+}
+
+/**
+ * @return string e.g. 1.5, 24px, 150%
+ */
+function trove_font_base_line_height_css_value() {
+	$unit = trove_sanitize_font_base_line_height_unit( get_theme_mod( 'trove_font_base_line_height_unit', 'unitless' ) );
+	$raw  = get_theme_mod( 'trove_font_base_line_height', 1.5 );
+	$v    = is_numeric( $raw ) ? (float) $raw : 1.5;
+	$v    = trove_sanitize_font_base_line_height( $v );
+
+	if ( 'unitless' === $unit ) {
+		$f = max( 1, min( 3, $v ) );
+		return trove_format_css_float_string( $f );
+	}
+	if ( 'px' === $unit ) {
+		$n = max( 12, min( 80, (int) round( $v ) ) );
+		return $n . 'px';
+	}
+	if ( 'rem' === $unit || 'em' === $unit ) {
+		$f = max( 0.5, min( 4, $v ) );
+		return trove_format_css_float_string( $f ) . $unit;
+	}
+	if ( '%' === $unit ) {
+		$n = max( 80, min( 250, (int) round( $v ) ) );
+		return $n . '%';
+	}
+	return '1.5';
+}
+
+/**
  * Sanitizes a CSS color token for :root custom properties.
  * Supports hex and rgb/rgba for alpha-enabled pickers.
  *
@@ -143,7 +275,8 @@ function output_customizer_css() {
 	if ( ! wp_style_is( 'trove-style', 'enqueued' ) ) {
 		return;
 	}
-	$font = get_theme_mod( 'trove_font_base_stack', 'inter' );
+	$font_family = get_font_family_setting();
+	$body_font   = get_body_font_family_css_value( $font_family );
 
 	$widths = get_responsive_mod_values(
 		'trove_content_width',
@@ -164,15 +297,15 @@ function output_customizer_css() {
 		$root_parts[] = $row['var'] . ':' . esc_attr( trove_color_theme_mod( $mod_key, $row['default'] ) );
 	}
 	$root_parts[] = '--trove-content:' . (int) $w_pc . 'px';
+	$root_parts[] = '--trove-body-font-family:' . $body_font;
+	$root_parts[] = '--trove_font_base_size:' . esc_attr( trove_font_base_size_css_value() );
+	$root_parts[] = '--trove_font_base_weight:' . esc_attr( trove_font_base_weight_css_value() );
+	$root_parts[] = '--trove_font_base_line_height:' . esc_attr( trove_font_base_line_height_css_value() );
 
 	$css  = ':root{' . implode( ';', $root_parts ) . '}';
 	$css .= '.site-main{max-width:var(--trove-content);}';
 	$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){:root{--trove-content:' . (int) $w_tablet . 'px;}}';
 	$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){:root{--trove-content:' . (int) $w_phone . 'px;}}';
-
-	if ( 'system' === $font ) {
-		$css .= 'body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}';
-	}
 
 	$header_min = absint( get_theme_mod( 'trove_header_min_height', 0 ) );
 	if ( $header_min > 0 && $header_min <= 400 ) {
@@ -198,6 +331,15 @@ function enqueue_customizer_preview_scripts() {
 		);
 	}
 
+	$preview_typography = array();
+	foreach ( trove_typography_theme_mod_definitions() as $mod => $row ) {
+		$preview_typography[ $mod ] = array(
+			'var'     => $row['var'],
+			'default' => $row['default'],
+			'mode'    => $row['mode'],
+		);
+	}
+
 	wp_enqueue_script(
 		'trove-customizer-preview',
 		$uri . '/inc/customizer/js/customizer-preview.js',
@@ -210,7 +352,10 @@ function enqueue_customizer_preview_scripts() {
 		'trove-customizer-preview',
 		'troveCustomizerPreview',
 		array(
-			'colors' => $preview_colors,
+			'colors'       => $preview_colors,
+			'fonts'        => get_google_font_preview_data(),
+			'typography'   => $preview_typography,
+			'fontWeights'  => get_font_weight_map_for_customizer(),
 		)
 	);
 }
@@ -230,6 +375,8 @@ function get_header_classnames() {
 		'horizontal-left-logo',
 		'horizontal-centered-logo',
 		'horizontal-right-logo',
+		'vertical-centered-logo',
+		'vertical-left-logo',
 	);
 	$layout = get_theme_mod( 'trove_header_layout', 'horizontal-left-logo' );
 	$layout = is_string( $layout ) ? sanitize_key( $layout ) : '';

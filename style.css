@@ -34,6 +34,10 @@ Tags: custom-logo, custom-menu, featured-images, threaded-comments, translation-
 	--trove-selection-color: #ffffff;
 	--trove-selection-bg: #22c55e;
 	--trove-border: #eeeeee;
+	--trove-body-font-family: "Instrument Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--trove_font_base_size: 16px;
+	--trove_font_base_weight: 400;
+	--trove_font_base_line_height: 1.5;
 }
 
 html {
@@ -43,10 +47,10 @@ html {
 
 body {
 	margin: 0;
-	font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-	font-size: 16px;
-	font-weight: 300;
-	line-height: 1.5;
+	font-family: var(--trove-body-font-family);
+	font-size: var(--trove_font_base_size);
+	font-weight: var(--trove_font_base_weight);
+	line-height: var(--trove_font_base_line_height);
 	letter-spacing: -0.02em;
 	color: var(--trove-text);
 	background: #fff;
@@ -158,6 +162,19 @@ main {
 	background: #fff;
 }
 
+/* Avoid overlapping WordPress admin bar when logged in. */
+body.admin-bar .site-header.trove-header-sticky-always,
+body.admin-bar .site-header.trove-header-sticky-on_scroll_up {
+	top: 32px;
+}
+
+@media (max-width: 782px) {
+	body.admin-bar .site-header.trove-header-sticky-always,
+	body.admin-bar .site-header.trove-header-sticky-on_scroll_up {
+		top: 46px;
+	}
+}
+
 .site-header.trove-header-sticky-on_scroll_up {
 	transition: transform 0.2s ease;
 	will-change: transform;
@@ -220,7 +237,7 @@ main {
 }
 
 .site-header__title-link {
-	font-size: 1.25rem;
+	font-size: 1.6rem;
 	font-weight: 700;
 	letter-spacing: -0.04em;
 	color: var(--trove-text);
@@ -265,7 +282,8 @@ body.has-custom-logo .site-header__tagline {
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
 	scrollbar-width: thin;
-	font-size: 14px;
+	font-size: 16px;
+	font-weight: 500;
 	letter-spacing: -0.02em;
 }
 
@@ -359,6 +377,41 @@ body.has-custom-logo .site-header__tagline {
 }
 .site-header.trove-header__horizontal-right-logo .site-header__brand {
 	order: 3;
+}
+
+/* Header layout: vertical */
+.site-header[class*="trove-header__vertical-"] .site-header__inner {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	padding: 2rem 0;
+}
+
+.site-header[class*="trove-header__vertical-"] .site-header__nav {
+	border-top: 1px solid var(--trove-border);
+	padding-top: 20px;
+}
+
+.site-header.trove-header__vertical-centered-logo .site-header__woo {
+	position: absolute;
+	right: 0;
+}
+
+.site-header.trove-header__vertical-left-logo .site-header__nav {
+   justify-content: flex-start;
+}
+
+.site-header.trove-header__vertical-left-logo .primary-menu {
+   width: var(--trove-wide);
+   margin-left: auto;
+   margin-right: auto;
+   justify-content: flex-start;
+}
+
+.site-header.trove-header__vertical-left-logo .site-header__inner {
+	justify-content: space-between;
 }
 
 /* Footer

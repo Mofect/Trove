@@ -18,17 +18,26 @@ return array(
 		'transport'   => 'postMessage',
 		'choices'     => array(
 			'horizontal-left-logo' => array(
-				'label' => __( 'Left logo', 'trove' ),
+				'label' => __( 'Horizontal Left logo', 'trove' ),
 				'url'   => get_template_directory_uri() . '/inc/customizer/img/header-1.png',
 			),
 			'horizontal-centered-logo' => array(
-				'label' => __( 'Centered logo', 'trove' ),
+				'label' => __( 'Horizontal Centered logo', 'trove' ),
 				'url'   => get_template_directory_uri() . '/inc/customizer/img/header-2.png',
 			),
 			'horizontal-right-logo' => array(
-				'label' => __( 'Right logo', 'trove' ),
+				'label' => __( 'Horizontal Right logo', 'trove' ),
 				'url'   => get_template_directory_uri() . '/inc/customizer/img/header-3.png',
-			)
+			),
+			'vertical-centered-logo' => array(
+				'label' => __( 'Vertical centered logo', 'trove' ),
+				'url'   => get_template_directory_uri() . '/inc/customizer/img/header-4.png',
+			),
+			'vertical-left-logo' => array(
+				'label' => __( 'Vertical left logo', 'trove' ),
+				'url'   => get_template_directory_uri() . '/inc/customizer/img/header-5.png',
+			),
+			
 		),
 		'sanitize_callback' => 'sanitize_text_field',
 	),

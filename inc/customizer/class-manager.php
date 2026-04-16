@@ -45,6 +45,8 @@ final class Manager {
 		require_once __DIR__ . '/controls/class-group-marker-control.php';
 		require_once __DIR__ . '/controls/class-dual-color-control.php';
 		require_once __DIR__ . '/controls/class-heading-control.php';
+		require_once __DIR__ . '/controls/class-google-font-control.php';
+		require_once __DIR__ . '/controls/class-number-unit-control.php';
 
 		// Do not call register_control_type( Responsive_Tabs_Control ): that prints an empty JS
 		// tmpl and customize-controls.js replaces server-rendered HTML with it, hiding the UI.

@@ -1,0 +1,56 @@
+.trove-cz-google-font {
+	margin-top: 8px;
+}
+
+.trove-cz-google-font--select2 .select2-container {
+	width: 100% !important;
+	max-width: 100%;
+	margin: 0;
+	font-size: 13px;
+}
+
+.trove-cz-google-font--select2 .select2-selection--single {
+	height: 36px;
+	min-height: 36px;
+	border-color: #8c8f94;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	padding: 0;
+}
+
+.trove-cz-google-font--select2 .select2-selection__rendered {
+	display: block;
+	line-height: 1.4;
+	padding: 0 6px 0 10px;
+	flex: 1;
+	min-width: 0;
+}
+
+.trove-cz-google-font--select2 .select2-selection__arrow {
+	position: static;
+	height: 36px;
+	width: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin: 0;
+}
+
+.trove-cz-google-font--select2 .select2-selection__arrow b {
+	margin-top: 0;
+}
+
+.trove-cz-google-font__select {
+	width: 100%;
+	max-width: 100%;
+	min-height: 36px;
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+/* Select2 attaches the dropdown to body; raise above .wp-full-overlay (~500000) */
+body.wp-customizer .select2-dropdown {
+	z-index: 600000 !important;
+}

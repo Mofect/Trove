@@ -53,7 +53,10 @@ function setup() {
 	}
 
 	add_theme_support( 'editor-styles' );
-	add_editor_style( 'assets/css/fonts.css' );
+	$gf = \Trove\Customizer\get_google_font_stylesheet_url( \Trove\Customizer\get_font_family_setting() );
+	if ( $gf ) {
+		add_editor_style( $gf );
+	}
 	add_editor_style( 'style.css' );
 }
 add_action( 'after_setup_theme', __NAMESPACE__ . '\\setup' );
@@ -62,16 +65,21 @@ add_action( 'after_setup_theme', __NAMESPACE__ . '\\setup' );
  * Enqueues the theme stylesheet.
  */
 function enqueue_styles() {
-	wp_enqueue_style(
-		'trove-fonts',
-		get_template_directory_uri() . '/assets/css/fonts.css',
-		array(),
-		TROVE_THEME_VERSION
-	);
+	$deps = array();
+	$gf   = \Trove\Customizer\get_google_font_stylesheet_url( \Trove\Customizer\get_font_family_setting() );
+	if ( $gf ) {
+		wp_enqueue_style(
+			'trove-google-font',
+			$gf,
+			array(),
+			TROVE_THEME_VERSION
+		);
+		$deps[] = 'trove-google-font';
+	}
 	wp_enqueue_style(
 		'trove-style',
 		get_stylesheet_uri(),
-		array( 'trove-fonts' ),
+		$deps,
 		TROVE_THEME_VERSION
 	);
 
