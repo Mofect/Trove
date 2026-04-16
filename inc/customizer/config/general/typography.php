@@ -53,7 +53,7 @@ $scopes = apply_filters('trove_typography_options', array(
 	'h1' => array(
 		'group'          => __( 'H1-H6 typography', 'trove' ),
 		'label'          => 'H1',
-		'size'           => 2.5,
+		'size'           => 4.0,
 		'size_unit'      => 'rem',
 		'weight'         => 600,
 		'line'           => 1.2,
@@ -62,7 +62,7 @@ $scopes = apply_filters('trove_typography_options', array(
 	),
 	'h2' => array(
 		'label'          => 'H2',
-		'size'           => 2.0,
+		'size'           => 3.0,
 		'size_unit'      => 'rem',
 		'weight'         => 600,
 		'line'           => 1.2,
@@ -71,7 +71,7 @@ $scopes = apply_filters('trove_typography_options', array(
 	),
 	'h3' => array(
 		'label'          => 'H3',
-		'size'           => 1.75,
+		'size'           => 2.4,
 		'size_unit'      => 'rem',
 		'weight'         => 600,
 		'line'           => 1.2,
@@ -80,7 +80,7 @@ $scopes = apply_filters('trove_typography_options', array(
 	),
 	'h4' => array(
 		'label'          => 'H4',
-		'size'           => 1.5,
+		'size'           => 2.0,
 		'size_unit'      => 'rem',
 		'weight'         => 600,
 		'line'           => 1.2,
@@ -89,7 +89,7 @@ $scopes = apply_filters('trove_typography_options', array(
 	),
 	'h5' => array(
 		'label'          => 'H5',
-		'size'           => 1.25,
+		'size'           => 1.8,
 		'size_unit'      => 'rem',
 		'weight'         => 600,
 		'line'           => 1.3,
@@ -98,7 +98,7 @@ $scopes = apply_filters('trove_typography_options', array(
 	),
 	'h6' => array(
 		'label'          => 'H6',
-		'size'           => 1.0,
+		'size'           => 1.6,
 		'size_unit'      => 'rem',
 		'weight'         => 600,
 		'line'           => 1.3,

@@ -59,10 +59,10 @@
 		}
 		if ( unit === 'px' ) {
 			var n = Math.round( v );
-			n = Math.max( 10, Math.min( 32, n ) );
+		n = Math.max( 1, Math.min( 500, n ) );
 			return n + 'px';
 		}
-		var f = Math.max( 0.5, Math.min( 2.5, v ) );
+	var f = Math.max( 0.25, Math.min( 32, v ) );
 		return formatCssFloatStr( f ) + unit;
 	}
 

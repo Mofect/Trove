@@ -61,27 +61,19 @@ function trove_global_color_scheme_setting_keys() {
 }
 
 /**
- * Body typography → :root CSS variables (`--trove-font-base-*`).
+ * Typography theme mods mapped to CSS variables.
  *
  * @return array<string, array{var:string, default:string, mode:string}>
  */
 function trove_typography_theme_mod_definitions() {
-	$defs = array(
-		'trove_font_base_weight' => array(
-			'var'     => '--trove-font-base-weight',
-			'default' => '400',
-			'mode'    => 'weight',
-		),
-		'trove_menu_font_weight' => array(
-			'var'     => '--trove-menu-font-weight',
-			'default' => '500',
-			'mode'    => 'weight',
-		),
-	);
-	foreach ( trove_typography_font_scope_meta() as $scope => $_meta ) {
-		$defs[ 'trove_' . $scope . '_font_weight' ] = array(
-			'var'     => '--trove_' . $scope . '_font_weight',
-			'default' => '400',
+	$defs = array();
+	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
+		$weight_setting = isset( $meta['weight_setting'] ) ? (string) $meta['weight_setting'] : 'trove_' . $scope . '_font_weight';
+		$weight_var     = isset( $meta['weight_var'] ) ? (string) $meta['weight_var'] : '--trove-' . $scope . '-font-weight';
+
+		$defs[ $weight_setting ] = array(
+			'var'     => $weight_var,
+			'default' => (string) $meta['default_weight'],
 			'mode'    => 'weight',
 		);
 	}
@@ -89,19 +81,76 @@ function trove_typography_theme_mod_definitions() {
 }
 
 /**
- * Per-element typography scopes (used by CSS output + preview wiring).
+ * Typography scopes used by CSS output + preview wiring.
  *
- * @return array<string, array{selector:string, default_size:string, default_weight:int, default_line_height:string}>
+ * @return array<string, array<string, mixed>>
  */
 function trove_typography_font_scope_meta() {
 	return array(
-		'h1'         => array( 'selector' => 'h1',         'default_size' => 2.5,  'default_weight' => 600, 'default_line_height' => 1.2 ),
-		'h2'         => array( 'selector' => 'h2',         'default_size' => 2.0,    'default_weight' => 600, 'default_line_height' => 1.2 ),
-		'h3'         => array( 'selector' => 'h3',         'default_size' => 1.75, 'default_weight' => 600, 'default_line_height' => 1.2 ),
-		'h4'         => array( 'selector' => 'h4',         'default_size' => 1.5,  'default_weight' => 600, 'default_line_height' => 1.2 ),
-		'h5'         => array( 'selector' => 'h5',         'default_size' => 1.25, 'default_weight' => 600, 'default_line_height' => 1.3 ),
-		'h6'         => array( 'selector' => 'h6',         'default_size' => 1.0,    'default_weight' => 600, 'default_line_height' => 1.3 ),
-		'blockquote' => array( 'selector' => 'blockquote', 'default_size' => 1.125,'default_weight' => 500, 'default_line_height' => 1.6 ),
+		'body'       => array(
+			'selector'            => 'body',
+			'family_setting'      => 'trove_google_font_family',
+			'size_setting'        => 'trove_font_base_size',
+			'size_unit_setting'   => 'trove_font_base_size_unit',
+			'weight_setting'      => 'trove_font_base_weight',
+			'line_setting'        => 'trove_font_base_line_height',
+			'line_unit_setting'   => 'trove_font_base_line_height_unit',
+			'family_var'          => '--trove-body-font-family',
+			'size_var'            => '--trove-font-base-size',
+			'weight_var'          => '--trove-font-base-weight',
+			'line_var'            => '--trove-font-base-line-height',
+			'default_family'      => 'Instrument Sans',
+			'default_size'        => 16,
+			'default_size_unit'   => 'px',
+			'default_weight'      => 400,
+			'default_line_height' => 1.5,
+			'default_line_unit'   => 'unitless',
+		),
+		'menu'       => array(
+			'selector'            => '.site-header__nav .primary-menu',
+			'family_setting'      => 'trove_menu_google_font_family',
+			'size_setting'        => 'trove_menu_font_size',
+			'size_unit_setting'   => 'trove_menu_font_size_unit',
+			'weight_setting'      => 'trove_menu_font_weight',
+			'line_setting'        => 'trove_menu_font_line_height',
+			'line_unit_setting'   => 'trove_menu_font_line_height_unit',
+			'family_var'          => '--trove-menu-font-family',
+			'size_var'            => '--trove-menu-font-size',
+			'weight_var'          => '--trove-menu-font-weight',
+			'line_var'            => '--trove-menu-font-line-height',
+			'default_family'      => 'Instrument Sans',
+			'default_size'        => 16,
+			'default_size_unit'   => 'px',
+			'default_weight'      => 500,
+			'default_line_height' => 1.5,
+			'default_line_unit'   => 'unitless',
+		),
+		'h1'         => array( 'selector' => 'h1', 'family_setting' => 'trove_h1_google_font_family', 'size_setting' => 'trove_h1_font_size', 'size_unit_setting' => 'trove_h1_font_size_unit', 'weight_setting' => 'trove_h1_font_weight', 'line_setting' => 'trove_h1_font_line_height', 'line_unit_setting' => 'trove_h1_font_line_height_unit', 'family_var' => '--trove-h1-font-family', 'size_var' => '--trove-h1-font-size', 'weight_var' => '--trove-h1-font-weight', 'line_var' => '--trove-h1-font-line-height', 'default_size' => 4.0, 'default_size_unit' => 'rem', 'default_weight' => 600, 'default_line_height' => 1.2, 'default_line_unit' => 'unitless', 'default_family' => 'Instrument Sans' ),
+		'h2'         => array( 'selector' => 'h2', 'family_setting' => 'trove_h2_google_font_family', 'size_setting' => 'trove_h2_font_size', 'size_unit_setting' => 'trove_h2_font_size_unit', 'weight_setting' => 'trove_h2_font_weight', 'line_setting' => 'trove_h2_font_line_height', 'line_unit_setting' => 'trove_h2_font_line_height_unit', 'family_var' => '--trove-h2-font-family', 'size_var' => '--trove-h2-font-size', 'weight_var' => '--trove-h2-font-weight', 'line_var' => '--trove-h2-font-line-height', 'default_size' => 3.0, 'default_size_unit' => 'rem', 'default_weight' => 600, 'default_line_height' => 1.2, 'default_line_unit' => 'unitless', 'default_family' => 'Instrument Sans' ),
+		'h3'         => array( 'selector' => 'h3', 'family_setting' => 'trove_h3_google_font_family', 'size_setting' => 'trove_h3_font_size', 'size_unit_setting' => 'trove_h3_font_size_unit', 'weight_setting' => 'trove_h3_font_weight', 'line_setting' => 'trove_h3_font_line_height', 'line_unit_setting' => 'trove_h3_font_line_height_unit', 'family_var' => '--trove-h3-font-family', 'size_var' => '--trove-h3-font-size', 'weight_var' => '--trove-h3-font-weight', 'line_var' => '--trove-h3-font-line-height', 'default_size' => 2.4, 'default_size_unit' => 'rem', 'default_weight' => 600, 'default_line_height' => 1.2, 'default_line_unit' => 'unitless', 'default_family' => 'Instrument Sans' ),
+		'h4'         => array( 'selector' => 'h4', 'family_setting' => 'trove_h4_google_font_family', 'size_setting' => 'trove_h4_font_size', 'size_unit_setting' => 'trove_h4_font_size_unit', 'weight_setting' => 'trove_h4_font_weight', 'line_setting' => 'trove_h4_font_line_height', 'line_unit_setting' => 'trove_h4_font_line_height_unit', 'family_var' => '--trove-h4-font-family', 'size_var' => '--trove-h4-font-size', 'weight_var' => '--trove-h4-font-weight', 'line_var' => '--trove-h4-font-line-height', 'default_size' => 2.0, 'default_size_unit' => 'rem', 'default_weight' => 600, 'default_line_height' => 1.2, 'default_line_unit' => 'unitless', 'default_family' => 'Instrument Sans' ),
+		'h5'         => array( 'selector' => 'h5', 'family_setting' => 'trove_h5_google_font_family', 'size_setting' => 'trove_h5_font_size', 'size_unit_setting' => 'trove_h5_font_size_unit', 'weight_setting' => 'trove_h5_font_weight', 'line_setting' => 'trove_h5_font_line_height', 'line_unit_setting' => 'trove_h5_font_line_height_unit', 'family_var' => '--trove-h5-font-family', 'size_var' => '--trove-h5-font-size', 'weight_var' => '--trove-h5-font-weight', 'line_var' => '--trove-h5-font-line-height', 'default_size' => 1.8, 'default_size_unit' => 'rem', 'default_weight' => 600, 'default_line_height' => 1.3, 'default_line_unit' => 'unitless', 'default_family' => 'Instrument Sans' ),
+		'h6'         => array( 'selector' => 'h6', 'family_setting' => 'trove_h6_google_font_family', 'size_setting' => 'trove_h6_font_size', 'size_unit_setting' => 'trove_h6_font_size_unit', 'weight_setting' => 'trove_h6_font_weight', 'line_setting' => 'trove_h6_font_line_height', 'line_unit_setting' => 'trove_h6_font_line_height_unit', 'family_var' => '--trove-h6-font-family', 'size_var' => '--trove-h6-font-size', 'weight_var' => '--trove-h6-font-weight', 'line_var' => '--trove-h6-font-line-height', 'default_size' => 1.6, 'default_size_unit' => 'rem', 'default_weight' => 600, 'default_line_height' => 1.3, 'default_line_unit' => 'unitless', 'default_family' => 'Instrument Sans' ),
+		'blockquote' => array( 'selector' => 'blockquote', 'family_setting' => 'trove_blockquote_google_font_family', 'size_setting' => 'trove_blockquote_font_size', 'size_unit_setting' => 'trove_blockquote_font_size_unit', 'weight_setting' => 'trove_blockquote_font_weight', 'line_setting' => 'trove_blockquote_font_line_height', 'line_unit_setting' => 'trove_blockquote_font_line_height_unit', 'family_var' => '--trove-blockquote-font-family', 'size_var' => '--trove-blockquote-font-size', 'weight_var' => '--trove-blockquote-font-weight', 'line_var' => '--trove-blockquote-font-line-height', 'default_size' => 1.125, 'default_size_unit' => 'rem', 'default_weight' => 500, 'default_line_height' => 1.6, 'default_line_unit' => 'unitless', 'default_family' => 'Playfair Display' ),
+		'accent'     => array(
+			'selector'            => '',
+			'family_setting'      => 'trove_accent_google_font_family',
+			'size_setting'        => 'trove_accent_font_size',
+			'size_unit_setting'   => 'trove_accent_font_size_unit',
+			'weight_setting'      => 'trove_accent_font_weight',
+			'line_setting'        => 'trove_accent_font_line_height',
+			'line_unit_setting'   => 'trove_accent_font_line_height_unit',
+			'family_var'          => '--trove-accent-font-family',
+			'size_var'            => '--trove-accent-font-size',
+			'weight_var'          => '--trove-accent-font-weight',
+			'line_var'            => '--trove-accent-font-line-height',
+			'default_family'      => 'Playfair Display',
+			'default_size'        => 1.125,
+			'default_size_unit'   => 'rem',
+			'default_weight'      => 500,
+			'default_line_height' => 1.6,
+			'default_line_unit'   => 'unitless',
+		),
 	);
 }
 
@@ -111,12 +160,11 @@ function trove_typography_font_scope_meta() {
  * @return array<string, string>
  */
 function trove_font_weight_setting_pairs() {
-	$pairs = array(
-		'trove_google_font_family'      => 'trove_font_base_weight',
-		'trove_menu_google_font_family' => 'trove_menu_font_weight',
-	);
-	foreach ( array_keys( trove_typography_font_scope_meta() ) as $scope ) {
-		$pairs[ 'trove_' . $scope . '_google_font_family' ] = 'trove_' . $scope . '_font_weight';
+	$pairs = array();
+	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
+		$family_setting = isset( $meta['family_setting'] ) ? (string) $meta['family_setting'] : 'trove_' . $scope . '_google_font_family';
+		$weight_setting = isset( $meta['weight_setting'] ) ? (string) $meta['weight_setting'] : 'trove_' . $scope . '_font_weight';
+		$pairs[ $family_setting ] = $weight_setting;
 	}
 	return $pairs;
 }
@@ -299,10 +347,10 @@ function trove_number_unit_css_value( $number_setting, $unit_setting, $default, 
 	$v    = trove_sanitize_font_base_size( $v );
 	if ( 'px' === $unit ) {
 		$n = (int) round( $v );
-		$n = max( 10, min( 32, $n ) );
+		$n = max( 1, min( 500, $n ) );
 		return $n . 'px';
 	}
-	$f = max( 0.5, min( 2.5, $v ) );
+	$f = max( 0.25, min( 32, $v ) );
 	return trove_format_css_float_string( $f ) . $unit;
 }
 
@@ -423,28 +471,39 @@ function output_customizer_css() {
 		$root_parts[] = $row['var'] . ':' . esc_attr( trove_color_theme_mod( $mod_key, $row['default'] ) );
 	}
 	$root_parts[] = '--trove-content:' . (int) $w_pc . 'px';
-	$root_parts[] = '--trove-body-font-family:' . $body_font;
-	$root_parts[] = '--trove-menu-font-family:' . get_body_font_family_css_value( sanitize_google_font_family( get_theme_mod( 'trove_menu_google_font_family', 'system' ) ) );
-	$root_parts[] = '--trove-menu-font-size:' . esc_attr( trove_number_unit_css_value( 'trove_menu_font_size', 'trove_menu_font_size_unit', 16, 'px' ) );
-	$root_parts[] = '--trove-menu-font-weight:' . esc_attr( trove_font_weight_css_value_for_settings( 'trove_menu_font_weight', 'trove_menu_google_font_family', 500 ) );
-	$root_parts[] = '--trove-menu-font-line-height:' . esc_attr( trove_number_unit_css_value( 'trove_menu_font_line_height', 'trove_menu_font_line_height_unit', 1.5, 'unitless' ) );
-	$root_parts[] = '--trove-font-base-size:' . esc_attr( trove_font_base_size_css_value() );
-	$root_parts[] = '--trove-font-base-weight:' . esc_attr( trove_font_base_weight_css_value() );
-	$root_parts[] = '--trove-font-base-line-height:' . esc_attr( trove_font_base_line_height_css_value() );
-
 	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
 		$prefix = 'trove_' . $scope;
-		$family = sanitize_google_font_family( get_theme_mod( $prefix . '_google_font_family', 'system' ) );
-		$root_parts[] = '--trove-' . $scope . '-font-family:' . get_body_font_family_css_value( $family );
-		$root_parts[] = '--trove-' . $scope . '-font-size:' . esc_attr( trove_number_unit_css_value( $prefix . '_font_size', $prefix . '_font_size_unit', (float) $meta['default_size'], 'rem' ) );
-		$root_parts[] = '--trove-' . $scope . '-font-weight:' . esc_attr( trove_font_weight_css_value_for_settings( $prefix . '_font_weight', $prefix . '_google_font_family', (int) $meta['default_weight'] ) );
-		$root_parts[] = '--trove-' . $scope . '-font-line-height:' . esc_attr( trove_number_unit_css_value( $prefix . '_font_line_height', $prefix . '_font_line_height_unit', (float) $meta['default_line_height'], 'unitless' ) );
+		$family_setting = isset( $meta['family_setting'] ) ? (string) $meta['family_setting'] : $prefix . '_google_font_family';
+		$size_setting   = isset( $meta['size_setting'] ) ? (string) $meta['size_setting'] : $prefix . '_font_size';
+		$size_unit      = isset( $meta['size_unit_setting'] ) ? (string) $meta['size_unit_setting'] : $prefix . '_font_size_unit';
+		$weight_setting = isset( $meta['weight_setting'] ) ? (string) $meta['weight_setting'] : $prefix . '_font_weight';
+		$line_setting   = isset( $meta['line_setting'] ) ? (string) $meta['line_setting'] : $prefix . '_font_line_height';
+		$line_unit      = isset( $meta['line_unit_setting'] ) ? (string) $meta['line_unit_setting'] : $prefix . '_font_line_height_unit';
+		$family_var     = isset( $meta['family_var'] ) ? (string) $meta['family_var'] : '--trove-' . $scope . '-font-family';
+		$size_var       = isset( $meta['size_var'] ) ? (string) $meta['size_var'] : '--trove-' . $scope . '-font-size';
+		$weight_var     = isset( $meta['weight_var'] ) ? (string) $meta['weight_var'] : '--trove-' . $scope . '-font-weight';
+		$line_var       = isset( $meta['line_var'] ) ? (string) $meta['line_var'] : '--trove-' . $scope . '-font-line-height';
+		$family_default = isset( $meta['default_family'] ) ? (string) $meta['default_family'] : 'system';
+		$size_default   = isset( $meta['default_size'] ) ? (float) $meta['default_size'] : 1;
+		$size_unit_def  = isset( $meta['default_size_unit'] ) ? (string) $meta['default_size_unit'] : 'rem';
+		$line_default   = isset( $meta['default_line_height'] ) ? (float) $meta['default_line_height'] : 1.5;
+		$line_unit_def  = isset( $meta['default_line_unit'] ) ? (string) $meta['default_line_unit'] : 'unitless';
+		$weight_default = isset( $meta['default_weight'] ) ? (int) $meta['default_weight'] : 400;
+
+		$family = sanitize_google_font_family( get_theme_mod( $family_setting, $family_default ) );
+		$root_parts[] = $family_var . ':' . get_body_font_family_css_value( $family );
+		$root_parts[] = $size_var . ':' . esc_attr( trove_number_unit_css_value( $size_setting, $size_unit, $size_default, $size_unit_def ) );
+		$root_parts[] = $weight_var . ':' . esc_attr( trove_font_weight_css_value_for_settings( $weight_setting, $family_setting, $weight_default ) );
+		$root_parts[] = $line_var . ':' . esc_attr( trove_number_unit_css_value( $line_setting, $line_unit, $line_default, $line_unit_def ) );
 	}
 
 	$css  = ':root{' . implode( ';', $root_parts ) . '}';
 	$css .= '.site-main{max-width:var(--trove-content);}';
+	$css .= '.site-footer__extra-responsive .trove-fe--tablet,.site-footer__extra-responsive .trove-fe--phone{display:none;}';
+	$css .= '.site-footer__extra-responsive .trove-fe--pc{display:block;}';
 	$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){:root{--trove-content:' . (int) $w_tablet . 'px;}}';
-	$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){:root{--trove-content:' . (int) $w_phone . 'px;}}';
+	$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){.site-footer__extra-responsive .trove-fe--pc{display:none;}.site-footer__extra-responsive .trove-fe--tablet{display:block;}}';
+	$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){:root{--trove-content:' . (int) $w_phone . 'px;}.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
 
 	$header_min = absint( get_theme_mod( 'trove_header_min_height', 0 ) );
 	if ( $header_min > 0 && $header_min <= 400 ) {
@@ -462,12 +521,10 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\output_customizer_css', 20 
  * @return array<string, string>
  */
 function trove_preview_font_family_var_map() {
-	$map = array(
-		'trove_google_font_family'      => '--trove-body-font-family',
-		'trove_menu_google_font_family' => '--trove-menu-font-family',
-	);
-	foreach ( array_keys( trove_typography_font_scope_meta() ) as $scope ) {
-		$map[ 'trove_' . $scope . '_google_font_family' ] = '--trove-' . $scope . '-font-family';
+	$map = array();
+	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
+		$family_setting         = isset( $meta['family_setting'] ) ? (string) $meta['family_setting'] : 'trove_' . $scope . '_google_font_family';
+		$map[ $family_setting ] = isset( $meta['family_var'] ) ? (string) $meta['family_var'] : '--trove-' . $scope . '-font-family';
 	}
 	return $map;
 }
@@ -478,16 +535,18 @@ function trove_preview_font_family_var_map() {
  * @return array<string, array{unit:string,var:string,mode:string}>
  */
 function trove_preview_number_unit_pairs() {
-	$pairs = array(
-		'trove_font_base_size' => array( 'unit' => 'trove_font_base_size_unit', 'var' => '--trove-font-base-size', 'mode' => 'size' ),
-		'trove_menu_font_size' => array( 'unit' => 'trove_menu_font_size_unit', 'var' => '--trove-menu-font-size', 'mode' => 'size' ),
-		'trove_font_base_line_height' => array( 'unit' => 'trove_font_base_line_height_unit', 'var' => '--trove-font-base-line-height', 'mode' => 'line_height' ),
-		'trove_menu_font_line_height' => array( 'unit' => 'trove_menu_font_line_height_unit', 'var' => '--trove-menu-font-line-height', 'mode' => 'line_height' ),
-	);
-	foreach ( array_keys( trove_typography_font_scope_meta() ) as $scope ) {
-		$prefix = 'trove_' . $scope;
-		$pairs[ $prefix . '_font_size' ] = array( 'unit' => $prefix . '_font_size_unit', 'var' => '--trove-' . $scope . '-font-size', 'mode' => 'size' );
-		$pairs[ $prefix . '_font_line_height' ] = array( 'unit' => $prefix . '_font_line_height_unit', 'var' => '--trove-' . $scope . '-font-line-height', 'mode' => 'line_height' );
+	$pairs = array();
+	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
+		$prefix        = 'trove_' . $scope;
+		$size_setting  = isset( $meta['size_setting'] ) ? (string) $meta['size_setting'] : $prefix . '_font_size';
+		$size_unit     = isset( $meta['size_unit_setting'] ) ? (string) $meta['size_unit_setting'] : $prefix . '_font_size_unit';
+		$line_setting  = isset( $meta['line_setting'] ) ? (string) $meta['line_setting'] : $prefix . '_font_line_height';
+		$line_unit     = isset( $meta['line_unit_setting'] ) ? (string) $meta['line_unit_setting'] : $prefix . '_font_line_height_unit';
+		$size_var      = isset( $meta['size_var'] ) ? (string) $meta['size_var'] : '--trove-' . $scope . '-font-size';
+		$line_var      = isset( $meta['line_var'] ) ? (string) $meta['line_var'] : '--trove-' . $scope . '-font-line-height';
+
+		$pairs[ $size_setting ] = array( 'unit' => $size_unit, 'var' => $size_var, 'mode' => 'size' );
+		$pairs[ $line_setting ] = array( 'unit' => $line_unit, 'var' => $line_var, 'mode' => 'line_height' );
 	}
 	return $pairs;
 }
