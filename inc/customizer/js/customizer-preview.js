@@ -136,7 +136,7 @@
 		return best;
 	}
 
-	function applyTypographyVar( entry, newVal ) {
+	function applyTypographyVar( settingId, entry, newVal ) {
 		var mode = entry.mode || 'raw';
 		var v = '';
 		if ( mode === 'weight' ) {
@@ -145,8 +145,13 @@
 				w = 400;
 			}
 			var fam = '';
-			if ( typeof wp !== 'undefined' && wp.customize ) {
-				fam = wp.customize( 'trove_google_font_family' ).get();
+			var familyMap =
+				typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.weightFamilies
+					? troveCustomizerPreview.weightFamilies
+					: {};
+			var familySetting = familyMap[ settingId ] || 'trove_google_font_family';
+			if ( typeof wp !== 'undefined' && wp.customize && wp.customize( familySetting ) ) {
+				fam = wp.customize( familySetting ).get();
 			}
 			w = nearestWeight( w, weightsForFamily( fam ) );
 			v = String( w );
@@ -177,54 +182,56 @@
 
 			wp.customize( sid, function ( value ) {
 				function onChange( newVal ) {
-					applyTypographyVar( entry, newVal );
+					applyTypographyVar( sid, entry, newVal );
 				}
 				value.bind( onChange );
 				onChange( value.get() );
 			} );
 		} );
 
-		function applySizeVar() {
-			var size = wp.customize( 'trove_font_base_size' ).get();
-			var u = wp.customize( 'trove_font_base_size_unit' ).get();
-			document.documentElement.style.setProperty(
-				'--trove_font_base_size',
-				fontBaseSizeCss( size, u )
-			);
-		}
-		function applyLineVar() {
-			var lh = wp.customize( 'trove_font_base_line_height' ).get();
-			var u = wp.customize( 'trove_font_base_line_height_unit' ).get();
-			document.documentElement.style.setProperty(
-				'--trove_font_base_line_height',
-				fontBaseLineHeightCss( lh, u )
-			);
+		function applyNumberUnitVar( numberSetting, pair ) {
+			var numberVal = wp.customize( numberSetting ).get();
+			var unitVal = wp.customize( pair.unit ).get();
+			var css = pair.mode === 'line_height' ? fontBaseLineHeightCss( numberVal, unitVal ) : fontBaseSizeCss( numberVal, unitVal );
+			document.documentElement.style.setProperty( pair.var, css );
 		}
 
-		wp.customize( 'trove_font_base_size', function ( value ) {
-			value.bind( applySizeVar );
-		} );
-		wp.customize( 'trove_font_base_size_unit', function ( value ) {
-			value.bind( applySizeVar );
-		} );
-		wp.customize( 'trove_font_base_line_height', function ( value ) {
-			value.bind( applyLineVar );
-		} );
-		wp.customize( 'trove_font_base_line_height_unit', function ( value ) {
-			value.bind( applyLineVar );
-		} );
-		applySizeVar();
-		applyLineVar();
-
-		var weightEntry = cfg.trove_font_base_weight;
-		if ( weightEntry && weightEntry.mode === 'weight' ) {
-			wp.customize( 'trove_google_font_family', function ( value ) {
+		var numberUnitPairs =
+			typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.numberUnitPairs
+				? troveCustomizerPreview.numberUnitPairs
+				: {};
+		Object.keys( numberUnitPairs ).forEach( function ( numberSetting ) {
+			var pair = numberUnitPairs[ numberSetting ];
+			wp.customize( numberSetting, function ( value ) {
 				value.bind( function () {
-					var wv = wp.customize( 'trove_font_base_weight' ).get();
-					applyTypographyVar( weightEntry, wv );
+					applyNumberUnitVar( numberSetting, pair );
+				} );
+				wp.customize( pair.unit, function ( unitValue ) {
+					unitValue.bind( function () {
+						applyNumberUnitVar( numberSetting, pair );
+					} );
+					applyNumberUnitVar( numberSetting, pair );
 				} );
 			} );
-		}
+		} );
+
+		var weightFamilyMap =
+			typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.weightFamilies
+				? troveCustomizerPreview.weightFamilies
+				: {};
+		Object.keys( weightFamilyMap ).forEach( function ( weightSetting ) {
+			var familySetting = weightFamilyMap[ weightSetting ];
+			if ( ! cfg[ weightSetting ] ) {
+				return;
+			}
+			wp.customize( weightSetting, function ( weightValue ) {
+				wp.customize( familySetting, function ( familyValue ) {
+					familyValue.bind( function () {
+						applyTypographyVar( weightSetting, cfg[ weightSetting ], weightValue.get() );
+					} );
+				} );
+			} );
+		} );
 	}
 
 	function getHeaderEl() {
@@ -276,6 +283,25 @@
 		header.classList.toggle( 'trove-header-has-border', !! enabled );
 	}
 
+	function applyHeaderMenuAlignment( newVal ) {
+		var header = getHeaderEl();
+		var nav = header ? header.querySelector( '.site-header__nav' ) : null;
+		var alignment = newVal ? String( newVal ).trim() : 'right';
+		var allowed = { left: true, center: true, right: true };
+		if ( ! nav ) {
+			return;
+		}
+		Array.prototype.slice.call( nav.classList ).forEach( function ( cls ) {
+			if ( cls.indexOf( 'site-header__nav-' ) === 0 ) {
+				nav.classList.remove( cls );
+			}
+		} );
+		if ( !allowed[ alignment ] ) {
+			alignment = 'right';
+		}
+		nav.classList.add( 'site-header__nav-' + alignment );
+	}
+
 	function applyHeaderSticky( newVal ) {
 		var header = getHeaderEl();
 		var sticky = newVal ? String( newVal ).trim() : 'none';
@@ -294,6 +320,16 @@
 			sticky = 'none';
 		}
 		header.classList.add( 'trove-header-sticky-' + sticky );
+
+		/*
+		 * Keep preview consistent with front-end runtime:
+		 * - on_scroll_up starts visible at top
+		 * - hide only after scrolling down (runtime script toggles classes on scroll)
+		 */
+		header.classList.remove( 'is-at-top', 'is-sticky-visible' );
+		if ( sticky === 'on_scroll_up' ) {
+			header.classList.add( 'is-at-top' );
+		}
 	}
 
 	function applyGoogleFont( slug ) {
@@ -345,12 +381,40 @@
 		if ( typeof wp === 'undefined' || ! wp.customize ) {
 			return;
 		}
-		wp.customize( 'trove_google_font_family', function ( value ) {
-			function onChange( newVal ) {
-				applyGoogleFont( newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
+		var map =
+			typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.fontFamilies
+				? troveCustomizerPreview.fontFamilies
+				: { trove_google_font_family: '--trove-body-font-family' };
+		Object.keys( map ).forEach( function ( settingId ) {
+			wp.customize( settingId, function ( value ) {
+				function onChange( newVal ) {
+					var fonts =
+						typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.fonts
+							? troveCustomizerPreview.fonts
+							: {};
+					var s = newVal ? String( newVal ).trim() : 'Instrument Sans';
+					var entry = fonts[ s ] || fonts.system || fonts[ 'Instrument Sans' ];
+					if ( ! entry ) {
+						return;
+					}
+					var id = 'trove-preview-google-font-' + settingId.replace( /[^a-z0-9_-]/gi, '-' );
+					var link = document.getElementById( id );
+					if ( entry.cssUrl ) {
+						if ( ! link ) {
+							link = document.createElement( 'link' );
+							link.id = id;
+							link.rel = 'stylesheet';
+							document.head.appendChild( link );
+						}
+						link.href = entry.cssUrl;
+					} else if ( link && link.parentNode ) {
+						link.parentNode.removeChild( link );
+					}
+					document.documentElement.style.setProperty( map[ settingId ], entry.stack );
+				}
+				value.bind( onChange );
+				onChange( value.get() );
+			} );
 		} );
 	}
 
@@ -398,16 +462,24 @@
 			value.bind( onChange );
 			onChange( value.get() );
 		} );
+
+		wp.customize( 'trove_header_menu_alignment', function ( value ) {
+			function onChange( newVal ) {
+				applyHeaderMenuAlignment( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
 	}
 
-	if ( document.readyState === 'loading' ) {
-		document.addEventListener( 'DOMContentLoaded', function () {
-			bindGlobalColors();
-			bindTypography();
-			bindGoogleFont();
-			bindHeaderSettings();
-		} );
-	} else {
+	/*
+	 * Run immediately in the preview iframe. WordPress does not fire
+	 * wp.customize.bind( 'ready' ) here — the core script triggers
+	 * 'preview-ready' instead, and our file loads after that, so
+	 * binding('ready') never runs and body font / colors never updated.
+	 * wp.customize( 'setting_id', fn ) defers until each setting exists.
+	 */
+	if ( typeof wp !== 'undefined' && wp.customize ) {
 		bindGlobalColors();
 		bindTypography();
 		bindGoogleFont();

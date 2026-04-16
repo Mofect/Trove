@@ -153,6 +153,25 @@ function get_options() {
 			'options'   => require __DIR__ . '/general/typography.php',
 		),
 
+		'announcement_bar' => array(
+			'title'       => __( 'Announcement Bar', 'trove' ),
+			'container'   => array( 'priority' => 108 ),
+			'tabs'        => array(
+				'content' => array(
+					'label'   => __( 'Content', 'trove' ),
+					'options' => require __DIR__ . '/announcement/content.php',
+				),
+				'styles' => array(
+					'label'   => __( 'styles', 'trove' ),
+					'options' => require __DIR__ . '/announcement/styles.php',
+				),
+				'advanced' => array(
+					'label'   => __( 'Advanced', 'trove' ),
+					'options' => require __DIR__ . '/announcement/advanced.php',
+				)
+			),
+		),
+
 		'header' => array(
 			'title'       => __( 'Header', 'trove' ),
 			'container'   => array( 'priority' => 110 ),

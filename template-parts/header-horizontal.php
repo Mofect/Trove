@@ -16,7 +16,7 @@
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-header__title-link"><?php bloginfo( 'name' ); ?></a>
 			<?php } ?>
 		</div>
-		<nav class="site-header__nav" aria-label="<?php esc_attr_e( 'Primary menu', 'trove' ); ?>">
+		<nav class="<?php \Trove\Customizer\the_header_nav_class_attr(); ?>" aria-label="<?php esc_attr_e( 'Primary menu', 'trove' ); ?>">
 			<?php
 			if ( has_nav_menu( 'primary' ) ) {
 				wp_nav_menu(

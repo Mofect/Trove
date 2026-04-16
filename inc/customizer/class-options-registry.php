@@ -485,6 +485,49 @@ final class Options_Registry {
 			return;
 		}
 
+		if ( 'alignment' === $type ) {
+			$choices_map = isset( $field['choices'] ) && is_array( $field['choices'] ) ? $field['choices'] : array();
+			if ( empty( $choices_map ) ) {
+				$choices_map = array(
+					'left'   => __( 'Left', 'trove' ),
+					'center' => __( 'Center', 'trove' ),
+					'right'  => __( 'Right', 'trove' ),
+				);
+			}
+			$choice_keys = array_keys( $choices_map );
+			$def         = isset( $field['default'] ) ? (string) $field['default'] : (string) $choice_keys[0];
+			$def         = in_array( $def, $choice_keys, true ) ? $def : (string) $choice_keys[0];
+
+			$align_setting_args = array(
+				'default'           => $def,
+				'transport'         => isset( $field['transport'] ) ? $field['transport'] : 'refresh',
+				'sanitize_callback' => function ( $value ) use ( $choice_keys, $def ) {
+					$value = sanitize_key( (string) $value );
+					return in_array( $value, $choice_keys, true ) ? $value : $def;
+				},
+			);
+			$wp_customize->add_setting( $setting_id, $align_setting_args );
+
+			$align_control_args = array(
+				'label'       => isset( $field['label'] ) ? $field['label'] : '',
+				'description' => isset( $field['description'] ) ? $field['description'] : '',
+				'section'     => $section_id,
+				'priority'    => $control_priority,
+				'choices'     => $choices_map,
+			);
+			$wp_customize->add_control(
+				new Alignment_Control(
+					$wp_customize,
+					$setting_id,
+					$align_control_args
+				)
+			);
+			if ( null !== $tab_slug && '' !== $tab_slug ) {
+				$this->remember_control_tab( $section_id, $setting_id, $tab_slug );
+			}
+			return;
+		}
+
 		if ( 'google_font' === $type ) {
 			$def = isset( $field['default'] ) ? (string) $field['default'] : 'Instrument Sans';
 			$def = \Trove\Customizer\sanitize_google_font_family( $def );

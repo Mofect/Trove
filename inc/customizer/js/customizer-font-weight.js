@@ -1,16 +1,11 @@
 /**
- * Rebuilds Base font weight <select> options from Google Fonts metadata for the active family.
+ * Rebuilds font-weight select options from Google Fonts metadata.
  */
 ( function ( $, wp ) {
 	'use strict';
 
-	var SETTING_FAMILY = 'trove_google_font_family';
-	var SETTING_WEIGHT = 'trove_font_base_weight';
-
 	function cfg() {
-		return typeof window.troveFontWeightMap !== 'undefined'
-			? window.troveFontWeightMap
-			: {};
+		return typeof window.troveFontWeightMap !== 'undefined' ? window.troveFontWeightMap : {};
 	}
 
 	function nearest( candidate, weights ) {
@@ -61,19 +56,15 @@
 		return key;
 	}
 
-	function refreshWeightSelect() {
-		if ( typeof wp === 'undefined' || ! wp.customize ) {
+	function refreshWeightSelect( familySetting, weightSetting ) {
+		var famInst = wp.customize( familySetting );
+		var weightInst = wp.customize( weightSetting );
+		if ( ! famInst || ! weightInst ) {
 			return;
 		}
-		var famInst = wp.customize( SETTING_FAMILY );
-		var wInst = wp.customize( SETTING_WEIGHT );
-		if ( ! famInst || ! wInst ) {
-			return;
-		}
-		var family = famInst.get();
-		var weights = weightsForFamily( family );
+		var weights = weightsForFamily( famInst.get() );
 		var labels = cfg().labels || {};
-		var control = wp.customize.control( SETTING_WEIGHT );
+		var control = wp.customize.control( weightSetting );
 		if ( ! control || ! control.container ) {
 			return;
 		}
@@ -81,39 +72,34 @@
 		if ( ! $select.length ) {
 			return;
 		}
-
-		var current = parseInt( wInst.get(), 10 );
+		var current = parseInt( weightInst.get(), 10 );
 		if ( isNaN( current ) ) {
 			current = 400;
 		}
 		var snapped = nearest( current, weights );
-
 		$select.empty();
-		var i;
-		for ( i = 0; i < weights.length; i++ ) {
-			var n = weights[ i ];
-			$(
-				'<option/>',
-				{
-					value: String( n ),
-					text: optionLabel( n, labels ),
-				}
-			).appendTo( $select );
+		for ( var i = 0; i < weights.length; i++ ) {
+			$( '<option/>', { value: String( weights[ i ] ), text: optionLabel( weights[ i ], labels ) } ).appendTo( $select );
 		}
-
 		if ( snapped !== current ) {
-			wInst.set( String( snapped ) );
+			weightInst.set( String( snapped ) );
 		} else {
 			$select.val( String( snapped ) );
 		}
 	}
 
-	wp.customize.bind( 'ready', function () {
-		wp.customize( SETTING_FAMILY, function ( value ) {
-			value.bind( function () {
-				refreshWeightSelect();
+	function initPairs() {
+		var pairs = cfg().pairs || { trove_google_font_family: 'trove_font_base_weight' };
+		Object.keys( pairs ).forEach( function ( familySetting ) {
+			var weightSetting = pairs[ familySetting ];
+			wp.customize( familySetting, function ( value ) {
+				value.bind( function () {
+					refreshWeightSelect( familySetting, weightSetting );
+				} );
 			} );
+			refreshWeightSelect( familySetting, weightSetting );
 		} );
-		refreshWeightSelect();
-	} );
+	}
+
+	wp.customize.bind( 'ready', initPairs );
 } )( jQuery, wp );

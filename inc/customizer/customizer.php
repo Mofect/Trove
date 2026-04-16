@@ -272,6 +272,13 @@ function enqueue_customizer_ui_assets() {
 	);
 
 	wp_enqueue_style(
+		'trove-customizer-alignment-control',
+		$dir . '/inc/customizer/css/customizer-alignment-control.css',
+		array(),
+		$ver
+	);
+
+	wp_enqueue_style(
 		'trove-customizer-panel',
 		$dir . '/inc/customizer/css/customizer-panel.css',
 		array( 'customize-controls' ),
@@ -380,12 +387,21 @@ function enqueue_customizer_ui_assets() {
 		true
 	);
 
+	wp_enqueue_script(
+		'trove-customizer-header-menu-alignment',
+		$dir . '/inc/customizer/js/customizer-header-menu-alignment.js',
+		array( 'customize-controls' ),
+		$ver,
+		true
+	);
+
 	wp_localize_script(
 		'trove-customizer-font-weight',
 		'troveFontWeightMap',
 		array(
 			'map'    => \Trove\Customizer\get_font_weight_map_for_customizer(),
 			'labels' => \Trove\Customizer\trove_font_weight_choice_labels(),
+			'pairs'  => trove_font_weight_setting_pairs(),
 		)
 	);
 

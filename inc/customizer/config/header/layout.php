@@ -48,4 +48,16 @@ return array(
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'wp_validate_boolean',
 	),
+	'trove_header_menu_alignment' => array(
+		'label'             => __( 'Menu alignment', 'trove' ),
+		'type'              => 'alignment',
+		'default'           => 'right',
+		'transport'         => 'postMessage',
+		'choices'           => array(
+			'left'   => __( 'Left', 'trove' ),
+			'center' => __( 'Center', 'trove' ),
+			'right'  => __( 'Right', 'trove' ),
+		),
+		'sanitize_callback' => 'sanitize_text_field',
+	),
 );

@@ -53,6 +53,14 @@
 			$select.trigger( 'change.select2' );
 		}
 
+		/*
+		 * Select2 must notify the native <select> so Customizer’s
+		 * data-customize-setting-link picks up user selection (postMessage).
+		 */
+		$select.off( 'select2:select.troveCz' ).on( 'select2:select.troveCz', function () {
+			$( this ).trigger( 'change' );
+		} );
+
 		$select.data( 'troveGoogleFontSelect2', true );
 	}
 
