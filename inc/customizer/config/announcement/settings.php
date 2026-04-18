@@ -1,6 +1,6 @@
 <?php
 /**
- * Customizer fields: Announcement Bar → advanced.
+ * Customizer fields: Announcement Bar → settings.
  *
  * @package Trove
  */

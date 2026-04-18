@@ -8,13 +8,7 @@
 <header class="<?php \Trove\Customizer\the_header_class_attr(); ?>" role="banner">
 	<div class="site-header__inner">
 		<div class="site-header__brand">
-			<?php
-			if ( has_custom_logo() ) {
-				the_custom_logo();
-			} else {
-			?>
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-header__title-link"><?php bloginfo( 'name' ); ?></a>
-			<?php } ?>
+			<?php get_template_part( 'template-parts/header', 'brand' ); ?>
 		</div>
 		<nav class="<?php \Trove\Customizer\the_header_nav_class_attr(); ?>" aria-label="<?php esc_attr_e( 'Primary menu', 'trove' ); ?>">
 			<?php

@@ -162,12 +162,12 @@ function get_options() {
 					'options' => require __DIR__ . '/announcement/content.php',
 				),
 				'styles' => array(
-					'label'   => __( 'styles', 'trove' ),
+					'label'   => __( 'Styles', 'trove' ),
 					'options' => require __DIR__ . '/announcement/styles.php',
 				),
-				'advanced' => array(
-					'label'   => __( 'Advanced', 'trove' ),
-					'options' => require __DIR__ . '/announcement/advanced.php',
+				'settings' => array(
+					'label'   => __( 'Settings', 'trove' ),
+					'options' => require __DIR__ . '/announcement/settings.php',
 				)
 			),
 		),
@@ -180,13 +180,13 @@ function get_options() {
 					'label'   => __( 'Layout', 'trove' ),
 					'options' => require __DIR__ . '/header/layout.php',
 				),
-				'search' => array(
-					'label'   => __( 'Search', 'trove' ),
-					'options' => require __DIR__ . '/header/search.php',
+				'styles' => array(
+					'label'   => __( 'Styles', 'trove' ),
+					'options' => require __DIR__ . '/header/styles.php',
 				),
-				'advanced' => array(
-					'label'   => __( 'Advanced', 'trove' ),
-					'options' => require __DIR__ . '/header/advanced.php',
+				'settings' => array(
+					'label'   => __( 'Settings', 'trove' ),
+					'options' => require __DIR__ . '/header/settings.php',
 				)
 			),
 		),
@@ -194,12 +194,31 @@ function get_options() {
 		'footer' => array(
 			'title'     => __( 'Footer', 'trove' ),
 			'container' => array( 'priority' => 115 ),
-			'options'   => require __DIR__ . '/general/footer.php',
+			'tabs'        => array(
+				'layout' => array(
+					'label'   => __( 'Layout', 'trove' ),
+					'options' => require __DIR__ . '/footer/layout.php',
+				),
+				'styles' => array(
+					'label'   => __( 'Styles', 'trove' ),
+					'options' => require __DIR__ . '/footer/styles.php',
+				),
+				'content' => array(
+					'label'   => __( 'Content', 'trove' ),
+					'options' => require __DIR__ . '/footer/content.php',
+				)
+			)
+		),
+
+		'social_profile' => array(
+			'title'     => __( 'Social Profiles', 'trove' ),
+			'container' => array( 'priority' => 116 ),
+			'options'   => require __DIR__ . '/general/social-profiles.php',
 		),
 
 		'performance' => array(
 			'title'     => __( 'Performance', 'trove' ),
-			'container' => array( 'priority' => 116 ),
+			'container' => array( 'priority' => 117 ),
 			'options'   => require __DIR__ . '/general/performance.php',
 		),
 	);

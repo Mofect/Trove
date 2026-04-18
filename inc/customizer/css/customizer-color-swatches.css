@@ -1,6 +1,8 @@
-/* Global Colors: row layout + circular swatches (Colors section only) */
+/* Global Colors + Footer / Header → Styles: row layout + circular swatches */
 
-#accordion-section-trove_section_color > .accordion-section-title {
+#accordion-section-trove_section_color > .accordion-section-title,
+#accordion-section-trove_section_footer > .accordion-section-title,
+#accordion-section-trove_section_header > .accordion-section-title {
 	font-weight: 600;
 }
 
@@ -9,7 +11,11 @@
  * the row is narrow; flex-wrap + space-between caused “broken column” misalignment.
  */
 #sub-accordion-section-trove_section_color li.customize-control-color,
-#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color {
+#sub-accordion-section-trove_section_footer li.customize-control-color,
+#sub-accordion-section-trove_section_header li.customize-control-color,
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color,
+#sub-accordion-section-trove_section_footer li.customize-control-trove_dual_color,
+#sub-accordion-section-trove_section_header li.customize-control-trove_dual_color {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;
 	align-items: center;
@@ -19,7 +25,11 @@
 }
 
 #sub-accordion-section-trove_section_color li.customize-control-color .customize-control-title,
-#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color > .customize-control-title {
+#sub-accordion-section-trove_section_footer li.customize-control-color .customize-control-title,
+#sub-accordion-section-trove_section_header li.customize-control-color .customize-control-title,
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color > .customize-control-title,
+#sub-accordion-section-trove_section_footer li.customize-control-trove_dual_color > .customize-control-title,
+#sub-accordion-section-trove_section_header li.customize-control-trove_dual_color > .customize-control-title {
 	float: none;
 	width: auto;
 	max-width: none;
@@ -32,45 +42,64 @@
 }
 
 #sub-accordion-section-trove_section_color li.customize-control-color .customize-control-description,
-#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color .customize-control-description {
+#sub-accordion-section-trove_section_footer li.customize-control-color .customize-control-description,
+#sub-accordion-section-trove_section_header li.customize-control-color .customize-control-description,
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color .customize-control-description,
+#sub-accordion-section-trove_section_footer li.customize-control-trove_dual_color .customize-control-description,
+#sub-accordion-section-trove_section_header li.customize-control-trove_dual_color .customize-control-description {
 	grid-column: 1 / -1;
 	margin-top: 0;
 }
 
 /* WP color control order: title → description → .customize-control-content (picker). Pin picker to row 1 / col 2. */
-#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-title {
+#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-title,
+#sub-accordion-section-trove_section_footer li.customize-control-color .customize-control-title,
+#sub-accordion-section-trove_section_header li.customize-control-color .customize-control-title {
 	grid-column: 1;
 	grid-row: 1;
+	font-weight: 600;
 }
 
-#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-description {
+#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-description,
+#sub-accordion-section-trove_section_footer li.customize-control-color .customize-control-description,
+#sub-accordion-section-trove_section_header li.customize-control-color .customize-control-description {
 	grid-row: 2;
 }
 
-#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-content {
+#sub-accordion-section-trove_section_color li.customize-control-color .customize-control-content,
+#sub-accordion-section-trove_section_footer li.customize-control-color .customize-control-content,
+#sub-accordion-section-trove_section_header li.customize-control-color .customize-control-content {
 	grid-column: 2;
 	grid-row: 1;
 	justify-self: end;
 }
 
 /* Dual: title → swatches → description */
-#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color > .customize-control-title {
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color > .customize-control-title,
+#sub-accordion-section-trove_section_footer li.customize-control-trove_dual_color > .customize-control-title,
+#sub-accordion-section-trove_section_header li.customize-control-trove_dual_color > .customize-control-title {
 	grid-column: 1;
 	grid-row: 1;
 }
 
-#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color .trove-dual-color__swatches {
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color .trove-dual-color__swatches,
+#sub-accordion-section-trove_section_footer li.customize-control-trove_dual_color .trove-dual-color__swatches,
+#sub-accordion-section-trove_section_header li.customize-control-trove_dual_color .trove-dual-color__swatches {
 	grid-column: 2;
 	grid-row: 1;
 	justify-self: end;
 }
 
-#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color .customize-control-description {
+#sub-accordion-section-trove_section_color li.customize-control-trove_dual_color .customize-control-description,
+#sub-accordion-section-trove_section_footer li.customize-control-trove_dual_color .customize-control-description,
+#sub-accordion-section-trove_section_header li.customize-control-trove_dual_color .customize-control-description {
 	grid-row: 2;
 }
 
 /* Core color control: push picker to the right; narrow box so holder does not stretch the row */
-#sub-accordion-section-trove_section_color li.customize-control-color .wp-picker-container {
+#sub-accordion-section-trove_section_color li.customize-control-color .wp-picker-container,
+#sub-accordion-section-trove_section_footer li.customize-control-color .wp-picker-container,
+#sub-accordion-section-trove_section_header li.customize-control-color .wp-picker-container {
 	position: relative;
 	margin: 0;
 	width: auto !important;
@@ -78,7 +107,9 @@
 	max-width: 36px;
 }
 
-#sub-accordion-section-trove_section_color li.customize-control-color .wp-color-result {
+#sub-accordion-section-trove_section_color li.customize-control-color .wp-color-result,
+#sub-accordion-section-trove_section_footer li.customize-control-color .wp-color-result,
+#sub-accordion-section-trove_section_header li.customize-control-color .wp-color-result {
 	width: 28px;
 	height: 28px;
 	min-height: 28px;
@@ -88,16 +119,22 @@
 	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
 }
 
-#sub-accordion-section-trove_section_color li.customize-control-color .wp-color-result-text {
+#sub-accordion-section-trove_section_color li.customize-control-color .wp-color-result-text,
+#sub-accordion-section-trove_section_footer li.customize-control-color .wp-color-result-text,
+#sub-accordion-section-trove_section_header li.customize-control-color .wp-color-result-text {
 	display: none;
 }
 
-#sub-accordion-section-trove_section_color li.customize-control-color .wp-color-result::after {
+#sub-accordion-section-trove_section_color li.customize-control-color .wp-color-result::after,
+#sub-accordion-section-trove_section_footer li.customize-control-color .wp-color-result::after,
+#sub-accordion-section-trove_section_header li.customize-control-color .wp-color-result::after {
 	display: none;
 }
 
 /* Dual swatches */
-#sub-accordion-section-trove_section_color .trove-dual-color__swatches {
+#sub-accordion-section-trove_section_color .trove-dual-color__swatches,
+#sub-accordion-section-trove_section_footer .trove-dual-color__swatches,
+#sub-accordion-section-trove_section_header .trove-dual-color__swatches {
 	display: flex;
 	flex: 0 0 auto;
 	align-items: center;
@@ -105,20 +142,26 @@
 	overflow: visible;
 }
 
-#sub-accordion-section-trove_section_color .trove-dual-color__pill {
+#sub-accordion-section-trove_section_color .trove-dual-color__pill,
+#sub-accordion-section-trove_section_footer .trove-dual-color__pill,
+#sub-accordion-section-trove_section_header .trove-dual-color__pill {
 	display: block;
 	line-height: 0;
 	overflow: visible;
 }
 
-#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-picker-container {
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-picker-container,
+#sub-accordion-section-trove_section_footer .trove-dual-color__pill .wp-picker-container,
+#sub-accordion-section-trove_section_header .trove-dual-color__pill .wp-picker-container {
 	margin: 0;
 	width: auto !important;
 	flex: 0 0 auto;
 	max-width: 36px;
 }
 
-#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-color-result {
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-color-result,
+#sub-accordion-section-trove_section_footer .trove-dual-color__pill .wp-color-result,
+#sub-accordion-section-trove_section_header .trove-dual-color__pill .wp-color-result {
 	width: 28px;
 	height: 28px;
 	min-height: 28px;
@@ -128,11 +171,15 @@
 	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
 }
 
-#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-color-result-text {
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-color-result-text,
+#sub-accordion-section-trove_section_footer .trove-dual-color__pill .wp-color-result-text,
+#sub-accordion-section-trove_section_header .trove-dual-color__pill .wp-color-result-text {
 	display: none;
 }
 
-#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-color-result::after {
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-color-result::after,
+#sub-accordion-section-trove_section_footer .trove-dual-color__pill .wp-color-result::after,
+#sub-accordion-section-trove_section_header .trove-dual-color__pill .wp-color-result::after {
 	display: none;
 }
 
@@ -195,7 +242,9 @@
 	/* Removed from flow until JS applies fixed when open */
 }
 
-#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-picker-container {
+#sub-accordion-section-trove_section_color .trove-dual-color__pill .wp-picker-container,
+#sub-accordion-section-trove_section_footer .trove-dual-color__pill .wp-picker-container,
+#sub-accordion-section-trove_section_header .trove-dual-color__pill .wp-picker-container {
 	position: relative !important;
 }
 
@@ -319,7 +368,7 @@
 	display: none !important;
 }
 
-#accordion-section-trove_section_color,
-#sub-accordion-section-trove_section_color {
+#accordion-section-trove_section_color, #accordion-section-trove_section_footer, #accordion-section-trove_section_header,
+#sub-accordion-section-trove_section_color, #sub-accordion-section-trove_section_footer, #sub-accordion-section-trove_section_header {
 	overflow: visible !important;
 }

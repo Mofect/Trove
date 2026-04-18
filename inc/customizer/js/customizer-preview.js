@@ -418,9 +418,64 @@
 		} );
 	}
 
+	/** Coerce Customizer checkbox / theme_mod values (avoids !!'0' === true). */
+	function troveCustomizeBool( v ) {
+		if ( v === true || v === 1 || v === '1' ) {
+			return true;
+		}
+		if ( v === false || v === 0 || v === '0' || v === '' || v === null || typeof v === 'undefined' ) {
+			return false;
+		}
+		return Boolean( v );
+	}
+
+	function applyRootCssColorVar( prop, newVal ) {
+		var raw = newVal == null ? '' : String( newVal ).trim();
+		if ( raw === '' ) {
+			document.documentElement.style.removeProperty( prop );
+			return;
+		}
+		document.documentElement.style.setProperty( prop, raw );
+	}
+
+	/**
+	 * Mini-cart badge: WooCommerce Interactivity often sets inline colors that beat :root variables.
+	 * Sync theme_mod colors to :root and to each badge node with !important so preview updates immediately.
+	 *
+	 * @param {string} badgeBg  Badge background (hex/rgb or empty).
+	 * @param {string} countCol Count text color (hex/rgb or empty).
+	 * @return {void}
+	 */
+	function applyHeaderCartBadgePreview( badgeBg, countCol ) {
+		var bg = badgeBg == null ? '' : String( badgeBg ).trim();
+		var fg = countCol == null ? '' : String( countCol ).trim();
+		applyRootCssColorVar( '--trove-header-cart-badge-bg', bg );
+		applyRootCssColorVar( '--trove-header-cart-count', fg );
+		var badges = document.querySelectorAll(
+			'.site-header .wc-block-mini-cart .wc-block-mini-cart__badge'
+		);
+		var i;
+		for ( i = 0; i < badges.length; i++ ) {
+			if ( bg === '' ) {
+				badges[ i ].style.removeProperty( 'background-color' );
+			} else {
+				badges[ i ].style.setProperty( 'background-color', bg, 'important' );
+			}
+			if ( fg === '' ) {
+				badges[ i ].style.removeProperty( 'color' );
+			} else {
+				badges[ i ].style.setProperty( 'color', fg, 'important' );
+			}
+		}
+	}
+
 	function bindHeaderSettings() {
 		if ( typeof wp === 'undefined' || ! wp.customize ) {
 			return;
+		}
+
+		function getHeaderRoot() {
+			return document.querySelector( 'header.site-header' );
 		}
 
 		wp.customize( 'trove_header_layout', function ( value ) {
@@ -470,6 +525,477 @@
 			value.bind( onChange );
 			onChange( value.get() );
 		} );
+
+		wp.customize( 'trove_header_dark_mode', function ( value ) {
+			function applyHeaderThemeLogoForDarkMode( isDark ) {
+				var img = document.querySelector(
+					'header.site-header .site-header__brand img.site-header__logo'
+				);
+				if ( ! img || typeof wp === 'undefined' || ! wp.customize || ! wp.customize.instance ) {
+					return;
+				}
+				var light = '';
+				var dark = '';
+				try {
+					if ( wp.customize.instance( 'trove_header_logo' ) ) {
+						light = String( wp.customize.instance( 'trove_header_logo' ).get() || '' ).trim();
+					}
+					if ( wp.customize.instance( 'trove_header_logo_dark' ) ) {
+						dark = String( wp.customize.instance( 'trove_header_logo_dark' ).get() || '' ).trim();
+					}
+				} catch ( err ) {
+					return;
+				}
+				if ( ! light && ! dark ) {
+					return;
+				}
+				var next = isDark ? dark || light : light || '';
+				if ( next && img.getAttribute( 'src' ) !== next ) {
+					img.setAttribute( 'src', next );
+				}
+			}
+
+			function onChange( newVal ) {
+				var header = getHeaderRoot();
+				if ( ! header ) {
+					return;
+				}
+				var isDark = troveCustomizeBool( newVal );
+				header.classList.toggle( 'light-scheme', ! isDark );
+				applyHeaderThemeLogoForDarkMode( isDark );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_header_background', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-header-background', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_header_text_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-header-text', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_header_link_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-header-link', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_header_link_hover_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-header-link-hover', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_header_border_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-header-border', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_header_logo_width', function ( value ) {
+			function onChange( newVal ) {
+				var w = parseInt( newVal, 10 );
+				if ( isNaN( w ) ) {
+					w = 200;
+				}
+				w = Math.max( 40, Math.min( 400, w ) );
+				document.documentElement.style.setProperty( '--trove-header-logo-max-width', w + 'px' );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		if (
+			typeof troveCustomizerPreview !== 'undefined' &&
+			troveCustomizerPreview.woocommerceHeaderCart
+		) {
+			wp.customize( 'trove_header_cart_badge_color', function ( value ) {
+				function getCountColor() {
+					try {
+						var s = wp.customize.instance( 'trove_header_cart_count_color' );
+						return s ? s.get() : '';
+					} catch ( err ) {
+						return '';
+					}
+				}
+				function onChange( newVal ) {
+					applyHeaderCartBadgePreview( newVal, getCountColor() );
+				}
+				value.bind( onChange );
+				onChange( value.get() );
+			} );
+
+			wp.customize( 'trove_header_cart_count_color', function ( value ) {
+				function getBadgeColor() {
+					try {
+						var s = wp.customize.instance( 'trove_header_cart_badge_color' );
+						return s ? s.get() : '';
+					} catch ( err ) {
+						return '';
+					}
+				}
+				function onChange( newVal ) {
+					applyHeaderCartBadgePreview( getBadgeColor(), newVal );
+				}
+				value.bind( onChange );
+				onChange( value.get() );
+			} );
+
+			(function observeHeaderCartBadgeForPreview() {
+				if ( typeof MutationObserver === 'undefined' ) {
+					return;
+				}
+				var woo = document.querySelector( 'header.site-header .site-header__woo' );
+				if ( ! woo ) {
+					return;
+				}
+				var t = null;
+				function syncFromCustomizer() {
+					if ( t ) {
+						clearTimeout( t );
+					}
+					t = setTimeout( function () {
+						t = null;
+						var bg = '';
+						var fg = '';
+						var sb = null;
+						var sf = null;
+						try {
+							sb = wp.customize.instance( 'trove_header_cart_badge_color' );
+							sf = wp.customize.instance( 'trove_header_cart_count_color' );
+							if ( sb ) {
+								bg = sb.get();
+							}
+							if ( sf ) {
+								fg = sf.get();
+							}
+						} catch ( err ) {
+							return;
+						}
+						if ( ! sb && ! sf ) {
+							return;
+						}
+						applyHeaderCartBadgePreview( bg, fg );
+					}, 0 );
+				}
+				var observer = new MutationObserver( syncFromCustomizer );
+				observer.observe( woo, { childList: true, subtree: true } );
+			} )();
+		}
+	}
+
+	function bindFooterSettings() {
+		if ( typeof wp === 'undefined' || ! wp.customize ) {
+			return;
+		}
+
+		function getFooterRoot() {
+			return document.querySelector( 'footer.site-footer' );
+		}
+
+		function escapeHtml( str ) {
+			var d = document.createElement( 'div' );
+			d.textContent = str == null ? '' : String( str );
+			return d.innerHTML;
+		}
+
+		function applyFooterBrandInfoVisibility( show ) {
+			var el = document.querySelector( 'footer.site-footer .site-footer__brand' );
+			if ( ! el ) {
+				return;
+			}
+			el.hidden = ! show;
+		}
+
+		function applyFooterSocialVisibility( show ) {
+			var el = document.querySelector( 'footer.site-footer .site-footer__socials' );
+			if ( ! el ) {
+				return;
+			}
+			el.hidden = ! show;
+		}
+
+		function applyFooterNewsletterVisibility( show ) {
+			var el = document.querySelector( 'footer.site-footer .site-footer__subscribe' );
+			if ( ! el ) {
+				return;
+			}
+			el.hidden = ! show;
+		}
+
+		function getCustomizeSettingValue( id, fallback ) {
+			try {
+				if ( wp.customize.instance && wp.customize.instance( id ) ) {
+					var v = wp.customize.instance( id ).get();
+					return v == null ? fallback : v;
+				}
+			} catch ( err ) {
+				// Setting not registered in this preview context.
+			}
+			return fallback;
+		}
+
+		/** Matches footer-1.php: omit .site-footer__top when brand and social are both off. */
+		function syncFooterTopVisibility() {
+			var top = document.querySelector( 'footer.site-footer .site-footer__top' );
+			if ( ! top ) {
+				return;
+			}
+			var showBrand = troveCustomizeBool( getCustomizeSettingValue( 'trove_footer_show_brand_info', true ) );
+			var showSocial = troveCustomizeBool( getCustomizeSettingValue( 'trove_footer_show_social_links', true ) );
+			top.hidden = ! showBrand && ! showSocial;
+		}
+
+		/** Matches PHP Trove\get_footer_brand_name() (empty mod => site name). */
+		function applyFooterBrandTitle( modVal ) {
+			var el = document.querySelector( 'footer.site-footer .site-footer__title' );
+			if ( ! el ) {
+				return;
+			}
+			var raw = modVal == null ? '' : String( modVal ).trim();
+			var text = raw !== '' ? raw : String( getCustomizeSettingValue( 'blogname', '' ) || '' );
+			el.textContent = text;
+		}
+
+		/** Matches PHP Trove\get_footer_brand_description() (empty mod => tagline). */
+		function applyFooterBrandDescription( modVal ) {
+			var el = document.querySelector( 'footer.site-footer .site-footer__description' );
+			if ( ! el ) {
+				return;
+			}
+			var raw = modVal == null ? '' : String( modVal ).trim();
+			var text = raw !== '' ? raw : String( getCustomizeSettingValue( 'blogdescription', '' ) || '' );
+			el.textContent = text;
+		}
+
+		function getFooterPreviewConfig() {
+			return typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.footer
+				? troveCustomizerPreview.footer
+				: {};
+		}
+
+		/** Matches PHP Trove\get_footer_newsletter_title() (empty mod => translated default). */
+		function applyFooterNewsletterTitle( modVal ) {
+			var el = document.querySelector( 'footer.site-footer .site-footer__subscribe-title' );
+			if ( ! el ) {
+				return;
+			}
+			var raw = modVal == null ? '' : String( modVal ).trim();
+			var cfg = getFooterPreviewConfig();
+			var fallback = cfg.newsletterTitleDefault || 'Subscribe to our emails';
+			el.textContent = raw !== '' ? raw : String( fallback );
+		}
+
+		/** Matches PHP Trove\get_footer_newsletter_description() (empty mod => translated default). */
+		function applyFooterNewsletterDescription( modVal ) {
+			var el = document.querySelector( 'footer.site-footer .site-footer__subscribe-description' );
+			if ( ! el ) {
+				return;
+			}
+			var raw = modVal == null ? '' : String( modVal ).trim();
+			var cfg = getFooterPreviewConfig();
+			var fallback = cfg.newsletterDescriptionDefault || '';
+			// Strip tags to detect empty rich text; mirrors PHP wp_strip_all_tags trim check.
+			var tmp = document.createElement( 'div' );
+			tmp.innerHTML = raw;
+			if ( ( tmp.textContent || '' ).trim() !== '' ) {
+				el.innerHTML = raw;
+				return;
+			}
+			el.innerHTML = escapeHtml( fallback );
+		}
+
+		function applyFooterCopyrightText( customCopy ) {
+			var inner = document.querySelector( 'footer.site-footer .site-footer__copy-inner' );
+			if ( ! inner ) {
+				return;
+			}
+			var raw = customCopy == null ? '' : String( customCopy ).trim();
+			if ( raw !== '' ) {
+				inner.textContent = raw;
+				return;
+			}
+			var cfg =
+				typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.footer
+					? troveCustomizerPreview.footer
+					: {};
+			var rights = cfg.allRightsReserved || 'All rights reserved.';
+			var year = new Date().getUTCFullYear();
+			var siteName = '';
+			try {
+				if ( wp.customize.instance && wp.customize.instance( 'blogname' ) ) {
+					siteName = wp.customize.instance( 'blogname' ).get() || '';
+				}
+			} catch ( err ) {
+				siteName = '';
+			}
+			inner.innerHTML =
+				'&copy; ' +
+				escapeHtml( year ) +
+				' ' +
+				escapeHtml( siteName ) +
+				'. ' +
+				escapeHtml( rights );
+		}
+
+		wp.customize( 'trove_footer_dark_mode', function ( value ) {
+			function onChange( newVal ) {
+				var footer = getFooterRoot();
+				if ( ! footer ) {
+					return;
+				}
+				var isDark = troveCustomizeBool( newVal );
+				footer.classList.toggle( 'light-scheme', ! isDark );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_background', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-footer-background', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_text_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-footer-text', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_link_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-footer-link', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_link_hover_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-footer-link-hover', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_border_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-footer-border', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_show_brand_info', function ( value ) {
+			function onChange( newVal ) {
+				applyFooterBrandInfoVisibility( troveCustomizeBool( newVal ) );
+				syncFooterTopVisibility();
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_show_social_links', function ( value ) {
+			function onChange( newVal ) {
+				applyFooterSocialVisibility( troveCustomizeBool( newVal ) );
+				syncFooterTopVisibility();
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_show_newsletter', function ( value ) {
+			function onChange( newVal ) {
+				applyFooterNewsletterVisibility( troveCustomizeBool( newVal ) );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_newsletter_title', function ( value ) {
+			function onChange( newVal ) {
+				applyFooterNewsletterTitle( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_newsletter_description', function ( value ) {
+			function onChange( newVal ) {
+				applyFooterNewsletterDescription( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_brand_name', function ( value ) {
+			function onChange( newVal ) {
+				applyFooterBrandTitle( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_brand_description', function ( value ) {
+			function onChange( newVal ) {
+				applyFooterBrandDescription( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_footer_copy_text', function ( value ) {
+			function onChange( newVal ) {
+				applyFooterCopyrightText( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'blogname', function ( value ) {
+			function onChange() {
+				var copySetting = wp.customize.instance( 'trove_footer_copy_text' );
+				if ( copySetting && ! String( copySetting.get() || '' ).trim() ) {
+					applyFooterCopyrightText( '' );
+				}
+				var brandNameSetting = wp.customize.instance( 'trove_footer_brand_name' );
+				if ( brandNameSetting && ! String( brandNameSetting.get() || '' ).trim() ) {
+					applyFooterBrandTitle( '' );
+				}
+			}
+			value.bind( onChange );
+		} );
+
+		wp.customize( 'blogdescription', function ( value ) {
+			function onChange() {
+				var brandDescSetting = wp.customize.instance( 'trove_footer_brand_description' );
+				if ( brandDescSetting && ! String( brandDescSetting.get() || '' ).trim() ) {
+					applyFooterBrandDescription( '' );
+				}
+			}
+			value.bind( onChange );
+		} );
 	}
 
 	/*
@@ -484,5 +1010,6 @@
 		bindTypography();
 		bindGoogleFont();
 		bindHeaderSettings();
+		bindFooterSettings();
 	}
 } )();

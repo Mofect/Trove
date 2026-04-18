@@ -9,6 +9,7 @@ namespace Trove\Customizer;
 
 use Trove\Customizer\Config;
 use WP_Customize_Color_Control;
+use WP_Customize_Image_Control;
 use WP_Customize_Manager;
 
 /**
@@ -420,6 +421,7 @@ final class Options_Registry {
 				$setting_id,
 				array(
 					'default'           => '',
+					'transport'         => isset( $field['transport'] ) ? $field['transport'] : 'refresh',
 					'sanitize_callback' => '__return_empty_string',
 				)
 			);
@@ -659,6 +661,20 @@ final class Options_Registry {
 			return;
 		}
 
+		if ( 'image' === $type ) {
+			$wp_customize->add_control(
+				new WP_Customize_Image_Control(
+					$wp_customize,
+					$setting_id,
+					$control_args
+				)
+			);
+			if ( null !== $tab_slug && '' !== $tab_slug ) {
+				$this->remember_control_tab( $section_id, $setting_id, $tab_slug );
+			}
+			return;
+		}
+
 		if ( 'switch' === $type ) {
 			$wp_customize->add_control(
 				new Switch_Control(
@@ -675,7 +691,7 @@ final class Options_Registry {
 
 		$control_args['type'] = $type;
 
-		if ( 'number' === $type && isset( $field['input_attrs'] ) ) {
+		if ( ( 'number' === $type || 'range' === $type ) && isset( $field['input_attrs'] ) ) {
 			$control_args['input_attrs'] = $field['input_attrs'];
 		}
 
@@ -865,6 +881,8 @@ final class Options_Registry {
 				return sanitize_key( (string) $value );
 			case 'number':
 				return is_numeric( $value ) ? 0 + $value : 0;
+			case 'range':
+				return is_numeric( $value ) ? absint( round( (float) $value ) ) : 0;
 			default:
 				return sanitize_text_field( (string) $value );
 		}

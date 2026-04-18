@@ -37,16 +37,9 @@ return array(
 				'label' => __( 'Vertical left logo', 'trove' ),
 				'url'   => get_template_directory_uri() . '/inc/customizer/img/header-5.png',
 			),
-			
+
 		),
 		'sanitize_callback' => 'sanitize_text_field',
-	),
-	'trove_header_bottom_border' => array(
-		'label'             => __( 'Show bottom border', 'trove' ),
-		'type'              => 'switch',
-		'default'           => false,
-		'transport'         => 'postMessage',
-		'sanitize_callback' => 'wp_validate_boolean',
 	),
 	'trove_header_menu_alignment' => array(
 		'label'             => __( 'Menu alignment', 'trove' ),

@@ -202,7 +202,7 @@ function position_woocommerce_below_blog_posts( $wp_customize ) {
 }
 
 /**
- * Swatch hover labels for Global Colors (matches keys in config/general/colors.php).
+ * Swatch hover labels for color controls (Global Colors + e.g. Footer → Styles).
  *
  * @return array<string, string|array{left:string, right:string}>
  */
@@ -231,6 +231,51 @@ function get_color_swatch_hints_export() {
 			);
 		}
 	}
+
+	$footer_styles_path = __DIR__ . '/config/footer/styles.php';
+	if ( is_readable( $footer_styles_path ) ) {
+		$footer_styles = require $footer_styles_path;
+		if ( is_array( $footer_styles ) ) {
+			foreach ( $footer_styles as $control_id => $field ) {
+				if ( ! is_array( $field ) || empty( $field['type'] ) ) {
+					continue;
+				}
+				if ( 'color' === $field['type'] && ! empty( $field['swatch_hint'] ) ) {
+					$out[ $control_id ] = $field['swatch_hint'];
+					continue;
+				}
+				if ( 'color_pair' === $field['type'] && ! empty( $field['swatch_hints'] ) && is_array( $field['swatch_hints'] ) ) {
+					$out[ $control_id ] = array(
+						'left'  => isset( $field['swatch_hints']['left'] ) ? $field['swatch_hints']['left'] : '',
+						'right' => isset( $field['swatch_hints']['right'] ) ? $field['swatch_hints']['right'] : '',
+					);
+				}
+			}
+		}
+	}
+
+	$header_styles_path = __DIR__ . '/config/header/styles.php';
+	if ( is_readable( $header_styles_path ) ) {
+		$header_styles = require $header_styles_path;
+		if ( is_array( $header_styles ) ) {
+			foreach ( $header_styles as $control_id => $field ) {
+				if ( ! is_array( $field ) || empty( $field['type'] ) ) {
+					continue;
+				}
+				if ( 'color' === $field['type'] && ! empty( $field['swatch_hint'] ) ) {
+					$out[ $control_id ] = $field['swatch_hint'];
+					continue;
+				}
+				if ( 'color_pair' === $field['type'] && ! empty( $field['swatch_hints'] ) && is_array( $field['swatch_hints'] ) ) {
+					$out[ $control_id ] = array(
+						'left'  => isset( $field['swatch_hints']['left'] ) ? $field['swatch_hints']['left'] : '',
+						'right' => isset( $field['swatch_hints']['right'] ) ? $field['swatch_hints']['right'] : '',
+					);
+				}
+			}
+		}
+	}
+
 	return $out;
 }
 

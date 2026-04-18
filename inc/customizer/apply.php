@@ -445,12 +445,8 @@ add_filter( 'excerpt_length', __NAMESPACE__ . '\\filter_excerpt_length', 20 );
 /**
  * Inline CSS for accent, content width, and header border.
  */
-function output_customizer_css() {
-	if ( ! wp_style_is( 'trove-style', 'enqueued' ) ) {
-		return;
-	}
+function trove_build_theme_variable_css( $selector = ':root', $include_responsive_content = true ) {
 	$font_family = get_font_family_setting();
-	$body_font   = get_body_font_family_css_value( $font_family );
 
 	$widths = get_responsive_mod_values(
 		'trove_content_width',
@@ -470,7 +466,61 @@ function output_customizer_css() {
 	foreach ( trove_color_theme_mod_definitions() as $mod_key => $row ) {
 		$root_parts[] = $row['var'] . ':' . esc_attr( trove_color_theme_mod( $mod_key, $row['default'] ) );
 	}
+	$footer_bg = trove_sanitize_css_color( (string) get_theme_mod( 'trove_footer_background', '' ) );
+	if ( '' !== $footer_bg ) {
+		$root_parts[] = '--trove-footer-background:' . esc_attr( $footer_bg );
+	}
+
+	$footer_color_mods = array(
+		'trove_footer_text_color'       => '--trove-footer-text',
+		'trove_footer_link_color'       => '--trove-footer-link',
+		'trove_footer_link_hover_color' => '--trove-footer-link-hover',
+		'trove_footer_border_color'     => '--trove-footer-border',
+	);
+	foreach ( $footer_color_mods as $mod_key => $css_var ) {
+		$c = trove_sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
+		if ( '' !== $c ) {
+			$root_parts[] = $css_var . ':' . esc_attr( $c );
+		}
+	}
+
+	$header_bg = trove_sanitize_css_color( (string) get_theme_mod( 'trove_header_background', '' ) );
+	if ( '' !== $header_bg ) {
+		$root_parts[] = '--trove-header-background:' . esc_attr( $header_bg );
+	}
+
+	$header_color_mods = array(
+		'trove_header_text_color'       => '--trove-header-text',
+		'trove_header_link_color'       => '--trove-header-link',
+		'trove_header_link_hover_color' => '--trove-header-link-hover',
+		'trove_header_border_color'     => '--trove-header-border',
+	);
+	foreach ( $header_color_mods as $mod_key => $css_var ) {
+		$c = trove_sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
+		if ( '' !== $c ) {
+			$root_parts[] = $css_var . ':' . esc_attr( $c );
+		}
+	}
+
+	if ( class_exists( 'WooCommerce' ) ) {
+		$wc_header_cart_mods = array(
+			'trove_header_cart_badge_color'  => '--trove-header-cart-badge-bg',
+			'trove_header_cart_count_color' => '--trove-header-cart-count',
+		);
+		foreach ( $wc_header_cart_mods as $mod_key => $css_var ) {
+			$c = trove_sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
+			if ( '' !== $c ) {
+				$root_parts[] = $css_var . ':' . esc_attr( $c );
+			}
+		}
+	}
+
+	$header_logo_w = \Trove\get_header_logo_width();
+	$root_parts[]  = '--trove-header-logo-max-width:' . (int) $header_logo_w . 'px';
+
+	$root_parts[] = '--trove-wide:1200px';
 	$root_parts[] = '--trove-content:' . (int) $w_pc . 'px';
+	$root_parts[] = '--trove-font-body-scale:1';
 	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
 		$prefix = 'trove_' . $scope;
 		$family_setting = isset( $meta['family_setting'] ) ? (string) $meta['family_setting'] : $prefix . '_google_font_family';
@@ -497,22 +547,59 @@ function output_customizer_css() {
 		$root_parts[] = $line_var . ':' . esc_attr( trove_number_unit_css_value( $line_setting, $line_unit, $line_default, $line_unit_def ) );
 	}
 
-	$css  = ':root{' . implode( ';', $root_parts ) . '}';
+	$css  = $selector . '{' . implode( ';', $root_parts ) . '}';
 	$css .= '.site-main{max-width:var(--trove-content);}';
 	$css .= '.site-footer__extra-responsive .trove-fe--tablet,.site-footer__extra-responsive .trove-fe--phone{display:none;}';
 	$css .= '.site-footer__extra-responsive .trove-fe--pc{display:block;}';
-	$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){:root{--trove-content:' . (int) $w_tablet . 'px;}}';
+	if ( $include_responsive_content ) {
+		$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{--trove-content:' . (int) $w_tablet . 'px;}}';
+	}
 	$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){.site-footer__extra-responsive .trove-fe--pc{display:none;}.site-footer__extra-responsive .trove-fe--tablet{display:block;}}';
-	$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){:root{--trove-content:' . (int) $w_phone . 'px;}.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
+	if ( $include_responsive_content ) {
+		$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{--trove-content:' . (int) $w_phone . 'px;}.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
+	} else {
+		$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
+	}
 
 	$header_min = absint( get_theme_mod( 'trove_header_min_height', 0 ) );
 	if ( $header_min > 0 && $header_min <= 400 ) {
 		$css .= '.site-header{min-height:' . $header_min . 'px;}';
 	}
 
-	wp_add_inline_style( 'trove-style', $css );
+	return $css;
+}
+
+/**
+ * Inline CSS for accent, content width, and header border.
+ */
+function output_customizer_css() {
+	if ( ! wp_style_is( 'trove-style', 'enqueued' ) ) {
+		return;
+	}
+
+	wp_add_inline_style( 'trove-style', trove_build_theme_variable_css( ':root', true ) );
 }
 add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\output_customizer_css', 20 );
+
+/**
+ * Injects the same CSS variables into the block editor.
+ *
+ * @return void
+ */
+function enqueue_editor_customizer_css() {
+	if ( ! is_admin() ) {
+		return;
+	}
+
+	$handle = 'trove-editor-vars';
+	if ( ! wp_style_is( $handle, 'registered' ) ) {
+		wp_register_style( $handle, false, array(), defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0' );
+	}
+
+	wp_enqueue_style( $handle );
+	wp_add_inline_style( $handle, trove_build_theme_variable_css( ':root, .editor-styles-wrapper', false ) );
+}
+add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\enqueue_editor_customizer_css', 20 );
 
 
 /**
@@ -594,10 +681,59 @@ function enqueue_customizer_preview_scripts() {
 			'fontFamilies'    => trove_preview_font_family_var_map(),
 			'weightFamilies'  => trove_font_weight_family_map(),
 			'numberUnitPairs' => trove_preview_number_unit_pairs(),
+			'footer'          => array(
+				'allRightsReserved'           => __( 'All rights reserved.', 'trove' ),
+				'newsletterTitleDefault'      => __( 'Subscribe to our emails', 'trove' ),
+				'newsletterDescriptionDefault' => __( 'Subscribe to our newsletter to get the latest news and updates.', 'trove' ),
+			),
+			'woocommerceHeaderCart' => class_exists( 'WooCommerce' ),
 		)
 	);
 }
 add_action( 'customize_preview_init', __NAMESPACE__ . '\\enqueue_customizer_preview_scripts' );
+
+/**
+ * Registers selective refresh for all footer theme_mods (no full preview iframe reload).
+ *
+ * @param \WP_Customize_Manager $wp_customize Customizer instance.
+ * @return void
+ */
+function register_footer_content_preview_partial( $wp_customize ) {
+	if ( ! $wp_customize instanceof \WP_Customize_Manager || ! isset( $wp_customize->selective_refresh ) ) {
+		return;
+	}
+
+	// Layout/logo/menus: selective refresh. Dark mode + text toggles: postMessage in customizer-preview.js only — avoids preview iframe full reload.
+	$settings = array(
+		'trove_footer_layout',
+		'trove_footer_logo',
+	);
+	for ( $i = 1; $i <= 5; $i++ ) {
+		$settings[] = 'trove_footer_menu_' . $i . '_id';
+	}
+
+	$wp_customize->selective_refresh->add_partial(
+		'trove_footer',
+		array(
+			'selector'        => 'footer.site-footer',
+			'settings'        => $settings,
+			'render_callback' => __NAMESPACE__ . '\\render_footer_content_preview_partial',
+		)
+	);
+}
+add_action( 'customize_register', __NAMESPACE__ . '\\register_footer_content_preview_partial', 100 );
+
+/**
+ * @return string
+ */
+function render_footer_content_preview_partial() {
+	if ( ! function_exists( '\Trove\render_footer' ) ) {
+		return '';
+	}
+	ob_start();
+	\Trove\render_footer();
+	return ob_get_clean();
+}
 
 /**
  * Class names for the theme `<header>` (always includes `site-header`).
@@ -606,6 +742,10 @@ add_action( 'customize_preview_init', __NAMESPACE__ . '\\enqueue_customizer_prev
  */
 function get_header_classnames() {
 	$classes = array( 'site-header' );
+	$header_dark_mode = wp_validate_boolean( get_theme_mod( 'trove_header_dark_mode', false ) );
+	if ( ! $header_dark_mode ) {
+		$classes[] = 'light-scheme';
+	}
 	if ( get_theme_mod( 'trove_header_bottom_border', false ) ) {
 		$classes[] = 'trove-header-has-border';
 	}

@@ -21,6 +21,7 @@ class TroveTheme {
 	 */
 	public static function init() {
 		add_action( 'after_setup_theme', array( __CLASS__, 'setup' ) );
+		add_filter( 'body_class', array( __CLASS__, 'filter_body_class_header_logo' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_styles' ) );
 		add_action( 'init', array( __CLASS__, 'register_block_styles' ) );
 		add_filter( 'render_block_woocommerce/customer-account', array( __CLASS__, 'replace_account_icon' ), 20 );
@@ -49,6 +50,25 @@ class TroveTheme {
 			$families[ $family ] = true;
 		}
 		return array_keys( $families );
+	}
+
+	/**
+	 * Adds `has-custom-logo` when the Header → Layout logo is set (without Site Identity logo).
+	 *
+	 * @param string[] $classes Body classes.
+	 * @return string[]
+	 */
+	public static function filter_body_class_header_logo( $classes ) {
+		if ( ! is_array( $classes ) ) {
+			$classes = array();
+		}
+		if (
+			( '' !== \Trove\get_header_logo_url() || '' !== \Trove\get_header_logo_dark_url() ) &&
+			! in_array( 'has-custom-logo', $classes, true )
+		) {
+			$classes[] = 'has-custom-logo';
+		}
+		return $classes;
 	}
 
 	/**
@@ -87,7 +107,6 @@ class TroveTheme {
 		register_nav_menus(
 			array(
 				'primary' => esc_html__( 'Primary menu', 'trove' ),
-				'footer'  => esc_html__( 'Footer menu', 'trove' ),
 			)
 		);
 

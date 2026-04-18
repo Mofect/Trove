@@ -1,0 +1,403 @@
+<?php
+/**
+ * Template helper functions.
+ *
+ * @package Trove
+ */
+
+namespace Trove;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Footer menu term IDs from Customizer slots (1–5), in order.
+ *
+ * @return array<int> Menu term IDs (0 = empty slot).
+ */
+function get_footer_menu_slot_ids() {
+	$menu_ids = array();
+	for ( $i = 1; $i <= 5; $i++ ) {
+		$menu_ids[] = absint( get_theme_mod( 'trove_footer_menu_' . $i . '_id', 0 ) );
+	}
+	return $menu_ids;
+}
+
+/**
+ * Resolves footer menu IDs to nav menu objects (preserves order, allows duplicates).
+ *
+ * @param array<int|string|mixed> $menu_ids Raw menu term IDs.
+ * @return array<\WP_Term> Valid menu objects.
+ */
+function get_footer_menus( $menu_ids ) {
+	$raw_ids = is_array( $menu_ids ) ? $menu_ids : array();
+	$menus   = array();
+	foreach ( $raw_ids as $maybe_id ) {
+		$id       = absint( $maybe_id );
+		$menu_obj = $id > 0 ? wp_get_nav_menu_object( $id ) : null;
+		if ( $menu_obj && isset( $menu_obj->term_id, $menu_obj->name ) ) {
+			$menus[] = $menu_obj;
+		}
+	}
+	return $menus;
+}
+
+/**
+ * Returns footer brand name with site-name fallback.
+ *
+ * @return string
+ */
+function get_footer_brand_name() {
+	$brand_name = get_theme_mod( 'trove_footer_brand_name', '' );
+	return '' !== trim( $brand_name ) ? $brand_name : get_bloginfo( 'name' );
+}
+
+/**
+ * Returns footer brand description with site-tagline fallback.
+ *
+ * @return string
+ */
+function get_footer_brand_description() {
+	$brand_description = get_theme_mod( 'trove_footer_brand_description', '' );
+	return '' !== trim( $brand_description ) ? $brand_description : get_bloginfo( 'description' );
+}
+
+/**
+ * Whether footer brand text information should be rendered.
+ *
+ * @return bool
+ */
+function should_render_footer_brand_info() {
+	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_brand_info', true ) );
+}
+
+/**
+ * Returns footer logo URL (empty when not set).
+ *
+ * @return string
+ */
+function get_footer_logo_url() {
+	$logo_url = get_theme_mod( 'trove_footer_logo', '' );
+	return is_string( $logo_url ) ? trim( $logo_url ) : '';
+}
+
+/**
+ * Header logo URL from Customizer (empty when not set).
+ *
+ * When set, it is shown instead of the Site Identity logo and site title.
+ *
+ * @return string
+ */
+function get_header_logo_url() {
+	$logo_url = get_theme_mod( 'trove_header_logo', '' );
+	return is_string( $logo_url ) ? trim( $logo_url ) : '';
+}
+
+/**
+ * Header logo URL for dark header (empty when not set).
+ *
+ * @return string
+ */
+function get_header_logo_dark_url() {
+	$logo_url = get_theme_mod( 'trove_header_logo_dark', '' );
+	return is_string( $logo_url ) ? trim( $logo_url ) : '';
+}
+
+/**
+ * Resolved theme header logo URL for the current header scheme, or null to use Site Identity logo or title.
+ *
+ * The dark-mode logo asset is only used when Header → Styles → Dark mode is on; it is never used on a light header.
+ *
+ * @return array{type: 'single', url: string}|null
+ */
+function get_header_brand_logo_config() {
+	$light = get_header_logo_url();
+	$dark  = get_header_logo_dark_url();
+
+	$header_dark = wp_validate_boolean( get_theme_mod( 'trove_header_dark_mode', false ) );
+
+	if ( $header_dark ) {
+		$url = '' !== $dark ? $dark : $light;
+	} else {
+		$url = '' !== $light ? $light : '';
+	}
+
+	if ( '' !== $url ) {
+		return array(
+			'type' => 'single',
+			'url'  => $url,
+		);
+	}
+
+	return null;
+}
+
+/**
+ * Header logo max width in pixels (clamped to Customizer range).
+ *
+ * @return int
+ */
+function get_header_logo_width() {
+	$w = absint( get_theme_mod( 'trove_header_logo_width', 200 ) );
+	return min( 400, max( 40, $w ) );
+}
+
+/**
+ * Sanitizes header logo width theme_mod (40–400 px).
+ *
+ * @param mixed $value Raw value.
+ * @return int
+ */
+function sanitize_header_logo_width( $value ) {
+	$w = absint( $value );
+	return min( 400, max( 40, $w ) );
+}
+
+/**
+ * Whether footer social links should be rendered.
+ *
+ * @return bool
+ */
+function should_render_footer_social_links() {
+	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_social_links', true ) );
+}
+
+/**
+ * Whether the footer newsletter subscribe block should be rendered.
+ *
+ * @return bool
+ */
+function should_render_footer_newsletter() {
+	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_newsletter', true ) );
+}
+
+/**
+ * Returns footer newsletter title with a default when the theme mod is empty.
+ *
+ * @return string
+ */
+function get_footer_newsletter_title() {
+	$title = get_theme_mod( 'trove_footer_newsletter_title', '' );
+	return '' !== trim( (string) $title ) ? $title : __( 'Subscribe to our emails', 'trove' );
+}
+
+/**
+ * Returns footer newsletter description HTML/text with a default when the mod is empty.
+ *
+ * @return string
+ */
+function get_footer_newsletter_description() {
+	$description = get_theme_mod( 'trove_footer_newsletter_description', '' );
+	if ( '' !== trim( wp_strip_all_tags( (string) $description ) ) ) {
+		return $description;
+	}
+	return __( 'Subscribe to our newsletter to get the latest news and updates.', 'trove' );
+}
+
+/**
+ * Returns a social profile URL from theme mods (Social Profiles), or empty string.
+ *
+ * @param string $theme_mod_key e.g. trove_social_facebook_url.
+ * @return string Trimmed URL or ''.
+ */
+function get_footer_social_profile_url( $theme_mod_key ) {
+	$raw = get_theme_mod( $theme_mod_key, '' );
+	if ( ! is_string( $raw ) || '' === trim( $raw ) ) {
+		return '';
+	}
+	return trim( $raw );
+}
+
+/**
+ * Outputs footer social icon links using URLs from Customizer → Social Profiles.
+ *
+ * @return void
+ */
+function render_footer_social_links() {
+	$u = get_footer_social_profile_url( 'trove_social_facebook_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'Facebook', 'trove' ); ?></span>
+		<svg class="icon icon-facebook" viewBox="0 0 20 20"><path fill="currentColor" d="M18 10.049C18 5.603 14.419 2 10 2s-8 3.603-8 8.049C2 14.067 4.925 17.396 8.75 18v-5.624H6.719v-2.328h2.03V8.275c0-2.017 1.195-3.132 3.023-3.132.874 0 1.79.158 1.79.158v1.98h-1.009c-.994 0-1.303.621-1.303 1.258v1.51h2.219l-.355 2.326H11.25V18c3.825-.604 6.75-3.933 6.75-7.951"></path></svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_twitter_x_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'Twitter', 'trove' ); ?></span>
+		<svg class="icon icon-twitter" viewBox="0 0 20 20"><path fill="currentColor" fill-rule="evenodd" d="M7.273 2.8 10.8 7.822 15.218 2.8h1.768l-5.4 6.139 5.799 8.254h-4.658l-3.73-5.31-4.671 5.31H2.558l5.654-6.427L2.615 2.8zm6.242 13.125L5.07 4.109h1.405l8.446 11.816z" clip-rule="evenodd"></path></svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_instagram_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'Instagram', 'trove' ); ?></span>
+		<svg class="icon icon-instagram" viewBox="0 0 20 20"><path fill="currentColor" fill-rule="evenodd" d="M13.23 3.492c-.84-.037-1.096-.046-3.23-.046-2.144 0-2.39.01-3.238.055-.776.027-1.195.164-1.487.273a2.4 2.4 0 0 0-.912.593 2.5 2.5 0 0 0-.602.922c-.11.282-.238.702-.274 1.486-.046.84-.046 1.095-.046 3.23s.01 2.39.046 3.229c.004.51.097 1.016.274 1.495.145.365.319.639.602.913.282.282.538.456.92.602.474.176.974.268 1.479.273.848.046 1.103.046 3.238.046s2.39-.01 3.23-.046c.784-.036 1.203-.164 1.486-.273.374-.146.648-.329.921-.602.283-.283.447-.548.602-.922.177-.476.27-.979.274-1.486.037-.84.046-1.095.046-3.23s-.01-2.39-.055-3.229c-.027-.784-.164-1.204-.274-1.495a2.4 2.4 0 0 0-.593-.913 2.6 2.6 0 0 0-.92-.602c-.284-.11-.703-.237-1.488-.273ZM6.697 2.05c.857-.036 1.131-.045 3.302-.045a63 63 0 0 1 3.302.045c.664.014 1.321.14 1.943.374a4 4 0 0 1 1.414.922c.41.397.728.88.93 1.414.23.622.354 1.279.365 1.942C18 7.56 18 7.824 18 10.005c0 2.17-.01 2.444-.046 3.292-.036.858-.173 1.442-.374 1.943-.2.53-.474.976-.92 1.423a3.9 3.9 0 0 1-1.415.922c-.51.191-1.095.337-1.943.374-.857.036-1.122.045-3.302.045-2.171 0-2.445-.009-3.302-.055-.849-.027-1.432-.164-1.943-.364a4.15 4.15 0 0 1-1.414-.922 4.1 4.1 0 0 1-.93-1.423c-.183-.51-.329-1.085-.365-1.943C2.009 12.45 2 12.167 2 10.004c0-2.161 0-2.435.055-3.302.027-.848.164-1.432.365-1.942a4.4 4.4 0 0 1 .92-1.414 4.2 4.2 0 0 1 1.415-.93c.51-.183 1.094-.33 1.943-.366Zm.427 4.806a4.105 4.105 0 1 1 5.805 5.805 4.105 4.105 0 0 1-5.805-5.805m1.882 5.371a2.668 2.668 0 1 0 2.042-4.93 2.668 2.668 0 0 0-2.042 4.93m5.922-5.942a.958.958 0 1 1-1.355-1.355.958.958 0 0 1 1.355 1.355" clip-rule="evenodd"></path></svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_youtube_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'YouTube', 'trove' ); ?></span>
+		<svg class="icon icon-youtube" viewBox="0 0 20 20"><path fill="currentColor" d="M18.16 5.87c.34 1.309.34 4.08.34 4.08s0 2.771-.34 4.08a2.13 2.13 0 0 1-1.53 1.53c-1.309.34-6.63.34-6.63.34s-5.321 0-6.63-.34a2.13 2.13 0 0 1-1.53-1.53c-.34-1.309-.34-4.08-.34-4.08s0-2.771.34-4.08a2.17 2.17 0 0 1 1.53-1.53C4.679 4 10 4 10 4s5.321 0 6.63.34a2.17 2.17 0 0 1 1.53 1.53M8.3 12.5l4.42-2.55L8.3 7.4z"></path></svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_vimeo_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'Vimeo', 'trove' ); ?></span>
+		<svg class="icon icon-vimeo" viewBox="0 0 20 20">
+			<path fill="currentColor" fill-rule="evenodd" d="M17.995 7.002C17.92 8.457 16.9 10.451 14.935 13c-2.039 2.653-3.763 3.988-5.187 3.988q-1.305 0-2.205-2.429L6.33 10.121q-.675-2.43-1.44-2.43c-.12 0-.51.24-1.184.706L3 7.497l2.19-1.95c.989-.869 1.724-1.319 2.218-1.349 1.17-.135 1.89.66 2.16 2.37.3 1.844.495 2.998.6 3.448.344 1.53.704 2.294 1.11 2.294.314 0 .794-.495 1.424-1.5.49-.67.832-1.436 1.004-2.249.09-.87-.255-1.304-1.004-1.304-.36 0-.735.09-1.11.255.735-2.414 2.144-3.584 4.213-3.509 1.545.045 2.265 1.05 2.19 3Z" clip-rule="evenodd"/>
+		</svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_pinterest_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'Pinterest', 'trove' ); ?></span>
+		<svg class="icon icon-pinterest" viewBox="0 0 20 20">
+			<path fill="currentColor" d="M10 2.01a8.1 8.1 0 0 1 5.666 2.353 8.09 8.09 0 0 1 1.277 9.68A7.95 7.95 0 0 1 10 18.04a8.2 8.2 0 0 1-2.276-.307c.403-.653.672-1.24.816-1.729l.567-2.2c.134.27.393.5.768.702.384.192.768.297 1.19.297q1.254 0 2.248-.72a4.7 4.7 0 0 0 1.537-1.969c.37-.89.554-1.848.537-2.813 0-1.249-.48-2.315-1.43-3.227a5.06 5.06 0 0 0-3.65-1.374c-.893 0-1.729.154-2.478.461a5.02 5.02 0 0 0-3.236 4.552c0 .72.134 1.355.413 1.902.269.538.672.922 1.22 1.152.096.039.182.039.25 0 .066-.028.114-.096.143-.192l.173-.653c.048-.144.02-.288-.105-.432a2.26 2.26 0 0 1-.548-1.565 3.803 3.803 0 0 1 3.976-3.861c1.047 0 1.863.288 2.44.855.585.576.883 1.315.883 2.228a6.8 6.8 0 0 1-.317 2.122 3.8 3.8 0 0 1-.893 1.556c-.384.384-.836.576-1.345.576-.413 0-.749-.144-1.018-.451-.259-.307-.345-.672-.25-1.085q.22-.77.452-1.537l.173-.701c.057-.25.086-.451.086-.624 0-.346-.096-.634-.269-.855-.192-.22-.451-.336-.797-.336-.432 0-.797.192-1.085.595-.288.394-.442.893-.442 1.499.005.374.063.746.173 1.104l.058.144c-.576 2.478-.913 3.938-1.037 4.36-.116.528-.154 1.153-.125 1.863A8.07 8.07 0 0 1 2 10.03c0-2.208.778-4.11 2.343-5.666A7.72 7.72 0 0 1 10 2.001z"/>
+		</svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_tiktok_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'TikTok', 'trove' ); ?></span>
+		<svg class="icon icon-tiktok" viewBox="0 0 20 20">
+			<path fill="currentColor" d="M10.511 1.705h2.74s-.157 3.51 3.795 3.768v2.711s-2.114.129-3.796-1.158l.028 5.606A5.073 5.073 0 1 1 8.213 7.56h.708v2.785a2.298 2.298 0 1 0 1.618 2.205z"></path>
+		</svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_linkedin_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'LinkedIn', 'trove' ); ?></span>
+		<svg class="icon icon-linkedin" viewBox="0 0 22 22">
+			<path d="M18.72 3.99997H5.37C5.19793 3.99191 5.02595 4.01786 4.86392 4.07635C4.70189 4.13484 4.55299 4.22471 4.42573 4.34081C4.29848 4.45692 4.19537 4.59699 4.12232 4.75299C4.04927 4.909 4.0077 5.07788 4 5.24997V18.63C4.01008 18.9901 4.15766 19.3328 4.41243 19.5875C4.6672 19.8423 5.00984 19.9899 5.37 20H18.72C19.0701 19.9844 19.4002 19.8322 19.6395 19.5761C19.8788 19.32 20.0082 18.9804 20 18.63V5.24997C20.0029 5.08247 19.9715 4.91616 19.9078 4.76122C19.8441 4.60629 19.7494 4.466 19.6295 4.34895C19.5097 4.23191 19.3672 4.14059 19.2108 4.08058C19.0544 4.02057 18.8874 3.99314 18.72 3.99997ZM9 17.34H6.67V10.21H9V17.34ZM7.89 9.12997C7.72741 9.13564 7.5654 9.10762 7.41416 9.04768C7.26291 8.98774 7.12569 8.89717 7.01113 8.78166C6.89656 8.66615 6.80711 8.5282 6.74841 8.37647C6.6897 8.22474 6.66301 8.06251 6.67 7.89997C6.66281 7.73567 6.69004 7.57169 6.74995 7.41854C6.80986 7.26538 6.90112 7.12644 7.01787 7.01063C7.13463 6.89481 7.2743 6.80468 7.42793 6.74602C7.58157 6.68735 7.74577 6.66145 7.91 6.66997C8.07259 6.66431 8.2346 6.69232 8.38584 6.75226C8.53709 6.8122 8.67431 6.90277 8.78887 7.01828C8.90344 7.13379 8.99289 7.27174 9.05159 7.42347C9.1103 7.5752 9.13699 7.73743 9.13 7.89997C9.13719 8.06427 9.10996 8.22825 9.05005 8.3814C8.99014 8.53456 8.89888 8.6735 8.78213 8.78931C8.66537 8.90513 8.5257 8.99526 8.37207 9.05392C8.21843 9.11259 8.05423 9.13849 7.89 9.12997ZM17.34 17.34H15V13.44C15 12.51 14.67 11.87 13.84 11.87C13.5822 11.8722 13.3313 11.9541 13.1219 12.1045C12.9124 12.2549 12.7546 12.4664 12.67 12.71C12.605 12.8926 12.5778 13.0865 12.59 13.28V17.34H10.29V10.21H12.59V11.21C12.7945 10.8343 13.0988 10.5225 13.4694 10.3089C13.84 10.0954 14.2624 9.98848 14.69 9.99997C16.2 9.99997 17.34 11 17.34 13.13V17.34Z" />		
+		</svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_threads_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'Threads', 'trove' ); ?></span>
+		<svg class="icon icon-threads" viewBox="0 0 192 192">
+			<path d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.881 72.2328C81.6116 63.5383 90.6052 61.6848 97.2286 61.6848C97.3051 61.6848 97.3819 61.6848 97.4576 61.6855C105.707 61.7381 111.932 64.1366 115.961 68.814C118.893 72.2193 120.854 76.925 121.825 82.8638C114.511 81.6207 106.601 81.2385 98.145 81.7233C74.3247 83.0954 59.0111 96.9879 60.0396 116.292C60.5615 126.084 65.4397 134.508 73.775 140.011C80.8224 144.663 89.899 146.938 99.3323 146.423C111.79 145.74 121.563 140.987 128.381 132.296C133.559 125.696 136.834 117.143 138.28 106.366C144.217 109.949 148.617 114.664 151.047 120.332C155.179 129.967 155.42 145.8 142.501 158.708C131.182 170.016 117.576 174.908 97.0135 175.059C74.2042 174.89 56.9538 167.575 45.7381 153.317C35.2355 139.966 29.8077 120.682 29.6052 96C29.8077 71.3178 35.2355 52.0336 45.7381 38.6827C56.9538 24.4249 74.2039 17.11 97.0132 16.9405C119.988 17.1113 137.539 24.4614 149.184 38.788C154.894 45.8136 159.199 54.6488 162.037 64.9503L178.184 60.6422C174.744 47.9622 169.331 37.0357 161.965 27.974C147.036 9.60668 125.202 0.195148 97.0695 0H96.9569C68.8816 0.19447 47.2921 9.6418 32.7883 28.0793C19.8819 44.4864 13.2244 67.3157 13.0007 95.9325L13 96L13.0007 96.0675C13.2244 124.684 19.8819 147.514 32.7883 163.921C47.2921 182.358 68.8816 191.806 96.9569 192H97.0695C122.03 191.827 139.624 185.292 154.118 170.811C173.081 151.866 172.51 128.119 166.26 113.541C161.776 103.087 153.227 94.5962 141.537 88.9883ZM98.4405 129.507C88.0005 130.095 77.1544 125.409 76.6196 115.372C76.2232 107.93 81.9158 99.626 99.0812 98.6368C101.047 98.5234 102.976 98.468 104.871 98.468C111.106 98.468 116.939 99.0737 122.242 100.233C120.264 124.935 108.662 128.946 98.4405 129.507Z"></path>
+		</svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_github_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'GitHub', 'trove' ); ?></span>
+		<svg class="icon icon-github" viewBox="0 0 24 24">
+			<path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1.02.07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
+		</svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_reddit_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'Reddit', 'trove' ); ?></span>
+		<svg class="icon icon-reddit" viewBox="0 0 24 24">
+			<path d="M9 13C8.44772 13 8 13.4477 8 14C8 14.5523 8.44772 15 9 15C9.55229 15 10 14.5523 10 14C10 13.4477 9.55229 13 9 13Z" />
+			<path d="M14 14C14 13.4477 14.4477 13 15 13C15.5523 13 16 13.4477 16 14C16 14.5523 15.5523 15 15 15C14.4477 15 14 14.5523 14 14Z" />
+			<path d="M8.29289 16.7929C8.97405 16.1117 9.57505 16.7945 10.1972 17.1056C10.5749 17.2944 11.1728 17.5 12 17.5C12.8272 17.5 13.4251 17.2944 13.8028 17.1056C14.4249 16.7945 15.0259 16.1117 15.7071 16.7929C16.5738 17.6596 15.4209 18.5326 14.6972 18.8944C14.0749 19.2056 13.1728 19.5 12 19.5C10.8272 19.5 9.92507 19.2056 9.30279 18.8944C8.57552 18.5308 7.44766 17.6381 8.29289 16.7929Z" />
+			<path fill-rule="evenodd" clip-rule="evenodd" d="M12.4703 1.15182C12.7232 0.993884 13.0334 0.957034 13.3162 1.05132L16.6328 2.15685C17.1818 1.45278 18.038 1 19 1C20.6569 1 22 2.34315 22 4C22 5.65686 20.6569 7 19 7C17.3613 7 16.0294 5.68608 16.0005 4.05426L13.8314 3.33121L13.0711 9.03277C14.2994 9.1083 15.4685 9.31237 16.545 9.62357C17.166 8.64754 18.2574 8 19.5 8C21.433 8 23 9.56701 23 11.5C23 12.2757 22.7477 12.9924 22.3206 13.5726C22.76 14.3288 23 15.1466 23 16C23 19.866 18.0751 23 12 23C5.92487 23 1 19.866 1 16C1 15.1466 1.23999 14.3288 1.67937 13.5726C1.25233 12.9924 1 12.2757 1 11.5C1 9.56701 2.567 8 4.5 8C5.74259 8 6.83394 8.64754 7.45501 9.62358C8.56809 9.30178 9.78028 9.09454 11.0544 9.02551L12.0088 1.86784C12.0482 1.5723 12.2174 1.30975 12.4703 1.15182ZM20 4C20 4.55229 19.5523 5 19 5C18.4477 5 18 4.55229 18 4C18 3.44772 18.4477 3 19 3C19.5523 3 20 3.44772 20 4ZM18.7044 12.7376C20.3517 13.7858 21 14.988 21 16C21 17.012 20.3517 18.2142 18.7044 19.2624C17.0809 20.2956 14.7159 21 12 21C9.28405 21 6.91908 20.2956 5.29558 19.2624C3.64835 18.2142 3 17.012 3 16C3 14.988 3.64835 13.7858 5.29558 12.7376C6.91908 11.7044 9.28405 11 12 11C14.7159 11 17.0809 11.7044 18.7044 12.7376ZM18.5221 10.3626C19.5949 9.4393 21.352 10.5086 20.9402 11.9207C20.2671 11.3244 19.4503 10.7982 18.5221 10.3626ZM3.05982 11.9207C3.73291 11.3244 4.5497 10.7982 5.47793 10.3626C4.40504 9.43929 2.64794 10.5086 3.05982 11.9207Z" />
+		</svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_xing_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'Xing', 'trove' ); ?></span>
+		<svg class="icon icon-xing" viewBox="0 0 500 500">
+			<path d="M309.215,304.749
+					c30.414,57.874,62.227,114.961,94.801,173.782c4.402,7.997,11.826,19.137,8.67,26.073c-4.242,9.332-25.275,5.539-41.855,5.539
+					c-19.523,0-36.902,3.53-49.764-0.799c-13.125-4.416-25.002-36.989-31.6-48.979c-27.934-50.773-57.736-105.254-85.319-154.831
+					c47.294-86.353,103.108-180.979,152.448-270.165c7.572-13.661,13.748-33.771,31.613-34.769C396.68,0.14,413.596,1.4,430.875,1.4
+					c14.32,0,36.428-2.108,40.295,3.941c6.6,10.367-10.842,30.466-15.807,39.51C407.158,132.44,356.971,217.997,309.215,304.749z
+					M125.953,357.67c15.657-1.908,23.653-23.777,30.789-36.341c22.631-39.746,45.697-80.715,66.369-117.705
+					c-12.774-23.728-29.766-51.385-44.249-76.624c-6.25-10.891-10.979-25.087-25.263-25.275c-25.275,0-50.575,0-75.85,0
+					c-4.129,0.586-7.846,1.635-8.682,5.527c-2.046,12.438,5.625,19.486,9.48,26.073c8.97,15.407,17.978,29.866,27.646,46.608
+					c3.094,5.327,12.874,18.938,12.625,24.489c-0.15,3.718-7.598,12.638-10.254,17.378c-21.607,38.586-39.334,70.735-60.83,109.009
+					c-3.194,5.689-10.267,12.301-7.896,20.534c1.023,3.605,6.749,6.637,9.469,6.325C74.853,357.67,100.403,357.67,125.953,357.67z">
+			</path>
+		</svg>
+	</a>
+		<?php endif; ?>
+	<?php
+	$u = get_footer_social_profile_url( 'trove_social_vk_url' );
+	if ( '' !== $u ) :
+		?>
+	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
+		<span class="screen-reader-text"><?php esc_html_e( 'VK', 'trove' ); ?></span>
+		<svg class="icon icon-vk" viewBox="-2.5 0 30 30" version="1.1">
+			<path d="M16.563 15.75c-0.5-0.188-0.5-0.906-0.531-1.406-0.125-1.781 0.5-4.5-0.25-5.656-0.531-0.688-3.094-0.625-4.656-0.531-0.438 0.063-0.969 0.156-1.344 0.344s-0.75 0.5-0.75 0.781c0 0.406 0.938 0.344 1.281 0.875 0.375 0.563 0.375 1.781 0.375 2.781 0 1.156-0.188 2.688-0.656 2.75-0.719 0.031-1.125-0.688-1.5-1.219-0.75-1.031-1.5-2.313-2.063-3.563-0.281-0.656-0.438-1.375-0.844-1.656-0.625-0.438-1.75-0.469-2.844-0.438-1 0.031-2.438-0.094-2.719 0.5-0.219 0.656 0.25 1.281 0.5 1.813 1.281 2.781 2.656 5.219 4.344 7.531 1.563 2.156 3.031 3.875 5.906 4.781 0.813 0.25 4.375 0.969 5.094 0 0.25-0.375 0.188-1.219 0.313-1.844s0.281-1.25 0.875-1.281c0.5-0.031 0.781 0.406 1.094 0.719 0.344 0.344 0.625 0.625 0.875 0.938 0.594 0.594 1.219 1.406 1.969 1.719 1.031 0.438 2.625 0.313 4.125 0.25 1.219-0.031 2.094-0.281 2.188-1 0.063-0.563-0.563-1.375-0.938-1.844-0.938-1.156-1.375-1.5-2.438-2.563-0.469-0.469-1.063-0.969-1.063-1.531-0.031-0.344 0.25-0.656 0.5-1 1.094-1.625 2.188-2.781 3.188-4.469 0.281-0.5 0.938-1.656 0.688-2.219-0.281-0.625-1.844-0.438-2.813-0.438-1.25 0-2.875-0.094-3.188 0.156-0.594 0.406-0.844 1.063-1.125 1.688-0.625 1.438-1.469 2.906-2.344 4-0.313 0.375-0.906 1.156-1.25 1.031z"></path>
+		</svg>
+	</a>
+		<?php endif; ?>
+<?php
+}
+
+/**
+ * Outputs the footer newsletter subscribe form (placeholder action).
+ *
+ * @return void
+ */
+function render_footer_subscribe_form() {
+?>
+	<form class="site-footer__subscribe-form" action="#" method="post">
+		<label class="screen-reader-text" for="trove-footer-email"><?php esc_html_e( 'Email address', 'trove' ); ?></label>
+		<input
+			id="trove-footer-email"
+			class="site-footer__subscribe-input"
+			type="email"
+			name="email"
+			placeholder="<?php esc_attr_e( 'Email address', 'trove' ); ?>"
+		/>
+		<button class="site-footer__subscribe-button" type="submit">
+			<?php esc_html_e( 'Subscribe', 'trove' ); ?>
+		</button>
+	</form>
+<?php
+}
+
+/**
+ * Outputs the footer copyright line (Customizer text or default year + site name).
+ *
+ * @return void
+ */
+function render_footer_copyright() {
+	echo '<span class="site-footer__copy-inner">';
+	$copy = get_theme_mod( 'trove_footer_copy_text', '' );
+	if ( ! empty( $copy ) ) {
+		echo wp_kses_post( $copy );
+	} else {
+		echo wp_kses_post( '&copy; ' . esc_html( gmdate( 'Y' ) ) . ' ' . esc_html( get_bloginfo( 'name' ) ) . ' ' . esc_html__( 'All rights reserved.', 'trove' ) );
+	}
+	echo '</span>';
+}

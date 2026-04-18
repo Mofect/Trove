@@ -5,6 +5,15 @@
 	gap: 0;
 }
 
+/*
+ * Header mini-cart count badge (Customizer → Header → Styles: Cart badge / Cart count).
+ * !important beats WooCommerce Interactivity inline badge colors when theme vars are set.
+ */
+.site-header .site-header__woo .wc-block-mini-cart .wc-block-mini-cart__badge {
+	background-color: var(--trove-header-cart-badge-bg) !important;
+	color: var(--trove-header-cart-count) !important;
+}
+
 /* Editor: WooCommerce account and cart icons (PHP replace runs on frontend only). */
 .editor-styles-wrapper .wc-block-customer-account__account-link svg {
 	display: none;
