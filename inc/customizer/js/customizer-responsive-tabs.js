@@ -1,8 +1,11 @@
 /**
  * Trove Customizer: responsive tab control — single input, switch active theme_mod by device.
  */
-(function ( api ) {
+(function (api) {
 	"use strict";
+
+	var controlsRoot =
+		document.getElementById("customize-theme-controls") || document.body;
 
 	/**
 	 * Trove option keys (pc/tablet/phone) -> Customizer preview frame keys (desktop/tablet/mobile).
@@ -49,7 +52,32 @@
 		}
 	}
 
+	function wireUnitSelect(root, settingsMap) {
+		var unitSid = root.getAttribute("data-trove-unit-setting");
+		var unitSel = root.querySelector(".trove-r-unit-select");
+		if (!unitSid || !unitSel) {
+			return;
+		}
+		api(unitSid, function (setting) {
+			function syncFromSetting() {
+				var v = setting.get();
+				if (String(unitSel.value) !== String(v)) {
+					unitSel.value = v;
+				}
+			}
+			unitSel.addEventListener("change", function () {
+				setting.set(unitSel.value);
+			});
+			setting.bind(syncFromSetting);
+			syncFromSetting();
+		});
+	}
+
 	function initOne(root) {
+		if (!root || root.getAttribute("data-trove-r-wired") === "1") {
+			return;
+		}
+
 		var fieldType = root.getAttribute("data-field-type") || "text";
 		var settingsMap = parseSettings(root);
 		if (!settingsMap || !settingsMap.pc || !settingsMap.tablet || !settingsMap.phone) {
@@ -57,6 +85,10 @@
 		}
 
 		var input = root.querySelector(".trove-r-active-input");
+		if (!input) {
+			return;
+		}
+
 		var tabs = root.querySelectorAll(".trove-r-tab");
 		var active = "pc";
 		var colorPickerInited = false;
@@ -64,7 +96,7 @@
 		var remaining = 3;
 
 		function readInputValue() {
-			if (fieldType === "checkbox") {
+			if (fieldType === "checkbox" || fieldType === "switch") {
 				return !!input.checked;
 			}
 			if (fieldType === "number") {
@@ -75,7 +107,7 @@
 		}
 
 		function writeInputValue(v) {
-			if (fieldType === "checkbox") {
+			if (fieldType === "checkbox" || fieldType === "switch") {
 				input.checked = !!v;
 				return;
 			}
@@ -138,7 +170,7 @@
 				});
 			});
 
-			if (fieldType === "checkbox") {
+			if (fieldType === "checkbox" || fieldType === "switch") {
 				input.addEventListener("change", function () {
 					var s = getSetting(active);
 					if (s) {
@@ -187,6 +219,8 @@
 				});
 			}
 
+			wireUnitSelect(root, settingsMap);
+
 			["pc", "tablet", "phone"].forEach(function (dev) {
 				var s = getSetting(dev);
 				if (!s) {
@@ -203,27 +237,41 @@
 			if (fieldType === "color") {
 				initColorPicker();
 			}
+
+			root.setAttribute("data-trove-r-wired", "1");
 		}
 
 		["pc", "tablet", "phone"].forEach(function (dev) {
-			api(
-				settingsMap[dev],
-				function (setting) {
-					settings[dev] = setting;
-					remaining -= 1;
-					if (remaining === 0) {
-						wireUi();
-					}
+			api(settingsMap[dev], function (setting) {
+				settings[dev] = setting;
+				remaining -= 1;
+				if (remaining === 0) {
+					wireUi();
 				}
-			);
+			});
+		});
+	}
+
+	function scanAndInit() {
+		document.querySelectorAll(".trove-responsive-tabs-control").forEach(initOne);
+	}
+
+	if (api && typeof api.bind === "function") {
+		api.bind("ready", function () {
+			scanAndInit();
 		});
 	}
 
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", function () {
-			document.querySelectorAll(".trove-responsive-tabs-control").forEach(initOne);
-		});
+		document.addEventListener("DOMContentLoaded", scanAndInit);
 	} else {
-		document.querySelectorAll(".trove-responsive-tabs-control").forEach(initOne);
+		scanAndInit();
+	}
+
+	if (typeof MutationObserver !== "undefined" && controlsRoot) {
+		var mo = new MutationObserver(function () {
+			scanAndInit();
+		});
+		mo.observe(controlsRoot, { childList: true, subtree: true });
 	}
 })(wp.customize);

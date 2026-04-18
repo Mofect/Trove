@@ -22,6 +22,9 @@ class TroveTheme {
 	public static function init() {
 		add_action( 'after_setup_theme', array( __CLASS__, 'setup' ) );
 		add_filter( 'body_class', array( __CLASS__, 'filter_body_class_header_logo' ) );
+		add_filter( 'body_class', array( __CLASS__, 'filter_body_class_blog_layout' ) );
+		add_filter( 'body_class', array( __CLASS__, 'filter_body_class_blog_boxed' ) );
+		add_filter( 'body_class', array( __CLASS__, 'filter_body_class_blog_pagination' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_styles' ) );
 		add_action( 'init', array( __CLASS__, 'register_block_styles' ) );
 		add_filter( 'render_block_woocommerce/customer-account', array( __CLASS__, 'replace_account_icon' ), 20 );
@@ -63,11 +66,64 @@ class TroveTheme {
 			$classes = array();
 		}
 		if (
-			( '' !== \Trove\get_header_logo_url() || '' !== \Trove\get_header_logo_dark_url() ) &&
+			'' !== \Trove\get_header_logo_url() &&
 			! in_array( 'has-custom-logo', $classes, true )
 		) {
 			$classes[] = 'has-custom-logo';
 		}
+		return $classes;
+	}
+
+	/**
+	 * Adds `trove-blog-layout--{list|grid|masonry}` on blog index and post archives.
+	 *
+	 * @param string[] $classes Body classes.
+	 * @return string[]
+	 */
+	public static function filter_body_class_blog_layout( $classes ) {
+		if ( ! is_array( $classes ) ) {
+			$classes = array();
+		}
+		if ( ! \Trove\is_blog_listing_view() ) {
+			return $classes;
+		}
+		$classes[] = 'trove-blog-layout--' . \Trove\get_blog_layout();
+		return $classes;
+	}
+
+	/**
+	 * Adds `trove-blog-boxed` when Boxed style is enabled (blog index/archives only).
+	 *
+	 * @param string[] $classes Body classes.
+	 * @return string[]
+	 */
+	public static function filter_body_class_blog_boxed( $classes ) {
+		if ( ! is_array( $classes ) ) {
+			$classes = array();
+		}
+		if ( ! \Trove\is_blog_listing_view() || ! \Trove\is_blog_boxed_style() ) {
+			return $classes;
+		}
+		$classes[] = 'trove-blog-boxed';
+		return $classes;
+	}
+
+	/**
+	 * Adds `trove-blog-pagination--paged` or `trove-blog-pagination--infinite` on blog listings.
+	 *
+	 * @param string[] $classes Body classes.
+	 * @return string[]
+	 */
+	public static function filter_body_class_blog_pagination( $classes ) {
+		if ( ! is_array( $classes ) ) {
+			$classes = array();
+		}
+		if ( ! \Trove\is_blog_listing_view() ) {
+			return $classes;
+		}
+		$classes[] = 'infinite_scroll' === \Trove\get_blog_pagination_type()
+			? 'trove-blog-pagination--infinite'
+			: 'trove-blog-pagination--paged';
 		return $classes;
 	}
 
@@ -165,6 +221,32 @@ class TroveTheme {
 			TROVE_THEME_VERSION,
 			true
 		);
+
+		global $wp_query;
+		$blog_infinite = \Trove\is_blog_listing_view()
+			&& 'infinite_scroll' === \Trove\get_blog_pagination_type()
+			&& ! is_customize_preview()
+			&& isset( $wp_query )
+			&& (int) $wp_query->max_num_pages > 1
+			&& \Trove\get_blog_list_paged() < (int) $wp_query->max_num_pages;
+
+		if ( $blog_infinite ) {
+			wp_enqueue_script(
+				'trove-blog-infinite',
+				get_template_directory_uri() . '/assets/js/blog-infinite-scroll.js',
+				array(),
+				TROVE_THEME_VERSION,
+				true
+			);
+			wp_localize_script(
+				'trove-blog-infinite',
+				'troveInfiniteScroll',
+				array(
+					'loading' => __( 'Loading…', 'trove' ),
+					'error'   => __( 'Could not load more posts.', 'trove' ),
+				)
+			);
+		}
 	}
 
 	/**

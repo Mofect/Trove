@@ -71,3 +71,10 @@ li.customize-control-trove_group_marker {
 	min-width: 0;
 	box-sizing: border-box;
 }
+
+.customize-control-title {
+	font-weight: 400;
+}
+.description.customize-control-description {
+	opacity: .7;
+}

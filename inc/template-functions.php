@@ -48,6 +48,75 @@ function get_announcement_lines() {
 }
 
 /**
+ * Whether the announcement bar is enabled for at least one breakpoint (Customizer).
+ *
+ * @return bool
+ */
+function is_announcement_bar_enabled() {
+	$v = \Trove\Customizer\get_responsive_mod_values(
+		'trove_announcement_enabled',
+		array(
+			'pc'     => true,
+			'tablet' => true,
+			'phone'  => true,
+		)
+	);
+	return wp_validate_boolean( $v['pc'] )
+		|| wp_validate_boolean( $v['tablet'] )
+		|| wp_validate_boolean( $v['phone'] );
+}
+
+/**
+ * Announcement transition: slide or fade.
+ *
+ * @return string 'slide'|'fade'
+ */
+function get_announcement_bar_animation() {
+	$v = get_theme_mod( 'trove_announcement_animation', 'slide' );
+	$v = is_string( $v ) ? sanitize_key( $v ) : 'slide';
+	return in_array( $v, array( 'slide', 'fade' ), true ) ? $v : 'slide';
+}
+
+/**
+ * Whether announcement carousel autoplay is on.
+ *
+ * @return bool
+ */
+function get_announcement_bar_autoplay() {
+	return wp_validate_boolean( get_theme_mod( 'trove_announcement_autoplay', false ) );
+}
+
+/**
+ * Autoplay interval in seconds (2–60).
+ *
+ * @return int
+ */
+function get_announcement_bar_autoplay_interval_seconds() {
+	$s = absint( get_theme_mod( 'trove_announcement_autoplay_interval', 5 ) );
+	return max( 2, min( 60, $s ) );
+}
+
+/**
+ * CSS `font-size` for announcement text from a size slug (Customizer).
+ *
+ * @param string $slug small|medium|big|large.
+ * @return string Pixel value with `px` suffix.
+ */
+function trove_announcement_text_size_slug_to_css( $slug ) {
+	$slug = sanitize_key( (string) $slug );
+	if ( ! in_array( $slug, array( 'small', 'medium', 'big', 'large' ), true ) ) {
+		$slug = 'medium';
+	}
+	$map = array(
+		'small'  => '14px',
+		'medium' => '16px',
+		'big'    => '18px',
+		'large'  => '20px',
+	);
+	return $map[ $slug ];
+}
+
+/**
  * Footer menu term IDs from Customizer slots (1–5), in order.
  *
  * @return array<int> Menu term IDs (0 = empty slot).
@@ -131,38 +200,17 @@ function get_header_logo_url() {
 }
 
 /**
- * Header logo URL for dark header (empty when not set).
- *
- * @return string
- */
-function get_header_logo_dark_url() {
-	$logo_url = get_theme_mod( 'trove_header_logo_dark', '' );
-	return is_string( $logo_url ) ? trim( $logo_url ) : '';
-}
-
-/**
- * Resolved theme header logo URL for the current header scheme, or null to use Site Identity logo or title.
- *
- * The dark-mode logo asset is only used when Header → Styles → Dark mode is on; it is never used on a light header.
+ * Resolved theme header logo URL, or null to use Site Identity logo or title.
  *
  * @return array{type: 'single', url: string}|null
  */
 function get_header_brand_logo_config() {
 	$light = get_header_logo_url();
-	$dark  = get_header_logo_dark_url();
 
-	$header_dark = wp_validate_boolean( get_theme_mod( 'trove_header_dark_mode', false ) );
-
-	if ( $header_dark ) {
-		$url = '' !== $dark ? $dark : $light;
-	} else {
-		$url = '' !== $light ? $light : '';
-	}
-
-	if ( '' !== $url ) {
+	if ( '' !== $light ) {
 		return array(
 			'type' => 'single',
-			'url'  => $url,
+			'url'  => $light,
 		);
 	}
 
@@ -438,4 +486,113 @@ function render_footer_copyright() {
 		echo wp_kses_post( '&copy; ' . esc_html( gmdate( 'Y' ) ) . ' ' . esc_html( get_bloginfo( 'name' ) ) . ' ' . esc_html__( 'All rights reserved.', 'trove' ) );
 	}
 	echo '</span>';
+}
+
+/**
+ * Whether the current template is the blog index or a standard post archive (category, tag, author, date).
+ *
+ * @return bool
+ */
+function is_blog_listing_view() {
+	if ( is_home() ) {
+		return true;
+	}
+	if ( is_category() || is_tag() || is_author() || is_date() ) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Blog listing layout from Customizer: list, grid (3 columns), or masonry (3 columns).
+ *
+ * @return string list|grid|masonry
+ */
+function get_blog_layout() {
+	$v = get_theme_mod( 'trove_blog_layout', 'list' );
+	$v = is_string( $v ) ? sanitize_key( $v ) : 'list';
+	$allowed = array( 'list', 'grid', 'masonry' );
+	return in_array( $v, $allowed, true ) ? $v : 'list';
+}
+
+/**
+ * Current page number for the main query on the blog index and post archives.
+ *
+ * @return int
+ */
+function get_blog_list_paged() {
+	$paged = (int) get_query_var( 'paged' );
+	if ( $paged < 1 ) {
+		$paged = (int) get_query_var( 'page' );
+	}
+	return max( 1, $paged );
+}
+
+/**
+ * Blog listing pagination: numbered links or infinite scroll (Customizer → Blog Posts → Settings).
+ *
+ * @return string paged|infinite_scroll
+ */
+function get_blog_pagination_type() {
+	$v = get_theme_mod( 'trove_blog_pagination_type', 'paged' );
+	$v = is_string( $v ) ? sanitize_key( $v ) : 'paged';
+	$allowed = array( 'paged', 'infinite_scroll' );
+	return in_array( $v, $allowed, true ) ? $v : 'paged';
+}
+
+/**
+ * Featured image placement for the List blog layout (Customizer → Blog Posts → Settings).
+ *
+ * @return string top|left|right
+ */
+function get_blog_list_featured_image_position() {
+	$v = get_theme_mod( 'trove_blog_list_featured_position', 'top' );
+	$v = is_string( $v ) ? sanitize_key( $v ) : 'top';
+	$allowed = array( 'top', 'left', 'right' );
+	return in_array( $v, $allowed, true ) ? $v : 'top';
+}
+
+/**
+ * Whether “Boxed style” is on (Customizer → Blog Posts → Styles).
+ *
+ * @return bool
+ */
+function is_blog_boxed_style() {
+	return wp_validate_boolean( get_theme_mod( 'trove_blog_boxed_style', false ) );
+}
+
+/**
+ * Blog listing: show featured image (Customizer → Blog Posts → Settings).
+ *
+ * @return bool
+ */
+function blog_loop_show_featured_image() {
+	return wp_validate_boolean( get_theme_mod( 'trove_blog_show_featured_image', true ) );
+}
+
+/**
+ * Blog listing: show publication date.
+ *
+ * @return bool
+ */
+function blog_loop_show_date() {
+	return wp_validate_boolean( get_theme_mod( 'trove_blog_show_date', true ) );
+}
+
+/**
+ * Blog listing: show author.
+ *
+ * @return bool
+ */
+function blog_loop_show_author() {
+	return wp_validate_boolean( get_theme_mod( 'trove_blog_show_author', true ) );
+}
+
+/**
+ * Blog listing: show “Continue reading” link.
+ *
+ * @return bool
+ */
+function blog_loop_show_continue_reading() {
+	return wp_validate_boolean( get_theme_mod( 'trove_blog_show_continue_reading', true ) );
 }

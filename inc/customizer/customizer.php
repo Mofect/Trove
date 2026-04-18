@@ -264,50 +264,6 @@ function get_color_swatch_hints_export() {
 		}
 	}
 
-	$footer_styles_path = __DIR__ . '/config/footer/styles.php';
-	if ( is_readable( $footer_styles_path ) ) {
-		$footer_styles = require $footer_styles_path;
-		if ( is_array( $footer_styles ) ) {
-			foreach ( $footer_styles as $control_id => $field ) {
-				if ( ! is_array( $field ) || empty( $field['type'] ) ) {
-					continue;
-				}
-				if ( 'color' === $field['type'] && ! empty( $field['swatch_hint'] ) ) {
-					$out[ $control_id ] = $field['swatch_hint'];
-					continue;
-				}
-				if ( 'color_pair' === $field['type'] && ! empty( $field['swatch_hints'] ) && is_array( $field['swatch_hints'] ) ) {
-					$out[ $control_id ] = array(
-						'left'  => isset( $field['swatch_hints']['left'] ) ? $field['swatch_hints']['left'] : '',
-						'right' => isset( $field['swatch_hints']['right'] ) ? $field['swatch_hints']['right'] : '',
-					);
-				}
-			}
-		}
-	}
-
-	$header_styles_path = __DIR__ . '/config/header/styles.php';
-	if ( is_readable( $header_styles_path ) ) {
-		$header_styles = require $header_styles_path;
-		if ( is_array( $header_styles ) ) {
-			foreach ( $header_styles as $control_id => $field ) {
-				if ( ! is_array( $field ) || empty( $field['type'] ) ) {
-					continue;
-				}
-				if ( 'color' === $field['type'] && ! empty( $field['swatch_hint'] ) ) {
-					$out[ $control_id ] = $field['swatch_hint'];
-					continue;
-				}
-				if ( 'color_pair' === $field['type'] && ! empty( $field['swatch_hints'] ) && is_array( $field['swatch_hints'] ) ) {
-					$out[ $control_id ] = array(
-						'left'  => isset( $field['swatch_hints']['left'] ) ? $field['swatch_hints']['left'] : '',
-						'right' => isset( $field['swatch_hints']['right'] ) ? $field['swatch_hints']['right'] : '',
-					);
-				}
-			}
-		}
-	}
-
 	return $out;
 }
 
@@ -529,9 +485,17 @@ function enqueue_customizer_ui_assets() {
 	);
 
 	wp_enqueue_script(
+		'trove-customizer-swatch-empty',
+		$dir . '/inc/customizer/js/customizer-swatch-empty.js',
+		array( 'customize-controls', 'wp-color-picker', 'trove-customizer-color-pair' ),
+		$ver,
+		true
+	);
+
+	wp_enqueue_script(
 		'trove-customizer-swatch-hints',
 		$dir . '/inc/customizer/js/customizer-swatch-hints.js',
-		array( 'customize-controls', 'trove-customizer-color-pair' ),
+		array( 'customize-controls', 'trove-customizer-swatch-empty' ),
 		$ver,
 		true
 	);
@@ -565,6 +529,16 @@ function enqueue_customizer_ui_assets() {
 		'troveCzSectionTabs',
 		Options_Registry::get_section_tabs_script_data()
 	);
+
+	$swatch_sections = Options_Registry::get_color_swatches_section_ids();
+	if ( ! empty( $swatch_sections ) ) {
+		$ids_json = wp_json_encode( array_values( $swatch_sections ) );
+		wp_add_inline_script(
+			'customize-controls',
+			'jQuery(function($){var s=' . $ids_json . ',i,l;for(i=0,l=s.length;i<l;i++){$("#accordion-section-"+s[i]+",#sub-accordion-section-"+s[i]).addClass("trove-cz-swatches");}});',
+			'after'
+		);
+	}
 }
 
 require_once __DIR__ . '/apply.php';

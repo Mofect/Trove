@@ -20,7 +20,7 @@ body {
 	font-weight: var(--trove-font-base-weight);
 	line-height: var(--trove-font-base-line-height);
 	color: var(--trove-text);
-	background: #fff;
+	background: var(--trove-page-bg, #fff);
 	-webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -159,19 +159,41 @@ main {
 	padding: 0 clamp(1rem, 4vw, 1.25rem) 3rem;
 }
 
+/* Blog grid / masonry: wider main column (Customizer → Blog Posts → Layout) */
+body.trove-blog-layout--grid .site-main,
+body.trove-blog-layout--masonry .site-main {
+	max-width: var(--trove-wide);
+}
+
 /* Header
 --------------------------------------------- */
 
 .trove-announcement-bar {
 	--trove-announcement-total: 1;
 	--trove-announcement-index: 0;
-	font-size: var(--trove-font-base-size, 1.4rem);
+	font-size: var(--trove-announcement-font-size, 16px);
 	line-height: 1.4;
+	min-height: var(--trove-announcement-min-height, auto);
+	display: flex;
+	align-items: center;
 	padding: 0.5em 0.25rem;
-	background-color: var(--trove-header-background, #111827);
-	color: var(--trove-header-text, rgba(255, 255, 255, 0.92));
+	background-color: var(--trove-announcement-background, var(--trove-accent, #000));
+	color: var(--trove-announcement-text, var(--trove-header-text, rgba(255, 255, 255, 0.92)));
 	border-bottom: 1px solid var(--trove-header-border, rgba(255, 255, 255, 0.12));
 	outline: none;
+}
+
+.trove-announcement-bar a {
+	color: var(--trove-announcement-link, var(--trove-header-link, var(--trove-link)));
+	text-decoration-thickness: 1px;
+}
+
+.trove-announcement-bar a:hover,
+.trove-announcement-bar a:focus {
+	color: var(
+		--trove-announcement-link-hover,
+		var(--trove-announcement-link, var(--trove-header-link-hover, var(--trove-link-hover)))
+	);
 }
 
 .trove-announcement-bar:focus-visible {
@@ -183,6 +205,7 @@ main {
 	align-items: center;
 	justify-content: center;
 	gap: 0.15rem;
+	width: 100%;
 	max-width: var(--trove-wide);
 	margin-left: auto;
 	margin-right: auto;
@@ -218,6 +241,36 @@ main {
 	box-sizing: border-box;
 	padding: 0.1em 0.35em;
 	text-align: center;
+}
+
+/* Fade animation: stacked slides in one grid cell */
+.trove-announcement-bar--fade .trove-announcement-bar__track {
+	display: grid;
+	grid-template-columns: 1fr;
+	width: 100% !important;
+	transform: none !important;
+	transition: none;
+}
+
+.trove-announcement-bar--fade .trove-announcement-bar__slide {
+	grid-column: 1;
+	grid-row: 1;
+	min-width: 0;
+	flex: none;
+	opacity: 0;
+	transition: opacity 0.35s ease;
+	z-index: 0;
+}
+
+.trove-announcement-bar--fade .trove-announcement-bar__slide.is-active {
+	opacity: 1;
+	z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.trove-announcement-bar--fade .trove-announcement-bar__slide {
+		transition: none;
+	}
 }
 
 .trove-announcement-bar__nav {
@@ -358,7 +411,7 @@ body.admin-bar .site-header.trove-header-sticky-on_scroll_up {
 }
 
 .site-header__title-link {
-	font-size: 1.6rem;
+	font-size: 2.2rem;
 	font-weight: 700;
 	letter-spacing: -0.01em;
 	color: var(--trove-header-text, rgba(255, 255, 255, 0.95));
@@ -627,7 +680,7 @@ body.has-custom-logo .site-header__tagline {
 .site-footer {
 	margin-top: auto;
 	background-color: var(--trove-footer-background, #000);
-	color: var(--trove-footer-text, rgba(255, 255, 255, 0.9));
+	color: var(--trove-footer-text, var(--trove-text, #111111));
 }
 
 .site-footer__inner {
@@ -716,13 +769,13 @@ body.has-custom-logo .site-header__tagline {
 	width: 20px;
 	height: 20px;
 	border-radius: 999px;
-	color: var(--trove-footer-link, rgba(255, 255, 255, 0.8));
+	color: var(--trove-footer-link, var(--trove-text, #111111));
 	transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .site-footer__social-link:hover,
 .site-footer__social-link:focus {
-	color: var(--trove-footer-link-hover, #ffffff);
+	color: var(--trove-footer-link-hover, var(--trove-link-hover, #003dcc));
 }
 
 .site-footer__menus {
@@ -761,12 +814,12 @@ body.has-custom-logo .site-header__tagline {
 .site-footer__menu-list a {
 	text-decoration: none;
 	font-size: 1.4rem;
-	color: var(--trove-footer-link, rgba(255, 255, 255, 0.8));
+	color: var(--trove-footer-link, var(--trove-text, #111111));
 }
 
 .site-footer__menu-list a:hover,
 .site-footer__menu-list a:focus {
-	color: var(--trove-footer-link-hover, #ffffff);
+	color: var(--trove-footer-link-hover, var(--trove-link-hover, #003dcc));
 	text-decoration: underline;
 }
 
@@ -828,7 +881,7 @@ input[type="email"].site-footer__subscribe-input {
 
 .site-footer__subscribe-button:hover,
 .site-footer__subscribe-button:focus {
-	color: var(--trove-footer-link-hover, var(--trove-link-hover, #064fff));
+	color: var(--trove-footer-link-hover, var(--trove-link-hover, #003dcc));
 }
 
 .site-footer__bottom {
@@ -851,25 +904,25 @@ input[type="email"].site-footer__subscribe-input {
 
 .site-footer.light-scheme {
 	background-color: var(--trove-footer-background, #f8f7f3);
-	color: var(--trove-footer-text, #1f2937);
+	color: var(--trove-footer-text, var(--trove-text, #111111));
 }
 
 .site-footer.light-scheme .site-footer__menu-list a {
-	color: var(--trove-footer-link, rgba(17, 24, 39, 0.75));
+	color: var(--trove-footer-link, var(--trove-text, #111111));
 }
 
 .site-footer.light-scheme .site-footer__menu-list a:hover,
 .site-footer.light-scheme .site-footer__menu-list a:focus {
-	color: var(--trove-footer-link-hover, #111827);
+	color: var(--trove-footer-link-hover, var(--trove-link-hover, #003dcc));
 }
 
 .site-footer.light-scheme .site-footer__social-link {
-	color: var(--trove-footer-link, rgba(17, 24, 39, 0.75));
+	color: var(--trove-footer-link, var(--trove-text, #111111));
 }
 
 .site-footer.light-scheme .site-footer__social-link:hover,
 .site-footer.light-scheme .site-footer__social-link:focus {
-	color: var(--trove-footer-link-hover, #111827);
+	color: var(--trove-footer-link-hover, var(--trove-link-hover, #003dcc));
 }
 
 .site-footer.light-scheme .site-footer__subscribe-input {
@@ -906,7 +959,111 @@ input[type="email"].site-footer__subscribe-input {
 --------------------------------------------- */
 
 .entry {
-	margin: 2.5rem 0;
+	margin: 0 0 2.5rem;
+}
+
+.trove-blog-loop--list {
+	padding: 4rem 0 1.5rem;
+}
+
+/* List layout: featured image (Customizer → Blog Posts → Settings → position) */
+.trove-blog-loop--list .entry--list .entry-card__body {
+	display: block;
+}
+
+.trove-blog-loop--list .entry--list.entry--featured-pos-top .entry-card__media {
+	margin: 0 0 1rem;
+	line-height: 0;
+}
+
+.trove-blog-loop--list .entry--list.entry--featured-pos-top .entry-card__thumb-img {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 16 / 9;
+	object-fit: cover;
+}
+
+.trove-blog-loop--list .entry--list.entry--featured-pos-left,
+.trove-blog-loop--list .entry--list.entry--featured-pos-right {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	gap: 1.25rem;
+}
+
+.trove-blog-loop--list .entry--list.entry--featured-pos-right {
+	flex-direction: row-reverse;
+}
+
+.trove-blog-loop--list .entry--list.entry--featured-pos-left .entry-card__media,
+.trove-blog-loop--list .entry--list.entry--featured-pos-right .entry-card__media {
+	flex: 0 0 40%;
+	width: 40%;
+	max-width: 40%;
+	min-width: 0;
+	margin: 0;
+	line-height: 0;
+	align-self: stretch;
+	position: relative;
+	overflow: hidden;
+	min-height: 0;
+}
+
+.trove-blog-loop--list .entry--list.entry--featured-pos-left .entry-card__media a,
+.trove-blog-loop--list .entry--list.entry--featured-pos-right .entry-card__media a {
+	display: block;
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.trove-blog-loop--list .entry--list.entry--featured-pos-left .entry-card__thumb-img,
+.trove-blog-loop--list .entry--list.entry--featured-pos-right .entry-card__thumb-img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.trove-blog-loop--list .entry--list.entry--featured-pos-left .entry-card__body,
+.trove-blog-loop--list .entry--list.entry--featured-pos-right .entry-card__body {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+@media (max-width: 560px) {
+	.trove-blog-loop--list .entry--list.entry--featured-pos-left,
+	.trove-blog-loop--list .entry--list.entry--featured-pos-right {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.trove-blog-loop--list .entry--list.entry--featured-pos-left .entry-card__media,
+	.trove-blog-loop--list .entry--list.entry--featured-pos-right .entry-card__media {
+		flex: none;
+		width: 100%;
+		max-width: none;
+		align-self: auto;
+		height: auto;
+		position: relative;
+	}
+
+	.trove-blog-loop--list .entry--list.entry--featured-pos-left .entry-card__media a,
+	.trove-blog-loop--list .entry--list.entry--featured-pos-right .entry-card__media a {
+		position: static;
+		width: 100%;
+		height: auto;
+	}
+
+	.trove-blog-loop--list .entry--list.entry--featured-pos-left .entry-card__thumb-img,
+	.trove-blog-loop--list .entry--list.entry--featured-pos-right .entry-card__thumb-img {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+	}
 }
 
 .entry-title {
@@ -955,6 +1112,29 @@ input[type="email"].site-footer__subscribe-input {
 	margin: 0.75rem 0 0;
 }
 
+/* Blog listing loop: max lines for title + excerpt (template-parts/content.php) */
+.trove-blog-loop .entry-title {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+	line-clamp: 3;
+	word-break: break-word;
+}
+
+.trove-blog-loop .entry-summary__text {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 5;
+	overflow: hidden;
+	line-clamp: 5;
+	word-break: break-word;
+}
+
+.trove-blog-loop .entry-summary__text > p:first-child {
+	margin-top: 0;
+}
+
 .entry-content {
 	font-size: 16px;
 }
@@ -980,6 +1160,137 @@ input[type="email"].site-footer__subscribe-input {
 
 .post-nav {
 	margin-top: 2rem;
+}
+
+/* Blog index & archives: list | 3-col grid | 3-col masonry (Customizer → Blog Posts → Layout) */
+.trove-blog-loop--grid,
+.trove-blog-loop--masonry {
+	--trove-blog-loop-gap: 1.5rem;
+	padding: 3rem 0;
+}
+
+.trove-blog-loop--grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--trove-blog-loop-gap);
+	align-items: stretch;
+}
+
+.trove-blog-loop--masonry {
+	column-count: 3;
+	column-gap: var(--trove-blog-loop-gap);
+}
+
+.trove-blog-loop--grid .entry--card {
+	margin-top: 0;
+	margin-bottom: 0;
+	border: 0 solid transparent;
+	border-radius: 10px;
+	overflow: hidden;
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.trove-blog-loop--masonry .entry--card {
+	break-inside: avoid;
+	display: inline-block;
+	width: 100%;
+	vertical-align: top;
+	margin-top: 0;
+	margin-bottom: var(--trove-blog-loop-gap);
+	border: 0 solid transparent;
+	border-radius: 10px;
+	overflow: hidden;
+	background: #fff;
+}
+
+body.trove-blog-boxed .trove-blog-loop--grid .entry--card,
+body.trove-blog-boxed .trove-blog-loop--masonry .entry--card {
+	border: 1px solid var(--trove-border);
+	border-radius: var(--trove-blog-boxed-radius, 10px);
+}
+
+/* List layout: outer border when Boxed style is on */
+body.trove-blog-boxed.trove-blog-layout--list .trove-blog-loop .entry--list {
+	border: 1px solid var(--trove-border);
+	border-radius: var(--trove-blog-boxed-radius, 10px);
+	overflow: hidden;
+}
+
+body.trove-blog-boxed.trove-blog-layout--list .trove-blog-loop--list .entry--list .entry-card__body {
+	padding: 2rem;
+}
+
+.trove-blog-loop--grid .entry-card__body {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	padding: 1rem 0 1.15rem;
+}
+
+.trove-blog-loop--masonry .entry-card__body {
+	padding: 1rem 0 1.15rem;
+}
+
+body.trove-blog-boxed .trove-blog-loop--grid .entry-card__body,
+body.trove-blog-boxed .trove-blog-loop--masonry .entry-card__body {
+	padding: 2.5rem 2rem 2rem;
+}
+
+.trove-blog-loop--grid .entry-card__media,
+.trove-blog-loop--masonry .entry-card__media {
+	margin: 0;
+	line-height: 0;
+}
+
+.trove-blog-loop--grid .entry-card__media a,
+.trove-blog-loop--masonry .entry-card__media a {
+	display: block;
+}
+
+.trove-blog-loop--grid .entry-card__thumb-img,
+.trove-blog-loop--masonry .entry-card__thumb-img {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 4 / 3;
+	object-fit: cover;
+}
+
+.trove-blog-loop--grid .entry-card__body .entry-title,
+.trove-blog-loop--masonry .entry-card__body .entry-title {
+	font-size: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+.trove-blog-loop--grid .entry-summary {
+	font-size: 15px;
+	flex: 1 1 auto;
+}
+
+.trove-blog-loop--masonry .entry-summary {
+	font-size: 15px;
+}
+
+@media (max-width: 900px) {
+	.trove-blog-loop--grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.trove-blog-loop--masonry {
+		column-count: 2;
+	}
+}
+
+@media (max-width: 560px) {
+	.trove-blog-loop--grid {
+		grid-template-columns: 1fr;
+	}
+
+	.trove-blog-loop--masonry {
+		column-count: 1;
+	}
 }
 
 /* Archives & 404
@@ -1014,12 +1325,41 @@ input[type="email"].site-footer__subscribe-input {
 	margin-top: 2rem;
 }
 
+.site-main > .navigation.pagination .nav-links {
+	justify-content: center;
+	width: 100%;
+}
+
 .page-numbers {
 	display: inline-flex;
 	gap: 0.5rem;
 	list-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+/* Blog infinite scroll (Customizer → Blog Posts → Settings → Infinite scroll) */
+.trove-blog-infinite-sentinel {
+	min-height: 1px;
+	margin-top: 1.5rem;
+}
+
+.trove-blog-infinite-sentinel.is-loading::after {
+	content: '';
+	display: block;
+	width: 2rem;
+	height: 2rem;
+	margin: 1rem auto;
+	border: 2px solid var(--trove-border);
+	border-top-color: var(--trove-accent, #000);
+	border-radius: 50%;
+	animation: trove-blog-infinite-spin 0.75s linear infinite;
+}
+
+@keyframes trove-blog-infinite-spin {
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 /* Comments

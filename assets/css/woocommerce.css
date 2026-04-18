@@ -6,7 +6,7 @@
 }
 
 /*
- * Header mini-cart count badge (Customizer → Header → Styles: Cart badge / Cart count).
+ * Header mini-cart count badge (Customizer → Colors: Cart badge / Cart count).
  * !important beats WooCommerce Interactivity inline badge colors when theme vars are set.
  */
 .site-header .site-header__woo .wc-block-mini-cart .wc-block-mini-cart__badge {

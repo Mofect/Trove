@@ -16,6 +16,10 @@ defined( 'ABSPATH' ) || exit;
  */
 function trove_color_theme_mod_definitions() {
 	return array(
+		'trove_color_page_background'  => array(
+			'var'     => '--trove-page-bg',
+			'default' => '#ffffff',
+		),
 		'trove_color_base_text'        => array(
 			'var'     => '--trove-text',
 			'default' => '#111111',
@@ -47,6 +51,46 @@ function trove_color_theme_mod_definitions() {
 		'trove_color_accent'           => array(
 			'var'     => '--trove-accent',
 			'default' => '#064fff',
+		),
+		'trove_header_background'      => array(
+			'var'     => '--trove-header-background',
+			'default' => '#ffffff',
+		),
+		'trove_header_text_color'      => array(
+			'var'     => '--trove-header-text',
+			'default' => '#111111',
+		),
+		'trove_header_link_color'      => array(
+			'var'     => '--trove-header-link',
+			'default' => '#064fff',
+		),
+		'trove_header_link_hover_color' => array(
+			'var'     => '--trove-header-link-hover',
+			'default' => '#003dcc',
+		),
+		'trove_footer_background'      => array(
+			'var'     => '--trove-footer-background',
+			'default' => '#eeeeee',
+		),
+		'trove_footer_text_color'      => array(
+			'var'     => '--trove-footer-text',
+			'default' => '#111111',
+		),
+		'trove_footer_link_color'      => array(
+			'var'     => '--trove-footer-link',
+			'default' => '#064fff',
+		),
+		'trove_footer_link_hover_color' => array(
+			'var'     => '--trove-footer-link-hover',
+			'default' => '#003dcc',
+		),
+		'trove_header_cart_badge_color' => array(
+			'var'     => '--trove-header-cart-badge-bg',
+			'default' => '#064fff',
+		),
+		'trove_header_cart_count_color' => array(
+			'var'     => '--trove-header-cart-count',
+			'default' => '#ffffff',
 		),
 	);
 }
@@ -355,6 +399,55 @@ function trove_number_unit_css_value( $number_setting, $unit_setting, $default, 
 }
 
 /**
+ * Min-height CSS for announcement bar from a raw number + unit (matches Customizer input range).
+ *
+ * @param mixed  $raw  Raw number.
+ * @param string $unit `px` or `rem`.
+ * @return string
+ */
+function trove_announcement_height_raw_to_css( $raw, $unit ) {
+	$unit = trove_sanitize_font_base_size_unit( (string) $unit );
+	$v    = is_numeric( $raw ) ? (float) $raw : 48.0;
+	$v    = trove_sanitize_font_base_size( $v );
+	if ( 'px' === $unit ) {
+		$n = (int) round( $v );
+		$n = max( 24, min( 120, $n ) );
+		return $n . 'px';
+	}
+	$f = max( 0.25, min( 32, $v ) );
+	return trove_format_css_float_string( $f ) . $unit;
+}
+
+/**
+ * Hide `.trove-announcement-bar` per breakpoint when that device’s “show” toggle is off.
+ *
+ * @param array<string, mixed> $enabled_by_device Keys pc, tablet, phone (booleans).
+ * @param array{tablet:int,phone:int} $bp Breakpoints (max-width).
+ * @return string CSS fragment.
+ */
+function trove_announcement_bar_responsive_visibility_css( array $enabled_by_device, array $bp ) {
+	$e_pc  = wp_validate_boolean( isset( $enabled_by_device['pc'] ) ? $enabled_by_device['pc'] : true );
+	$e_tab = wp_validate_boolean( isset( $enabled_by_device['tablet'] ) ? $enabled_by_device['tablet'] : true );
+	$e_ph  = wp_validate_boolean( isset( $enabled_by_device['phone'] ) ? $enabled_by_device['phone'] : true );
+	if ( $e_pc && $e_tab && $e_ph ) {
+		return '';
+	}
+	$tablet = isset( $bp['tablet'] ) ? (int) $bp['tablet'] : 1024;
+	$phone  = isset( $bp['phone'] ) ? (int) $bp['phone'] : 781;
+	$css    = '';
+	if ( ! $e_pc ) {
+		$css .= '@media (min-width:' . ( $tablet + 1 ) . 'px){.trove-announcement-bar{display:none!important;}}';
+	}
+	if ( ! $e_tab ) {
+		$css .= '@media (max-width:' . $tablet . 'px) and (min-width:' . ( $phone + 1 ) . 'px){.trove-announcement-bar{display:none!important;}}';
+	}
+	if ( ! $e_ph ) {
+		$css .= '@media (max-width:' . $phone . 'px){.trove-announcement-bar{display:none!important;}}';
+	}
+	return $css;
+}
+
+/**
  * @param string $weight_setting Weight setting id.
  * @param string $family_setting Family setting id.
  * @param int    $default_weight Default value.
@@ -431,18 +524,6 @@ function trove_clamp_content_width( $width ) {
 }
 
 /**
- * Excerpt length from Customizer (Blog section).
- *
- * @param int $length Default length.
- * @return int
- */
-function filter_excerpt_length( $length ) {
-	$custom = get_theme_mod( 'trove_excerpt_length', 40 );
-	return absint( $custom ) > 0 ? absint( $custom ) : $length;
-}
-add_filter( 'excerpt_length', __NAMESPACE__ . '\\filter_excerpt_length', 20 );
-
-/**
  * Inline CSS for accent, content width, and header border.
  */
 function trove_build_theme_variable_css( $selector = ':root', $include_responsive_content = true ) {
@@ -466,16 +547,9 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 	foreach ( trove_color_theme_mod_definitions() as $mod_key => $row ) {
 		$root_parts[] = $row['var'] . ':' . esc_attr( trove_color_theme_mod( $mod_key, $row['default'] ) );
 	}
-	$footer_bg = trove_sanitize_css_color( (string) get_theme_mod( 'trove_footer_background', '' ) );
-	if ( '' !== $footer_bg ) {
-		$root_parts[] = '--trove-footer-background:' . esc_attr( $footer_bg );
-	}
 
 	$footer_color_mods = array(
-		'trove_footer_text_color'       => '--trove-footer-text',
-		'trove_footer_link_color'       => '--trove-footer-link',
-		'trove_footer_link_hover_color' => '--trove-footer-link-hover',
-		'trove_footer_border_color'     => '--trove-footer-border',
+		'trove_footer_border_color' => '--trove-footer-border',
 	);
 	foreach ( $footer_color_mods as $mod_key => $css_var ) {
 		$c = trove_sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
@@ -484,16 +558,8 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 		}
 	}
 
-	$header_bg = trove_sanitize_css_color( (string) get_theme_mod( 'trove_header_background', '' ) );
-	if ( '' !== $header_bg ) {
-		$root_parts[] = '--trove-header-background:' . esc_attr( $header_bg );
-	}
-
 	$header_color_mods = array(
-		'trove_header_text_color'       => '--trove-header-text',
-		'trove_header_link_color'       => '--trove-header-link',
-		'trove_header_link_hover_color' => '--trove-header-link-hover',
-		'trove_header_border_color'     => '--trove-header-border',
+		'trove_header_border_color' => '--trove-header-border',
 	);
 	foreach ( $header_color_mods as $mod_key => $css_var ) {
 		$c = trove_sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
@@ -502,16 +568,36 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 		}
 	}
 
-	if ( class_exists( 'WooCommerce' ) ) {
-		$wc_header_cart_mods = array(
-			'trove_header_cart_badge_color'  => '--trove-header-cart-badge-bg',
-			'trove_header_cart_count_color' => '--trove-header-cart-count',
-		);
-		foreach ( $wc_header_cart_mods as $mod_key => $css_var ) {
-			$c = trove_sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
-			if ( '' !== $c ) {
-				$root_parts[] = $css_var . ':' . esc_attr( $c );
-			}
+	$ann_h_vals = get_responsive_mod_values(
+		'trove_announcement_height',
+		array(
+			'pc'     => 48,
+			'tablet' => 48,
+			'phone'  => 48,
+		)
+	);
+	$ann_h_unit = (string) get_theme_mod( 'trove_announcement_height_unit', 'px' );
+	$fz_vals    = get_responsive_mod_values(
+		'trove_announcement_text_size',
+		array(
+			'pc'     => 'medium',
+			'tablet' => 'medium',
+			'phone'  => 'medium',
+		)
+	);
+	$root_parts[] = '--trove-announcement-min-height:' . esc_attr( trove_announcement_height_raw_to_css( $ann_h_vals['pc'], $ann_h_unit ) );
+	$root_parts[] = '--trove-announcement-font-size:' . esc_attr( \Trove\trove_announcement_text_size_slug_to_css( $fz_vals['pc'] ) );
+
+	$announcement_color_mods = array(
+		'trove_announcement_background'       => '--trove-announcement-background',
+		'trove_announcement_text_color'       => '--trove-announcement-text',
+		'trove_announcement_link_color'     => '--trove-announcement-link',
+		'trove_announcement_link_hover_color' => '--trove-announcement-link-hover',
+	);
+	foreach ( $announcement_color_mods as $mod_key => $css_var ) {
+		$c = trove_sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
+		if ( '' !== $c ) {
+			$root_parts[] = $css_var . ':' . esc_attr( $c );
 		}
 	}
 
@@ -520,6 +606,10 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 
 	$root_parts[] = '--trove-wide:1200px';
 	$root_parts[] = '--trove-content:' . (int) $w_pc . 'px';
+
+	$boxed_radius = absint( get_theme_mod( 'trove_blog_boxed_border_radius', 10 ) );
+	$boxed_radius = max( 0, min( 20, $boxed_radius ) );
+	$root_parts[] = '--trove-blog-boxed-radius:' . (int) $boxed_radius . 'px';
 	$root_parts[] = '--trove-font-body-scale:1';
 	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
 		$prefix = 'trove_' . $scope;
@@ -552,11 +642,11 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 	$css .= '.site-footer__extra-responsive .trove-fe--tablet,.site-footer__extra-responsive .trove-fe--phone{display:none;}';
 	$css .= '.site-footer__extra-responsive .trove-fe--pc{display:block;}';
 	if ( $include_responsive_content ) {
-		$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{--trove-content:' . (int) $w_tablet . 'px;}}';
+		$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{--trove-content:' . (int) $w_tablet . 'px;--trove-announcement-min-height:' . esc_attr( trove_announcement_height_raw_to_css( $ann_h_vals['tablet'], $ann_h_unit ) ) . ';--trove-announcement-font-size:' . esc_attr( \Trove\trove_announcement_text_size_slug_to_css( $fz_vals['tablet'] ) ) . ';}}';
 	}
 	$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){.site-footer__extra-responsive .trove-fe--pc{display:none;}.site-footer__extra-responsive .trove-fe--tablet{display:block;}}';
 	if ( $include_responsive_content ) {
-		$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{--trove-content:' . (int) $w_phone . 'px;}.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
+		$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{--trove-content:' . (int) $w_phone . 'px;--trove-announcement-min-height:' . esc_attr( trove_announcement_height_raw_to_css( $ann_h_vals['phone'], $ann_h_unit ) ) . ';--trove-announcement-font-size:' . esc_attr( \Trove\trove_announcement_text_size_slug_to_css( $fz_vals['phone'] ) ) . ';}.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
 	} else {
 		$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
 	}
@@ -565,6 +655,16 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 	if ( $header_min > 0 && $header_min <= 400 ) {
 		$css .= '.site-header{min-height:' . $header_min . 'px;}';
 	}
+
+	$ann_enabled = get_responsive_mod_values(
+		'trove_announcement_enabled',
+		array(
+			'pc'     => true,
+			'tablet' => true,
+			'phone'  => true,
+		)
+	);
+	$css .= trove_announcement_bar_responsive_visibility_css( $ann_enabled, $bp );
 
 	return $css;
 }
@@ -635,6 +735,7 @@ function trove_preview_number_unit_pairs() {
 		$pairs[ $size_setting ] = array( 'unit' => $size_unit, 'var' => $size_var, 'mode' => 'size' );
 		$pairs[ $line_setting ] = array( 'unit' => $line_unit, 'var' => $line_var, 'mode' => 'line_height' );
 	}
+
 	return $pairs;
 }
 
@@ -646,7 +747,14 @@ function enqueue_customizer_preview_scripts() {
 	$uri = get_template_directory_uri();
 
 	$preview_colors = array();
+	$preview_color_exclude = array(
+		'trove_header_cart_badge_color',
+		'trove_header_cart_count_color',
+	);
 	foreach ( trove_color_theme_mod_definitions() as $mod => $row ) {
+		if ( in_array( $mod, $preview_color_exclude, true ) ) {
+			continue;
+		}
 		$preview_colors[ $mod ] = array(
 			'var'     => $row['var'],
 			'default' => $row['default'],
@@ -686,7 +794,9 @@ function enqueue_customizer_preview_scripts() {
 				'newsletterTitleDefault'      => __( 'Subscribe to our emails', 'trove' ),
 				'newsletterDescriptionDefault' => __( 'Subscribe to our newsletter to get the latest news and updates.', 'trove' ),
 			),
-			'woocommerceHeaderCart' => class_exists( 'WooCommerce' ),
+			'woocommerceHeaderCart'        => class_exists( 'WooCommerce' ),
+			'defaultAnnouncementLinesJson' => \Trove\get_default_announcement_lines_json(),
+			'responsiveBreakpoints'          => get_responsive_breakpoints_max(),
 		)
 	);
 }
@@ -703,7 +813,7 @@ function register_footer_content_preview_partial( $wp_customize ) {
 		return;
 	}
 
-	// Layout/logo/menus: selective refresh. Dark mode + text toggles: postMessage in customizer-preview.js only — avoids preview iframe full reload.
+	// Layout/logo/menus: selective refresh. Color overrides: postMessage in customizer-preview.js only — avoids preview iframe full reload.
 	$settings = array(
 		'trove_footer_layout',
 		'trove_footer_logo',
@@ -742,10 +852,7 @@ function render_footer_content_preview_partial() {
  */
 function get_header_classnames() {
 	$classes = array( 'site-header' );
-	$header_dark_mode = wp_validate_boolean( get_theme_mod( 'trove_header_dark_mode', false ) );
-	if ( ! $header_dark_mode ) {
-		$classes[] = 'light-scheme';
-	}
+	$classes[] = 'light-scheme';
 	if ( get_theme_mod( 'trove_header_bottom_border', false ) ) {
 		$classes[] = 'trove-header-has-border';
 	}

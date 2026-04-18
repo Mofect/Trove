@@ -68,6 +68,33 @@
 	margin-top: 6px;
 }
 
+.trove-r-field-wrap .trove-r-switch .trove-cz-switch__row {
+	justify-content: flex-start;
+}
+
+/* Number + shared unit (e.g. announcement height) */
+.trove-r-input-unit-row {
+	display: flex;
+	align-items: stretch;
+	gap: 8px;
+	width: 100%;
+}
+
+.trove-r-input-unit-row .trove-r-number-input {
+	flex: 1 1 auto;
+	min-width: 0;
+	width: auto;
+	max-width: none;
+}
+
+.trove-r-input-unit-row .trove-r-unit-select {
+	flex: 0 0 auto;
+	min-width: 4.5em;
+	max-width: 40%;
+	height: auto;
+	line-height: 1.4;
+}
+
 .trove-r-field-wrap .trove-r-checkbox-label {
 	display: inline-flex;
 	align-items: center;

@@ -48,6 +48,20 @@ class Responsive_Tabs_Control extends WP_Customize_Control {
 	public $trove_choices = array();
 
 	/**
+	 * Optional theme_mod id for a shared unit (px/rem) shown beside number inputs.
+	 *
+	 * @var string
+	 */
+	public $trove_unit_setting = '';
+
+	/**
+	 * Options for the unit select (value => label).
+	 *
+	 * @var array<string, string>
+	 */
+	public $trove_unit_choices = array();
+
+	/**
 	 * @return void
 	 */
 	protected function render_content() {
@@ -69,6 +83,11 @@ class Responsive_Tabs_Control extends WP_Customize_Control {
 			class="trove-responsive-tabs-control"
 			data-field-type="<?php echo esc_attr( $field ); ?>"
 			data-settings="<?php echo esc_attr( wp_json_encode( $map ) ); ?>"
+			<?php
+			if ( 'number' === $field && $this->trove_unit_setting && ! empty( $this->trove_unit_choices ) && is_array( $this->trove_unit_choices ) ) {
+				echo ' data-trove-unit-setting="' . esc_attr( $this->trove_unit_setting ) . '"';
+			}
+			?>
 		>
 			<div class="trove-r-heading">
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -113,6 +132,9 @@ class Responsive_Tabs_Control extends WP_Customize_Control {
 			case 'number':
 				$this->render_number();
 				break;
+			case 'switch':
+				$this->render_switch();
+				break;
 			case 'checkbox':
 				$this->render_checkbox();
 				break;
@@ -150,15 +172,61 @@ class Responsive_Tabs_Control extends WP_Customize_Control {
 		$min   = isset( $attrs['min'] ) ? (string) $attrs['min'] : '';
 		$max   = isset( $attrs['max'] ) ? (string) $attrs['max'] : '';
 		$step  = isset( $attrs['step'] ) ? (string) $attrs['step'] : 'any';
+		$has_unit = $this->trove_unit_setting && ! empty( $this->trove_unit_choices ) && is_array( $this->trove_unit_choices );
+		if ( $has_unit ) {
+			?>
+			<div class="trove-r-input-unit-row">
+			<?php
+		}
 		?>
 		<input
 			type="number"
-			class="trove-r-active-input widefat"
+			class="trove-r-active-input<?php echo $has_unit ? ' trove-r-number-input' : ' widefat'; ?>"
 			value=""
 			<?php echo $min ? ' min="' . esc_attr( $min ) . '"' : ''; ?>
 			<?php echo $max ? ' max="' . esc_attr( $max ) . '"' : ''; ?>
 			step="<?php echo esc_attr( $step ); ?>"
 		/>
+		<?php
+		if ( $has_unit ) {
+			?>
+			<select class="trove-r-unit-select" aria-label="<?php esc_attr_e( 'Unit', 'trove' ); ?>">
+				<?php
+				foreach ( $this->trove_unit_choices as $val => $opt_label ) {
+					printf(
+						'<option value="%s">%s</option>',
+						esc_attr( (string) $val ),
+						esc_html( (string) $opt_label )
+					);
+				}
+				?>
+			</select>
+			</div>
+			<?php
+		}
+	}
+
+	/**
+	 * Pill switch (same interaction as checkbox for responsive-tabs.js).
+	 *
+	 * @return void
+	 */
+	private function render_switch() {
+		?>
+		<div class="trove-cz-switch trove-r-switch">
+			<label class="trove-cz-switch__row">
+				<span class="screen-reader-text"><?php esc_html_e( 'Show', 'trove' ); ?></span>
+				<span class="trove-cz-switch__track-wrap">
+					<input
+						type="checkbox"
+						class="trove-r-active-input trove-cz-switch__input"
+					/>
+					<span class="trove-cz-switch__track" aria-hidden="true">
+						<span class="trove-cz-switch__knob"></span>
+					</span>
+				</span>
+			</label>
+		</div>
 		<?php
 	}
 

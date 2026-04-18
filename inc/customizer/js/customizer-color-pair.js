@@ -46,6 +46,9 @@
 				} else if ( defHex ) {
 					$input.val( defHex );
 					$input.wpColorPicker( 'color', defHex );
+				} else {
+					$input.val( '' );
+					$input.wpColorPicker( 'color', '' );
 				}
 			} );
 		} );

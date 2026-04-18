@@ -532,87 +532,134 @@
 			onChange( value.get() );
 		} );
 
-		wp.customize( 'trove_header_dark_mode', function ( value ) {
-			function applyHeaderThemeLogoForDarkMode( isDark ) {
-				var img = document.querySelector(
-					'header.site-header .site-header__brand img.site-header__logo'
-				);
-				if ( ! img || typeof wp === 'undefined' || ! wp.customize || ! wp.customize.instance ) {
+		wp.customize( 'trove_announcement_background', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-announcement-background', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_announcement_text_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-announcement-text', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_announcement_link_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-announcement-link', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_announcement_link_hover_color', function ( value ) {
+			function onChange( newVal ) {
+				applyRootCssColorVar( '--trove-announcement-link-hover', newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		( function bindAnnouncementResponsivePreview() {
+			function announcementMinHeightPreviewCss( raw, unit ) {
+				var u = unit ? String( unit ).toLowerCase() : 'px';
+				if ( u !== 'px' && u !== 'rem' ) {
+					u = 'px';
+				}
+				var v = parseFloat( raw, 10 );
+				if ( isNaN( v ) ) {
+					v = 48;
+				}
+				if ( u === 'px' ) {
+					var n = Math.round( v );
+					n = Math.max( 24, Math.min( 120, n ) );
+					return n + 'px';
+				}
+				var f = Math.max( 0.25, Math.min( 32, v ) );
+				return formatCssFloatStr( f ) + 'rem';
+			}
+
+			function announcementTextSizeSlugToCss( slug ) {
+				var k = String( slug == null ? 'medium' : slug ).trim();
+				var map = {
+					small: '14px',
+					medium: '16px',
+					big: '18px',
+					large: '20px',
+				};
+				return map[ k ] || map.medium;
+			}
+
+			function getAnnouncementPreviewDevice() {
+				var cfg =
+					typeof troveCustomizerPreview !== 'undefined' &&
+					troveCustomizerPreview.responsiveBreakpoints
+						? troveCustomizerPreview.responsiveBreakpoints
+						: { tablet: 1024, phone: 781 };
+				var tablet = parseInt( cfg.tablet, 10 ) || 1024;
+				var phone = parseInt( cfg.phone, 10 ) || 781;
+				var w = window.innerWidth || document.documentElement.clientWidth || tablet + 1;
+				if ( w <= phone ) {
+					return 'phone';
+				}
+				if ( w <= tablet ) {
+					return 'tablet';
+				}
+				return 'pc';
+			}
+
+			function applyAnnouncementResponsivePreviewVars() {
+				if ( typeof wp === 'undefined' || ! wp.customize || ! wp.customize.instance ) {
 					return;
 				}
-				var light = '';
-				var dark = '';
 				try {
-					if ( wp.customize.instance( 'trove_header_logo' ) ) {
-						light = String( wp.customize.instance( 'trove_header_logo' ).get() || '' ).trim();
-					}
-					if ( wp.customize.instance( 'trove_header_logo_dark' ) ) {
-						dark = String( wp.customize.instance( 'trove_header_logo_dark' ).get() || '' ).trim();
-					}
+					var unitInst = wp.customize.instance( 'trove_announcement_height_unit' );
+					var unit = unitInst ? unitInst.get() : 'px';
+					var dev = getAnnouncementPreviewDevice();
+					var hId = 'trove_announcement_height_' + dev;
+					var fzId = 'trove_announcement_text_size_' + dev;
+					var hInst = wp.customize.instance( hId );
+					var fzInst = wp.customize.instance( fzId );
+					var rawH = hInst ? hInst.get() : 48;
+					var rawFz = fzInst ? fzInst.get() : 'medium';
+					document.documentElement.style.setProperty(
+						'--trove-announcement-min-height',
+						announcementMinHeightPreviewCss( rawH, unit )
+					);
+					document.documentElement.style.setProperty(
+						'--trove-announcement-font-size',
+						announcementTextSizeSlugToCss( rawFz )
+					);
 				} catch ( err ) {
 					return;
 				}
-				if ( ! light && ! dark ) {
-					return;
-				}
-				var next = isDark ? dark || light : light || '';
-				if ( next && img.getAttribute( 'src' ) !== next ) {
-					img.setAttribute( 'src', next );
-				}
 			}
 
-			function onChange( newVal ) {
-				var header = getHeaderRoot();
-				if ( ! header ) {
-					return;
-				}
-				var isDark = troveCustomizeBool( newVal );
-				header.classList.toggle( 'light-scheme', ! isDark );
-				applyHeaderThemeLogoForDarkMode( isDark );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_header_background', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-header-background', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_header_text_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-header-text', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_header_link_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-header-link', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_header_link_hover_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-header-link-hover', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_header_border_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-header-border', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
+			var annResponsiveIds = [
+				'trove_announcement_height_pc',
+				'trove_announcement_height_tablet',
+				'trove_announcement_height_phone',
+				'trove_announcement_height_unit',
+				'trove_announcement_text_size_pc',
+				'trove_announcement_text_size_tablet',
+				'trove_announcement_text_size_phone',
+			];
+			annResponsiveIds.forEach( function ( id ) {
+				wp.customize( id, function ( value ) {
+					value.bind( function () {
+						applyAnnouncementResponsivePreviewVars();
+					} );
+				} );
+			} );
+			applyAnnouncementResponsivePreviewVars();
+			window.addEventListener( 'resize', function () {
+				applyAnnouncementResponsivePreviewVars();
+			} );
+		} )();
 
 		wp.customize( 'trove_header_logo_width', function ( value ) {
 			function onChange( newVal ) {
@@ -705,10 +752,33 @@
 			} )();
 		}
 
-		wp.customize( 'trove_announcement_lines', function ( value ) {
-			function buildAnnouncementCarouselMarkup( lines ) {
+		( function bindAnnouncementBarPreview() {
+			function getDefaultAnnouncementLinesJson() {
+				if (
+					typeof troveCustomizerPreview !== 'undefined' &&
+					troveCustomizerPreview.defaultAnnouncementLinesJson
+				) {
+					return troveCustomizerPreview.defaultAnnouncementLinesJson;
+				}
+				return '[]';
+			}
+
+			function getAnnSetting( id, fallback ) {
+				try {
+					if ( wp.customize.instance && wp.customize.instance( id ) ) {
+						var v = wp.customize.instance( id ).get();
+						return v == null ? fallback : v;
+					}
+				} catch ( err ) {
+					// Setting not registered in this preview context.
+				}
+				return fallback;
+			}
+
+			function buildAnnouncementCarouselMarkup( lines, animation ) {
 				var n = lines.length;
 				var navHide = n <= 1 ? ' hidden' : '';
+				var isFade = animation === 'fade';
 				var prevSvg =
 					'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 				var nextSvg =
@@ -725,8 +795,11 @@
 					'<div class="trove-announcement-bar__track">';
 				var i;
 				for ( i = 0; i < n; i++ ) {
+					var activeCls = isFade && i === 0 ? ' trove-announcement-bar__slide is-active' : ' trove-announcement-bar__slide';
 					inner +=
-						'<div class="trove-announcement-bar__slide" aria-hidden="' +
+						'<div class="' +
+						activeCls.trim() +
+						'" aria-hidden="' +
 						( i === 0 ? 'false' : 'true' ) +
 						'">' +
 						escapeHtmlStr( lines[ i ] ) +
@@ -742,10 +815,74 @@
 				return inner;
 			}
 
-			function applyAnnouncementLines( raw ) {
+			function applyAnnouncementResponsiveVisibilityStyle() {
+				var enPc = troveCustomizeBool(
+					getAnnSetting( 'trove_announcement_enabled_pc', true )
+				);
+				var enTab = troveCustomizeBool(
+					getAnnSetting( 'trove_announcement_enabled_tablet', true )
+				);
+				var enPh = troveCustomizeBool(
+					getAnnSetting( 'trove_announcement_enabled_phone', true )
+				);
+				var cfg =
+					typeof troveCustomizerPreview !== 'undefined' &&
+					troveCustomizerPreview.responsiveBreakpoints
+						? troveCustomizerPreview.responsiveBreakpoints
+						: { tablet: 1024, phone: 781 };
+				var tablet = parseInt( cfg.tablet, 10 ) || 1024;
+				var phone = parseInt( cfg.phone, 10 ) || 781;
+				var el = document.getElementById( 'trove-cz-announcement-enabled-visibility' );
+				if ( ! el ) {
+					el = document.createElement( 'style' );
+					el.id = 'trove-cz-announcement-enabled-visibility';
+					document.head.appendChild( el );
+				}
+				if ( enPc && enTab && enPh ) {
+					el.textContent = '';
+					return;
+				}
+				var css = '';
+				if ( ! enPc ) {
+					css +=
+						'@media (min-width:' +
+						( tablet + 1 ) +
+						'px){.trove-announcement-bar{display:none!important;}}';
+				}
+				if ( ! enTab ) {
+					css +=
+						'@media (max-width:' +
+						tablet +
+						'px) and (min-width:' +
+						( phone + 1 ) +
+						'px){.trove-announcement-bar{display:none!important;}}';
+				}
+				if ( ! enPh ) {
+					css +=
+						'@media (max-width:' +
+						phone +
+						'px){.trove-announcement-bar{display:none!important;}}';
+				}
+				el.textContent = css;
+			}
+
+			function applyAnnouncementBar() {
+				applyAnnouncementResponsiveVisibilityStyle();
+				var defaultLinesJson = getDefaultAnnouncementLinesJson();
+				var enPc = troveCustomizeBool(
+					getAnnSetting( 'trove_announcement_enabled_pc', true )
+				);
+				var enTab = troveCustomizeBool(
+					getAnnSetting( 'trove_announcement_enabled_tablet', true )
+				);
+				var enPh = troveCustomizeBool(
+					getAnnSetting( 'trove_announcement_enabled_phone', true )
+				);
+				var anyEnabled = enPc || enTab || enPh;
+				var rawLines = getAnnSetting( 'trove_announcement_lines', defaultLinesJson );
 				var lines = [];
 				try {
-					var parsed = JSON.parse( raw || '[]' );
+					var parsed = JSON.parse( rawLines || defaultLinesJson );
 					if ( Array.isArray( parsed ) ) {
 						var j;
 						for ( j = 0; j < parsed.length; j++ ) {
@@ -758,34 +895,56 @@
 				} catch ( err ) {
 					lines = [];
 				}
+
 				var header = document.querySelector( 'header.site-header' );
 				var bar = document.querySelector( '.trove-announcement-bar' );
-				if ( lines.length === 0 ) {
+
+				if ( ! anyEnabled || lines.length === 0 ) {
+					if ( bar && window.TroveAnnouncementCarousel && window.TroveAnnouncementCarousel.destroy ) {
+						window.TroveAnnouncementCarousel.destroy( bar );
+					}
 					if ( bar ) {
 						bar.remove();
 					}
 					return;
 				}
+
+				var anim = String( getAnnSetting( 'trove_announcement_animation', 'slide' ) || 'slide' );
+				if ( anim !== 'fade' ) {
+					anim = 'slide';
+				}
+				var autoplay = troveCustomizeBool( getAnnSetting( 'trove_announcement_autoplay', false ) );
+				var intervalSec = parseInt( getAnnSetting( 'trove_announcement_autoplay_interval', 5 ), 10 );
+				if ( isNaN( intervalSec ) ) {
+					intervalSec = 5;
+				}
+				intervalSec = Math.max( 2, Math.min( 60, intervalSec ) );
+				var intervalMs = intervalSec * 1000;
+
 				var n = lines.length;
 				if ( ! bar ) {
 					bar = document.createElement( 'div' );
-					bar.className = 'trove-announcement-bar';
 					if ( header && header.parentNode ) {
 						header.parentNode.insertBefore( bar, header );
 					} else {
 						document.body.insertBefore( bar, document.body.firstChild );
 					}
 				}
+				bar.className =
+					'trove-announcement-bar' + ( anim === 'fade' ? ' trove-announcement-bar--fade' : '' );
 				bar.setAttribute( 'role', 'region' );
 				bar.setAttribute( 'aria-label', 'Announcement' );
 				bar.setAttribute( 'data-trove-announcement-carousel', '' );
 				bar.setAttribute( 'data-slide-count', String( n ) );
+				bar.setAttribute( 'data-animation', anim );
+				bar.setAttribute( 'data-autoplay', autoplay ? 'true' : 'false' );
+				bar.setAttribute( 'data-autoplay-interval-ms', String( intervalMs ) );
 				bar.setAttribute( 'tabindex', '0' );
 				bar.style.cssText =
 					'--trove-announcement-total: ' +
 					n +
 					'; --trove-announcement-index: 0;';
-				bar.innerHTML = buildAnnouncementCarouselMarkup( lines );
+				bar.innerHTML = buildAnnouncementCarouselMarkup( lines, anim );
 				if (
 					typeof window.TroveAnnouncementCarousel !== 'undefined' &&
 					window.TroveAnnouncementCarousel.init
@@ -793,12 +952,213 @@
 					window.TroveAnnouncementCarousel.init( bar );
 				}
 			}
+
+			var annIds = [
+				'trove_announcement_lines',
+				'trove_announcement_enabled_pc',
+				'trove_announcement_enabled_tablet',
+				'trove_announcement_enabled_phone',
+				'trove_announcement_animation',
+				'trove_announcement_autoplay',
+				'trove_announcement_autoplay_interval',
+			];
+			annIds.forEach( function ( id ) {
+				wp.customize( id, function ( value ) {
+					value.bind( function () {
+						applyAnnouncementBar();
+					} );
+				} );
+			} );
+			applyAnnouncementBar();
+		} )();
+	}
+
+	function bindBlogLayout() {
+		if ( typeof wp === 'undefined' || ! wp.customize ) {
+			return;
+		}
+
+		var posKeys = [ 'top', 'left', 'right' ];
+
+		function getBlogListFeaturedPos() {
+			var pos = 'top';
+			try {
+				if ( wp.customize( 'trove_blog_list_featured_position' ) ) {
+					pos = wp.customize( 'trove_blog_list_featured_position' ).get() || 'top';
+				}
+			} catch ( err ) {
+				pos = 'top';
+			}
+			return posKeys.indexOf( pos ) !== -1 ? pos : 'top';
+		}
+
+		function stripFeaturedPosClasses( el ) {
+			posKeys.forEach( function ( p ) {
+				el.classList.remove( 'entry--featured-pos-' + p );
+			} );
+		}
+
+		function applyBlogListFeaturedPosition( slug ) {
+			var pos = slug && posKeys.indexOf( slug ) !== -1 ? slug : 'top';
+			var entries = document.querySelectorAll( '.trove-blog-loop .entry--list' );
+			var i;
+			for ( i = 0; i < entries.length; i++ ) {
+				var el = entries[ i ];
+				stripFeaturedPosClasses( el );
+				el.classList.add( 'entry--featured-pos-' + pos );
+			}
+		}
+
+		function moveBlogPaginationOutsideLoop() {
+			var loop = document.querySelector( '.trove-blog-loop' );
+			if ( ! loop || ! loop.parentNode ) {
+				return;
+			}
+			var nav = loop.querySelector( ':scope > nav.navigation.pagination' );
+			if ( nav ) {
+				loop.parentNode.insertBefore( nav, loop.nextSibling );
+			}
+		}
+
+		function applyBlogLayout( slug ) {
+			var allowed = [ 'list', 'grid', 'masonry' ];
+			var v = slug && allowed.indexOf( slug ) !== -1 ? slug : 'list';
+			var loop = document.querySelector( '.trove-blog-loop' );
+			if ( loop ) {
+				allowed.forEach( function ( l ) {
+					loop.classList.remove( 'trove-blog-loop--' + l );
+				} );
+				loop.classList.add( 'trove-blog-loop--' + v );
+			}
+			allowed.forEach( function ( l ) {
+				document.body.classList.remove( 'trove-blog-layout--' + l );
+			} );
+			document.body.classList.add( 'trove-blog-layout--' + v );
+			var entries = document.querySelectorAll( '.trove-blog-loop .entry' );
+			var i;
+			for ( i = 0; i < entries.length; i++ ) {
+				var el = entries[ i ];
+				el.classList.remove( 'entry--list', 'entry--card' );
+				el.classList.add( v === 'list' ? 'entry--list' : 'entry--card' );
+				stripFeaturedPosClasses( el );
+				if ( v === 'list' ) {
+					el.classList.add( 'entry--featured-pos-' + getBlogListFeaturedPos() );
+				}
+			}
+			moveBlogPaginationOutsideLoop();
+		}
+
+		wp.customize( 'trove_blog_layout', function ( value ) {
 			function onChange( newVal ) {
-				applyAnnouncementLines( newVal );
+				applyBlogLayout( newVal );
 			}
 			value.bind( onChange );
 			onChange( value.get() );
 		} );
+
+		wp.customize( 'trove_blog_list_featured_position', function ( value ) {
+			function onChange( newVal ) {
+				applyBlogListFeaturedPosition( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		function applyBlogBoxed( val ) {
+			var on =
+				val === true ||
+				val === 1 ||
+				val === '1' ||
+				val === 'true';
+			document.body.classList.toggle( 'trove-blog-boxed', on );
+		}
+
+		wp.customize( 'trove_blog_boxed_style', function ( value ) {
+			function onChange( newVal ) {
+				applyBlogBoxed( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		function applyBlogBoxedRadius( raw ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				n = 10;
+			}
+			n = Math.max( 0, Math.min( 20, n ) );
+			document.documentElement.style.setProperty( '--trove-blog-boxed-radius', n + 'px' );
+		}
+
+		wp.customize( 'trove_blog_boxed_border_radius', function ( value ) {
+			function onChange( newVal ) {
+				applyBlogBoxedRadius( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		function parseBool( val ) {
+			if ( val === true || val === 1 || val === '1' || val === 'true' ) {
+				return true;
+			}
+			if ( val === false || val === 0 || val === '0' || val === 'false' ) {
+				return false;
+			}
+			return !! val;
+		}
+
+		function getBlogPartSetting( id, fallback ) {
+			try {
+				if ( wp.customize( id ) ) {
+					return parseBool( wp.customize( id ).get() );
+				}
+			} catch ( err ) {}
+			return fallback;
+		}
+
+		function applyBlogLoopPartVisibility() {
+			var showImg = getBlogPartSetting( 'trove_blog_show_featured_image', true );
+			var showD = getBlogPartSetting( 'trove_blog_show_date', true );
+			var showA = getBlogPartSetting( 'trove_blog_show_author', true );
+			var showR = getBlogPartSetting( 'trove_blog_show_continue_reading', true );
+
+			document.querySelectorAll( '.trove-blog-loop .entry-card__media--blog' ).forEach( function ( el ) {
+				el.hidden = ! showImg;
+			} );
+
+			document.querySelectorAll( '.trove-blog-loop .entry-meta--blog' ).forEach( function ( meta ) {
+				var t = meta.querySelector( 'time' );
+				var sep = meta.querySelector( '.entry-meta__sep' );
+				var auth = meta.querySelector( '.entry-meta__author' );
+				if ( t ) {
+					t.hidden = ! showD;
+				}
+				if ( auth ) {
+					auth.hidden = ! showA;
+				}
+				if ( sep ) {
+					sep.hidden = ! ( showD && showA );
+				}
+				meta.hidden = ! showD && ! showA;
+			} );
+
+			document.querySelectorAll( '.trove-blog-loop .read-more--blog' ).forEach( function ( el ) {
+				el.hidden = ! showR;
+			} );
+		}
+
+		[
+			'trove_blog_show_featured_image',
+			'trove_blog_show_date',
+			'trove_blog_show_author',
+			'trove_blog_show_continue_reading',
+		].forEach( function ( sid ) {
+			wp.customize( sid, function ( value ) {
+				value.bind( applyBlogLoopPartVisibility );
+			} );
+		} );
+		applyBlogLoopPartVisibility();
 	}
 
 	function bindFooterSettings() {
@@ -955,59 +1315,6 @@
 				escapeHtml( rights );
 		}
 
-		wp.customize( 'trove_footer_dark_mode', function ( value ) {
-			function onChange( newVal ) {
-				var footer = getFooterRoot();
-				if ( ! footer ) {
-					return;
-				}
-				var isDark = troveCustomizeBool( newVal );
-				footer.classList.toggle( 'light-scheme', ! isDark );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_footer_background', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-footer-background', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_footer_text_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-footer-text', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_footer_link_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-footer-link', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_footer_link_hover_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-footer-link-hover', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_footer_border_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-footer-border', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
 		wp.customize( 'trove_footer_show_brand_info', function ( value ) {
 			function onChange( newVal ) {
 				applyFooterBrandInfoVisibility( troveCustomizeBool( newVal ) );
@@ -1111,6 +1418,7 @@
 		bindTypography();
 		bindGoogleFont();
 		bindHeaderSettings();
+		bindBlogLayout();
 		bindFooterSettings();
 	}
 } )();

@@ -32,19 +32,32 @@ add_action( 'trove_header', __NAMESPACE__ . '\\render_header' );
  * @return void
  */
 function render_announcement_bar() {
+	if ( ! is_announcement_bar_enabled() ) {
+		return;
+	}
 	$lines = get_announcement_lines();
 	if ( empty( $lines ) ) {
 		return;
 	}
 	$n        = count( $lines );
 	$nav_hide = $n <= 1;
+	$anim     = get_announcement_bar_animation();
+	$autoplay = get_announcement_bar_autoplay();
+	$interval = get_announcement_bar_autoplay_interval_seconds();
+	$classes  = 'trove-announcement-bar';
+	if ( 'fade' === $anim ) {
+		$classes .= ' trove-announcement-bar--fade';
+	}
 	?>
 	<div
-		class="trove-announcement-bar"
+		class="<?php echo esc_attr( $classes ); ?>"
 		role="region"
 		aria-label="<?php esc_attr_e( 'Announcement', 'trove' ); ?>"
 		data-trove-announcement-carousel
 		data-slide-count="<?php echo esc_attr( (string) $n ); ?>"
+		data-animation="<?php echo esc_attr( $anim ); ?>"
+		data-autoplay="<?php echo esc_attr( $autoplay ? 'true' : 'false' ); ?>"
+		data-autoplay-interval-ms="<?php echo esc_attr( (string) ( $interval * 1000 ) ); ?>"
 		style="<?php echo esc_attr( '--trove-announcement-total: ' . (int) $n . '; --trove-announcement-index: 0;' ); ?>"
 		tabindex="0"
 	>
@@ -63,7 +76,11 @@ function render_announcement_bar() {
 					$i = 0;
 					foreach ( $lines as $line ) {
 						$active = 0 === $i;
-						echo '<div class="trove-announcement-bar__slide" aria-hidden="' . esc_attr( $active ? 'false' : 'true' ) . '">' . esc_html( $line ) . '</div>';
+						$slide_classes = 'trove-announcement-bar__slide';
+						if ( 'fade' === $anim && $active ) {
+							$slide_classes .= ' is-active';
+						}
+						echo '<div class="' . esc_attr( $slide_classes ) . '" aria-hidden="' . esc_attr( $active ? 'false' : 'true' ) . '">' . esc_html( $line ) . '</div>';
 						++$i;
 					}
 					?>
@@ -89,7 +106,17 @@ add_action( 'trove_announcement_bar', __NAMESPACE__ . '\\render_announcement_bar
  * @return void
  */
 function enqueue_announcement_carousel_script() {
-	if ( empty( get_announcement_lines() ) && ! is_customize_preview() ) {
+	if ( is_customize_preview() ) {
+		wp_enqueue_script(
+			'trove-announcement-carousel',
+			get_template_directory_uri() . '/assets/js/announcement-carousel.js',
+			array(),
+			defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0',
+			true
+		);
+		return;
+	}
+	if ( ! is_announcement_bar_enabled() || empty( get_announcement_lines() ) ) {
 		return;
 	}
 	wp_enqueue_script(
@@ -108,9 +135,8 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_announcement_carous
  * @return void
  */
 function render_footer() {
-	$footer_dark_mode = wp_validate_boolean( get_theme_mod( 'trove_footer_dark_mode', false ) );
 	$footer_layout = get_theme_mod( 'trove_footer_layout', 'footer-1' );
-	$footer_classes   = 'site-footer' . ( $footer_dark_mode ? '' : ' light-scheme' );
+	$footer_classes   = 'site-footer light-scheme';
 
 	?>
 	<footer class="<?php echo esc_attr( $footer_classes ); ?>" role="contentinfo">

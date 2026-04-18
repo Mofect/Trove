@@ -32,6 +32,13 @@ final class Options_Registry {
 	private static $section_tabs_script_data = array();
 
 	/**
+	 * Section ids that use the shared color swatch sidebar layout (see customizer-color-swatches.css).
+	 *
+	 * @var list<string>
+	 */
+	private static $color_swatches_section_ids = array();
+
+	/**
 	 * @param string|null $panel_id Parent panel id, or null to register sections at the root.
 	 */
 	public function __construct( $panel_id = null ) {
@@ -77,6 +84,22 @@ final class Options_Registry {
 	}
 
 	/**
+	 * @return void
+	 */
+	public static function reset_color_swatches_section_ids() {
+		self::$color_swatches_section_ids = array();
+	}
+
+	/**
+	 * Section ids flagged with container.color_swatches_layout (for Customizer DOM class + CSS).
+	 *
+	 * @return list<string>
+	 */
+	public static function get_color_swatches_section_ids() {
+		return self::$color_swatches_section_ids;
+	}
+
+	/**
 	 * @param string $section_id Section id.
 	 * @param string $control_id Control id (matches HTML customize-control-* suffix).
 	 * @param string $tab_slug   Tab key from config.
@@ -100,6 +123,7 @@ final class Options_Registry {
 	 */
 	public function register( WP_Customize_Manager $wp_customize, array $config ) {
 		self::reset_section_tabs_script_data();
+		self::reset_color_swatches_section_ids();
 
 		foreach ( $config as $key => $item ) {
 			if ( ! is_array( $item ) ) {
@@ -242,6 +266,10 @@ final class Options_Registry {
 			)
 		);
 
+		if ( ! empty( $item['container']['color_swatches_layout'] ) ) {
+			self::$color_swatches_section_ids[] = $section_id;
+		}
+
 		foreach ( $item['options'] as $setting_id => $field ) {
 			if ( ! is_array( $field ) ) {
 				continue;
@@ -274,6 +302,10 @@ final class Options_Registry {
 				$parent_panel
 			)
 		);
+
+		if ( ! empty( $item['container']['color_swatches_layout'] ) ) {
+			self::$color_swatches_section_ids[] = $section_id;
+		}
 
 		$tab_slugs = array_keys( $item['tabs'] );
 		$first_tab = ! empty( $tab_slugs ) ? $tab_slugs[0] : 'general';
@@ -810,6 +842,22 @@ final class Options_Registry {
 			$wp_customize->add_setting( $sub_id, $args );
 		}
 
+		if ( 'number' === $type && ! empty( $field['unit_setting'] ) ) {
+			$unit_id = (string) $field['unit_setting'];
+			$unit_default = isset( $field['unit_default'] ) ? $field['unit_default'] : 'px';
+			$unit_args      = array(
+				'default'           => $unit_default,
+				'transport'         => $transport,
+				'sanitize_callback' => ! empty( $field['unit_sanitize_callback'] ) && is_callable( $field['unit_sanitize_callback'] )
+					? $field['unit_sanitize_callback']
+					: function ( $value ) {
+						$value = sanitize_key( (string) $value );
+						return in_array( $value, array( 'px', 'rem' ), true ) ? $value : 'px';
+					},
+			);
+			$wp_customize->add_setting( $unit_id, $unit_args );
+		}
+
 		$control_args = array(
 			'label'               => $base_label,
 			'description'         => $base_description,
@@ -826,6 +874,10 @@ final class Options_Registry {
 
 		if ( 'number' === $type && isset( $field['input_attrs'] ) ) {
 			$control_args['trove_input_attrs'] = $field['input_attrs'];
+		}
+		if ( 'number' === $type && ! empty( $field['unit_setting'] ) && ! empty( $field['unit_choices'] ) && is_array( $field['unit_choices'] ) ) {
+			$control_args['trove_unit_setting'] = (string) $field['unit_setting'];
+			$control_args['trove_unit_choices']   = $field['unit_choices'];
 		}
 		if ( 'select' === $type && isset( $field['choices'] ) ) {
 			$control_args['trove_choices'] = $field['choices'];

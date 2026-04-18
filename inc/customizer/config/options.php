@@ -4,7 +4,7 @@
  *
  * General panel: Layout only. Colors and Typography are root-level sections (siblings of General, Header, …).
  *
- * Panel with nested sections (Header → Layout, Style):
+ * Panel with nested sections (Header → Layout, Settings):
  *   'header' => [
  *     'type' => 'trove-panel',
  *     ...
@@ -24,14 +24,14 @@
  *   'section_key' => [
  *     'title'       => __( '…', 'trove' ),
  *     'description' => __( '…', 'trove' ), // optional
- *     'container'   => [ 'priority' => 10 ],
+ *     'container'   => [ 'priority' => 10, 'color_swatches_layout' => true ], // optional: swatch row layout
  *     'options'     => require __DIR__ . '/section-file.php', // returns field array
  *   ],
  *
  * Section with tabs (each tab has its own options array; tab bar appears at top of section):
  *   'section_key' => [
  *     'title'     => __( '…', 'trove' ),
- *     'container' => [ 'priority' => 10 ],
+ *     'container' => [ 'priority' => 10, 'color_swatches_layout' => true ], // optional
  *     'tabs'      => [
  *       'general' => [
  *         'label'   => __( 'General', 'trove' ),
@@ -143,7 +143,10 @@ function get_options() {
 
 		'color' => array(
 			'title'     => __( 'Colors', 'trove' ),
-			'container' => array( 'priority' => 106 ),
+			'container' => array(
+				'priority'              => 106,
+				'color_swatches_layout' => true,
+			),
 			'options'   => require __DIR__ . '/general/colors.php',
 		),
 
@@ -155,7 +158,10 @@ function get_options() {
 
 		'announcement_bar' => array(
 			'title'       => __( 'Announcement Bar', 'trove' ),
-			'container'   => array( 'priority' => 108 ),
+			'container'   => array(
+				'priority'              => 108,
+				'color_swatches_layout' => true,
+			),
 			'tabs'        => array(
 				'content' => array(
 					'label'   => __( 'Content', 'trove' ),
@@ -174,15 +180,14 @@ function get_options() {
 
 		'header' => array(
 			'title'       => __( 'Header', 'trove' ),
-			'container'   => array( 'priority' => 110 ),
+			'container'   => array(
+				'priority'              => 110,
+				'color_swatches_layout' => true,
+			),
 			'tabs'        => array(
 				'layout' => array(
 					'label'   => __( 'Layout', 'trove' ),
 					'options' => require __DIR__ . '/header/layout.php',
-				),
-				'styles' => array(
-					'label'   => __( 'Styles', 'trove' ),
-					'options' => require __DIR__ . '/header/styles.php',
 				),
 				'settings' => array(
 					'label'   => __( 'Settings', 'trove' ),
@@ -193,15 +198,14 @@ function get_options() {
 
 		'footer' => array(
 			'title'     => __( 'Footer', 'trove' ),
-			'container' => array( 'priority' => 115 ),
+			'container' => array(
+				'priority'              => 115,
+				'color_swatches_layout' => true,
+			),
 			'tabs'        => array(
 				'layout' => array(
 					'label'   => __( 'Layout', 'trove' ),
 					'options' => require __DIR__ . '/footer/layout.php',
-				),
-				'styles' => array(
-					'label'   => __( 'Styles', 'trove' ),
-					'options' => require __DIR__ . '/footer/styles.php',
 				),
 				'content' => array(
 					'label'   => __( 'Content', 'trove' ),
@@ -238,7 +242,20 @@ function get_options() {
 		'blog' => array(
 			'title'     => __( 'Blog Posts', 'trove' ),
 			'container' => array( 'priority' => 135 ),
-			'options'   => require __DIR__ . '/blog.php',
+			'tabs'        => array(
+				'layout' => array(
+					'label'   => __( 'Layout', 'trove' ),
+					'options' => require __DIR__ . '/blog/layout.php',
+				),
+				'styles' => array(
+					'label'   => __( 'Styles', 'trove' ),
+					'options' => require __DIR__ . '/blog/styles.php',
+				),
+				'settings' => array(
+					'label'   => __( 'Settings', 'trove' ),
+					'options' => require __DIR__ . '/blog/settings.php',
+				)
+			),
 		),
 	);
 

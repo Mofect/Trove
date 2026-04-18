@@ -18,14 +18,6 @@ return array(
 		'transport'         => 'refresh',
 		'sanitize_callback' => 'esc_url_raw',
 	),
-	'trove_header_logo_dark'       => array(
-		'label'             => __( 'Logo for dark mode', 'trove' ),
-		'description'       => __( 'Optional. Only used when the header is in dark mode (Header → Styles). Not shown on a light header. If empty, the light logo above is used in dark mode.', 'trove' ),
-		'type'              => 'image',
-		'default'           => '',
-		'transport'         => 'refresh',
-		'sanitize_callback' => 'esc_url_raw',
-	),
 	'trove_header_logo_width'      => array(
 		'label'             => __( 'Logo width', 'trove' ),
 		'description'       => __( 'Maximum width for the header logo.', 'trove' ),
