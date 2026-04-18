@@ -13,6 +13,12 @@
 		document.documentElement.style.setProperty( entry.var, v );
 	}
 
+	function escapeHtmlStr( str ) {
+		var d = document.createElement( 'div' );
+		d.textContent = str == null ? '' : String( str );
+		return d.innerHTML;
+	}
+
 	function bindGlobalColors() {
 		if ( typeof wp === 'undefined' || ! wp.customize ) {
 			return;
@@ -698,6 +704,101 @@
 				observer.observe( woo, { childList: true, subtree: true } );
 			} )();
 		}
+
+		wp.customize( 'trove_announcement_lines', function ( value ) {
+			function buildAnnouncementCarouselMarkup( lines ) {
+				var n = lines.length;
+				var navHide = n <= 1 ? ' hidden' : '';
+				var prevSvg =
+					'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+				var nextSvg =
+					'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+				var inner = '';
+				inner +=
+					'<div class="trove-announcement-bar__inner">' +
+					'<button type="button" class="trove-announcement-bar__nav trove-announcement-bar__nav--prev"' +
+					navHide +
+					' aria-label="Previous announcement">' +
+					prevSvg +
+					'</button>' +
+					'<div class="trove-announcement-bar__viewport">' +
+					'<div class="trove-announcement-bar__track">';
+				var i;
+				for ( i = 0; i < n; i++ ) {
+					inner +=
+						'<div class="trove-announcement-bar__slide" aria-hidden="' +
+						( i === 0 ? 'false' : 'true' ) +
+						'">' +
+						escapeHtmlStr( lines[ i ] ) +
+						'</div>';
+				}
+				inner +=
+					'</div></div>' +
+					'<button type="button" class="trove-announcement-bar__nav trove-announcement-bar__nav--next"' +
+					navHide +
+					' aria-label="Next announcement">' +
+					nextSvg +
+					'</button></div>';
+				return inner;
+			}
+
+			function applyAnnouncementLines( raw ) {
+				var lines = [];
+				try {
+					var parsed = JSON.parse( raw || '[]' );
+					if ( Array.isArray( parsed ) ) {
+						var j;
+						for ( j = 0; j < parsed.length; j++ ) {
+							var t = String( parsed[ j ] == null ? '' : parsed[ j ] ).trim();
+							if ( t !== '' ) {
+								lines.push( t );
+							}
+						}
+					}
+				} catch ( err ) {
+					lines = [];
+				}
+				var header = document.querySelector( 'header.site-header' );
+				var bar = document.querySelector( '.trove-announcement-bar' );
+				if ( lines.length === 0 ) {
+					if ( bar ) {
+						bar.remove();
+					}
+					return;
+				}
+				var n = lines.length;
+				if ( ! bar ) {
+					bar = document.createElement( 'div' );
+					bar.className = 'trove-announcement-bar';
+					if ( header && header.parentNode ) {
+						header.parentNode.insertBefore( bar, header );
+					} else {
+						document.body.insertBefore( bar, document.body.firstChild );
+					}
+				}
+				bar.setAttribute( 'role', 'region' );
+				bar.setAttribute( 'aria-label', 'Announcement' );
+				bar.setAttribute( 'data-trove-announcement-carousel', '' );
+				bar.setAttribute( 'data-slide-count', String( n ) );
+				bar.setAttribute( 'tabindex', '0' );
+				bar.style.cssText =
+					'--trove-announcement-total: ' +
+					n +
+					'; --trove-announcement-index: 0;';
+				bar.innerHTML = buildAnnouncementCarouselMarkup( lines );
+				if (
+					typeof window.TroveAnnouncementCarousel !== 'undefined' &&
+					window.TroveAnnouncementCarousel.init
+				) {
+					window.TroveAnnouncementCarousel.init( bar );
+				}
+			}
+			function onChange( newVal ) {
+				applyAnnouncementLines( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
 	}
 
 	function bindFooterSettings() {

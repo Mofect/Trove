@@ -162,6 +162,95 @@ main {
 /* Header
 --------------------------------------------- */
 
+.trove-announcement-bar {
+	--trove-announcement-total: 1;
+	--trove-announcement-index: 0;
+	font-size: var(--trove-font-base-size, 1.4rem);
+	line-height: 1.4;
+	padding: 0.5em 0.25rem;
+	background-color: var(--trove-header-background, #111827);
+	color: var(--trove-header-text, rgba(255, 255, 255, 0.92));
+	border-bottom: 1px solid var(--trove-header-border, rgba(255, 255, 255, 0.12));
+	outline: none;
+}
+
+.trove-announcement-bar:focus-visible {
+	box-shadow: inset 0 0 0 2px var(--trove-accent, #3b82f6);
+}
+
+.trove-announcement-bar__inner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.15rem;
+	max-width: var(--trove-wide);
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: clamp(0.25rem, 2vw, 0.75rem);
+	padding-right: clamp(0.25rem, 2vw, 0.75rem);
+}
+
+.trove-announcement-bar__viewport {
+	overflow: hidden;
+	flex: 1;
+	min-width: 0;
+}
+
+.trove-announcement-bar__track {
+	display: flex;
+	width: calc(var(--trove-announcement-total, 1) * 100%);
+	transition: transform 0.28s ease;
+	transform: translateX(
+		calc(
+			-100% * var(--trove-announcement-index, 0) / var(--trove-announcement-total, 1)
+		)
+	);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.trove-announcement-bar__track {
+		transition: none;
+	}
+}
+
+.trove-announcement-bar__slide {
+	flex: 0 0 calc(100% / var(--trove-announcement-total, 1));
+	box-sizing: border-box;
+	padding: 0.1em 0.35em;
+	text-align: center;
+}
+
+.trove-announcement-bar__nav {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25em;
+	height: 2.25em;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	opacity: 0.88;
+	border-radius: 3px;
+}
+
+.trove-announcement-bar__nav:hover,
+.trove-announcement-bar__nav:focus-visible {
+	opacity: 1;
+}
+
+.trove-announcement-bar__nav:focus-visible {
+	outline: 2px solid var(--trove-accent, #3b82f6);
+	outline-offset: 2px;
+}
+
+.trove-announcement-bar__nav[disabled],
+.trove-announcement-bar__nav[hidden] {
+	display: none;
+}
+
 .site-header {
 	padding-top: 20px;
 	padding-bottom: 20px;

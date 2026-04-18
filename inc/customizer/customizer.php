@@ -29,6 +29,38 @@ function bootstrap_customizer() {
 bootstrap_customizer();
 
 /**
+ * Sanitize announcement / repeater lines stored as JSON array of strings (max 10 non-empty lines).
+ *
+ * @param mixed $value Raw value.
+ * @return string JSON string.
+ */
+function sanitize_repeater_text_json( $value ) {
+	if ( is_array( $value ) ) {
+		$decoded = $value;
+	} elseif ( is_string( $value ) ) {
+		$decoded = json_decode( $value, true );
+	} else {
+		$decoded = array();
+	}
+
+	if ( ! is_array( $decoded ) ) {
+		return wp_json_encode( array() );
+	}
+
+	$out = array();
+	foreach ( $decoded as $line ) {
+		$line = sanitize_text_field( (string) $line );
+		if ( '' !== $line ) {
+			$out[] = $line;
+		}
+	}
+
+	$out = array_slice( $out, 0, 10 );
+
+	return wp_json_encode( array_values( $out ) );
+}
+
+/**
  * Places Site Identity, Menus, and Homepage Settings directly above Additional CSS.
  *
  * Menus is a Customizer panel (`nav_menus`), not a section — it must use get_panel().
@@ -438,6 +470,29 @@ function enqueue_customizer_ui_assets() {
 		array( 'customize-controls' ),
 		$ver,
 		true
+	);
+
+	wp_enqueue_style(
+		'trove-customizer-repeater-text',
+		$dir . '/inc/customizer/css/customizer-repeater-text.css',
+		array( 'customize-controls' ),
+		$ver
+	);
+
+	wp_enqueue_script(
+		'trove-customizer-repeater-text',
+		$dir . '/inc/customizer/js/customizer-repeater-text.js',
+		array( 'jquery', 'customize-controls' ),
+		$ver,
+		true
+	);
+
+	wp_localize_script(
+		'trove-customizer-repeater-text',
+		'troveRepeaterTextI18n',
+		array(
+			'remove' => __( 'Remove line', 'trove' ),
+		)
 	);
 
 	wp_localize_script(

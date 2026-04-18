@@ -10,6 +10,44 @@ namespace Trove;
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Default JSON for `trove_announcement_lines` (two placeholder announcements).
+ *
+ * @return string
+ */
+function get_default_announcement_lines_json() {
+	return wp_json_encode(
+		array(
+			__( 'Announcement 1', 'trove' ),
+			__( 'Announcement 2', 'trove' ),
+		)
+	);
+}
+
+/**
+ * Announcement bar lines from Customizer (JSON theme_mod), at most 10 non-empty strings.
+ *
+ * @return array<int, string>
+ */
+function get_announcement_lines() {
+	$raw = get_theme_mod( 'trove_announcement_lines', get_default_announcement_lines_json() );
+	if ( ! is_string( $raw ) ) {
+		return array();
+	}
+	$decoded = json_decode( $raw, true );
+	if ( ! is_array( $decoded ) ) {
+		return array();
+	}
+	$out = array();
+	foreach ( $decoded as $line ) {
+		$line = sanitize_text_field( (string) $line );
+		if ( '' !== $line ) {
+			$out[] = $line;
+		}
+	}
+	return array_slice( $out, 0, 10 );
+}
+
+/**
  * Footer menu term IDs from Customizer slots (1–5), in order.
  *
  * @return array<int> Menu term IDs (0 = empty slot).
