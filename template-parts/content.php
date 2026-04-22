@@ -39,6 +39,9 @@ if ( $blog_listing ) {
 	<?php endif; ?>
 	<div class="entry-card__body">
 		<header class="entry-header">
+			<?php if ( has_category() ) : ?>
+				<p class="entry-meta__cats"><?php echo wp_kses_post( get_the_category_list( ', ' ) ); ?></p>
+			<?php endif; ?>
 			<?php
 			the_title(
 				'<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">',

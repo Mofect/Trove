@@ -29,7 +29,7 @@ li.customize-control-trove_group_marker {
 .trove-cz-group-title-section .trove-cz-group-title__text {
 	margin: 10px 0 0;
 	padding: 16px 14px 8px;
-	font-size: 12px;
+	font-size: 12px !important;
 	font-weight: 700 !important;
 	line-height: 1.3;
 	letter-spacing: 0.02em;
@@ -77,4 +77,18 @@ li.customize-control-trove_group_marker {
 }
 .description.customize-control-description {
 	opacity: .7;
+}
+
+/* Customizer device preview: mobile viewport size override. */
+.wp-full-overlay.preview-mobile .wp-full-overlay-main {
+	width: 375px !important;
+	max-width: 375px !important;
+	margin-left: calc(-375px / 2) !important;
+	height: min(860px, calc(100vh - 80px)) !important;
+	max-height: min(860px, calc(100vh - 80px)) !important;
+}
+
+.wp-full-overlay.preview-mobile .wp-full-overlay-main iframe {
+	width: 375px !important;
+	height: 100% !important;
 }

@@ -39,14 +39,18 @@ final class Manager {
 		$wp_customize->register_section_type( '\Trove\Customizer\Group_Title_Section' );
 
 		require_once __DIR__ . '/controls/class-responsive-tabs-control.php';
+		require_once __DIR__ . '/controls/class-responsive-spacing-control.php';
 		require_once __DIR__ . '/controls/class-section-tabs-control.php';
 		require_once __DIR__ . '/controls/class-switch-control.php';
 		require_once __DIR__ . '/controls/class-image-radio-control.php';
 		require_once __DIR__ . '/controls/class-group-marker-control.php';
 		require_once __DIR__ . '/controls/class-dual-color-control.php';
 		require_once __DIR__ . '/controls/class-heading-control.php';
+		require_once __DIR__ . '/controls/class-divider-control.php';
+		require_once __DIR__ . '/controls/class-tip-control.php';
 		require_once __DIR__ . '/controls/class-google-font-control.php';
 		require_once __DIR__ . '/controls/class-number-unit-control.php';
+		require_once __DIR__ . '/controls/class-range-number-control.php';
 		require_once __DIR__ . '/controls/class-alignment-control.php';
 		require_once __DIR__ . '/controls/class-repeater-text-control.php';
 

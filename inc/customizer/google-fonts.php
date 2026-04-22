@@ -246,7 +246,12 @@ function migrate_stored_google_font_slug_to_family_name() {
  * @return string system | Google family name.
  */
 function get_font_family_setting() {
-	return sanitize_google_font_family( get_theme_mod( 'trove_google_font_family', 'Instrument Sans' ) );
+	return sanitize_google_font_family(
+		get_theme_mod(
+			'trove_google_font_family',
+			(string) \Trove\Customizer\trove_customizer_default( 'trove_google_font_family', 'Instrument Sans' )
+		)
+	);
 }
 
 /**

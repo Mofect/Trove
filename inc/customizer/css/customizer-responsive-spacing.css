@@ -1,0 +1,80 @@
+/* Responsive spacing box (TRBL + link + PX) — pairs with trove-responsive-tabs heading */
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-r-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-spacing-box__grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr)) auto auto;
+	gap: 8px 10px;
+	margin-bottom: 2px;
+	align-items: end;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-spacing-box__cell {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-spacing-box__cell--action,
+#customize-theme-controls .trove-responsive-spacing-control .trove-spacing-box__cell--unit {
+	justify-self: end;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-spacing-box__cell--unit {
+	justify-self: start;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-spacing-box__label {
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: #646970;
+	text-transform: uppercase;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-spacing-box__label--spacer {
+	line-height: 1;
+	visibility: hidden;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-sb-input {
+	width: 100%;
+	max-width: 100%;
+	margin: 0;
+	padding: 4px;
+	font-size: 12px;
+	line-height: 1.3;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-sb-link-toggle {
+	min-height: 30px;
+	padding: 0 8px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-sb-link-toggle .dashicons {
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	line-height: 1;
+}
+
+#customize-theme-controls .trove-responsive-spacing-control .trove-sb-unit {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	color: #787c82;
+	line-height: 30px;
+	white-space: nowrap;
+}

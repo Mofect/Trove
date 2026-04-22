@@ -7,6 +7,8 @@
 
 namespace Trove\Customizer\Config;
 
+use function \Trove\Customizer\trove_customizer_default;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -32,7 +34,7 @@ return array(
 		'label'             => __( 'Pagination type', 'trove' ),
 		'description'       => __( 'Paged shows numbered links. Infinite scroll loads the next page of posts as you scroll down.', 'trove' ),
 		'type'              => 'select',
-		'default'           => 'paged',
+		'default'           => (string) trove_customizer_default( 'trove_blog_pagination_type', 'paged' ),
 		'transport'         => 'refresh',
 		'choices'           => array(
 			'paged'           => __( 'Paged', 'trove' ),
@@ -44,7 +46,7 @@ return array(
 		'label'             => __( 'Featured image position', 'trove' ),
 		'description'       => __( 'Applies when Blog layout is set to List.', 'trove' ),
 		'type'              => 'select',
-		'default'           => 'top',
+		'default'           => (string) trove_customizer_default( 'trove_blog_list_featured_position', 'top' ),
 		'transport'         => 'postMessage',
 		'choices'           => array(
 			'top'   => __( 'Top', 'trove' ),
@@ -57,7 +59,7 @@ return array(
 		'label'             => __( 'Featured image', 'trove' ),
 		'description'       => __( 'Show the featured image in blog listings.', 'trove' ),
 		'type'              => 'switch',
-		'default'           => true,
+		'default'           => (bool) trove_customizer_default( 'trove_blog_show_featured_image', true ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'wp_validate_boolean',
 	),
@@ -65,7 +67,7 @@ return array(
 		'label'             => __( 'Date', 'trove' ),
 		'description'       => __( 'Show the publication date in blog listings.', 'trove' ),
 		'type'              => 'switch',
-		'default'           => true,
+		'default'           => (bool) trove_customizer_default( 'trove_blog_show_date', true ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'wp_validate_boolean',
 	),
@@ -73,7 +75,7 @@ return array(
 		'label'             => __( 'Author', 'trove' ),
 		'description'       => __( 'Show the author name in blog listings.', 'trove' ),
 		'type'              => 'switch',
-		'default'           => true,
+		'default'           => (bool) trove_customizer_default( 'trove_blog_show_author', true ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'wp_validate_boolean',
 	),
@@ -81,7 +83,7 @@ return array(
 		'label'             => __( 'Continue reading', 'trove' ),
 		'description'       => __( 'Show the “Continue reading” link in blog listings.', 'trove' ),
 		'type'              => 'switch',
-		'default'           => true,
+		'default'           => (bool) trove_customizer_default( 'trove_blog_show_continue_reading', true ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'wp_validate_boolean',
 	),

@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * @return void
  */
 function render_header() {
-	$layout = get_theme_mod( 'trove_header_layout', 'horizontal-left-logo' );
+	$layout = get_theme_mod( 'trove_header_layout', (string) \Trove\Customizer\trove_customizer_default( 'trove_header_layout', 'horizontal-left-logo' ) );
 	$layout = is_string( $layout ) ? sanitize_key( $layout ) : 'horizontal-left-logo';
 
 	if ( 'vertical-centered-logo' === $layout || 'vertical-left-logo' === $layout ) {
@@ -135,13 +135,70 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_announcement_carous
  * @return void
  */
 function render_footer() {
-	$footer_layout = get_theme_mod( 'trove_footer_layout', 'footer-1' );
-	$footer_classes   = 'site-footer light-scheme';
+	$footer_layout = get_theme_mod( 'trove_footer_layout', (string) \Trove\Customizer\trove_customizer_default( 'trove_footer_layout', 'footer-1' ) );
+	$footer_classes   = array( 'site-footer', 'light-scheme' );
+	if ( wp_validate_boolean( get_theme_mod( 'trove_footer_top_border', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_top_border', true ) ) ) ) {
+		$footer_classes[] = 'trove-footer-has-top-border';
+	}
 
 	?>
-	<footer class="<?php echo esc_attr( $footer_classes ); ?>" role="contentinfo">
+	<footer class="<?php echo esc_attr( implode( ' ', $footer_classes ) ); ?>" role="contentinfo">
 		<?php get_template_part( 'template-parts/' . $footer_layout, null ); ?>
 	</footer>
 	<?php
 }
 add_action( 'trove_footer', __NAMESPACE__ . '\\render_footer' );
+
+/**
+ * Blog posts loop (index + archives). Layout comes from Customizer → Blog Posts → Layout.
+ *
+ * @return void
+ */
+function render_blog_loop() {
+	$layout          = is_blog_listing_view() ? get_blog_layout() : 'list';
+	$pagination_type = is_blog_listing_view() ? get_blog_pagination_type() : 'paged';
+	global $wp_query;
+	$wp_max        = isset( $wp_query ) ? (int) $wp_query->max_num_pages : 0;
+	$had_posts     = isset( $wp_query ) && $wp_query->post_count > 0;
+	$paged_current = get_blog_list_paged();
+	$use_infinite  = $had_posts && 'infinite_scroll' === $pagination_type && $wp_max > 1;
+	$next_link     = $use_infinite ? get_next_posts_page_link() : '';
+
+	$pagination_args = array(
+		'mid_size'  => 2,
+		'prev_text' => __( 'Previous', 'trove' ),
+		'next_text' => __( 'Next', 'trove' ),
+	);
+	?>
+	<div class="trove-blog-loop trove-blog-loop--<?php echo esc_attr( $layout ); ?>"
+	<?php
+	if ( $use_infinite ) {
+		echo ' data-trove-infinite="1"';
+		echo ' data-trove-max-pages="' . esc_attr( (string) $wp_max ) . '"';
+		echo ' data-trove-current-page="' . esc_attr( (string) $paged_current ) . '"';
+		echo ' data-trove-next-url="' . ( $next_link ? esc_url( $next_link ) : '' ) . '"';
+	}
+	?>
+	>
+		<?php
+		if ( have_posts() ) {
+			while ( have_posts() ) {
+				the_post();
+				get_template_part( 'template-parts/content', get_post_type() );
+			}
+		} else {
+			get_template_part( 'template-parts/content', 'none' );
+		}
+		?>
+	</div>
+	<?php
+	if ( $had_posts ) {
+		if ( $use_infinite && $next_link ) {
+			echo '<div class="trove-blog-infinite-sentinel" id="trove-blog-infinite-sentinel" aria-hidden="true"></div>';
+			echo '<p class="trove-blog-infinite-status screen-reader-text" role="status" aria-live="polite"></p>';
+		} else {
+			the_posts_pagination( $pagination_args );
+		}
+	}
+}
+add_action( 'trove_blog_loop', __NAMESPACE__ . '\\render_blog_loop' );

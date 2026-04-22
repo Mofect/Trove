@@ -2,7 +2,7 @@
 /**
  * Declarative Customizer tree (Blocksy-style arrays: group titles + sections + options).
  *
- * General panel: Layout only. Colors and Typography are root-level sections (siblings of General, Header, …).
+ * General panel: Layout, Button. Colors and Typography are root-level sections (siblings of General, Header, …).
  *
  * Panel with nested sections (Header → Layout, Settings):
  *   'header' => [
@@ -53,6 +53,14 @@
  *     // optional: 'responsive_labels' => [ 'pc' => '…', 'tablet' => '…', 'phone' => '…' ],
  *   ],
  *
+ * Responsive TRBL padding (JSON string per device: top, right, bottom, left, linked):
+ *   'trove_bar_padding' => [
+ *     'label'    => __( 'Padding', 'trove' ),
+ *     'type'     => 'responsive_spacing',
+ *     'default'  => [ 'pc' => [ 'top' => 5, 'right' => 20, 'bottom' => 5, 'left' => 20 ], 'tablet' => [...], 'phone' => [...] ],
+ *     'input_attrs' => [ 'min' => 0, 'max' => 60, 'step' => 1 ],
+ *   ],
+ *
  * Switch (boolean theme_mod, pill UI instead of checkbox):
  *   'trove_toggle' => [
  *     'label'   => __( 'Hover effect', 'trove' ),
@@ -83,6 +91,9 @@
  *     'transport' => 'postMessage',
  *   ],
  *
+ *   'trove_divider_id' => [
+ *     'type' => 'divider', // horizontal rule; no label / no saved value
+ *   ],
  *   'trove_foo' => [
  *     'label'   => __( 'Layout', 'trove' ),
  *     'type'    => 'image_radio',
@@ -104,11 +115,31 @@ namespace Trove\Customizer\Config;
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Clone a settings array with prefixed setting ids.
+ *
+ * @param array<string, array<string, mixed>> $options Options keyed by setting id.
+ * @param string                              $from    Prefix to replace.
+ * @param string                              $to      New prefix.
+ * @return array<string, array<string, mixed>>
+ */
+function trove_prefixed_options( array $options, $from, $to ) {
+	$out = array();
+	foreach ( $options as $setting_id => $field ) {
+		$new_id = str_replace( (string) $from, (string) $to, (string) $setting_id );
+		if ( is_array( $field ) && array_key_exists( 'default', $field ) ) {
+			$field['default'] = \Trove\Customizer\trove_customizer_default( $new_id, $field['default'] );
+		}
+		$out[ $new_id ] = $field;
+	}
+	return $out;
+}
+
+/**
  * Returns the merged options array for the Customizer registry.
  *
  * Each segment is filterable before merge; the full tree is filterable last:
  *
- * - `trove_customizer_options_general` — General Options heading, General (Layout), Colors, Typography, Header, Footer, Performance.
+ * - `trove_customizer_options_general` — General Options heading, General (Layout, Button), Colors, Typography, Announcement Bar, Header, Footer, Performance.
  * - `trove_customizer_options_post_types` — Post types group title and post-type sections (e.g. Blog).
  * - `trove_customizer_options_shop` — Shop group title and shop-related sections (WooCommerce active).
  * - `trove_customizer_options_site` — Site group title and related entries.
@@ -138,6 +169,22 @@ function get_options() {
 					'container' => array( 'priority' => 1 ),
 					'options'   => require __DIR__ . '/general/layout.php',
 				),
+				'button' => array(
+					'title'     => __( 'Button', 'trove' ),
+					'container' => array(
+						'priority'              => 2,
+						'color_swatches_layout' => true,
+					),
+					'options'   => require __DIR__ . '/general/button.php',
+				),
+				'text_field' => array(
+					'title'     => __( 'Text Field', 'trove' ),
+					'container' => array(
+						'priority'              => 3,
+						'color_swatches_layout' => true,
+					),
+					'options'   => require __DIR__ . '/general/text-field.php',
+				),
 			),
 		),
 
@@ -159,17 +206,12 @@ function get_options() {
 		'announcement_bar' => array(
 			'title'       => __( 'Announcement Bar', 'trove' ),
 			'container'   => array(
-				'priority'              => 108,
-				'color_swatches_layout' => true,
+				'priority' => 108,
 			),
 			'tabs'        => array(
 				'content' => array(
 					'label'   => __( 'Content', 'trove' ),
 					'options' => require __DIR__ . '/announcement/content.php',
-				),
-				'styles' => array(
-					'label'   => __( 'Styles', 'trove' ),
-					'options' => require __DIR__ . '/announcement/styles.php',
 				),
 				'settings' => array(
 					'label'   => __( 'Settings', 'trove' ),
@@ -230,36 +272,66 @@ function get_options() {
 	$general = apply_filters( 'trove_customizer_options_general', $general );
 
 	/**
-	 * Post types
+	 * Pages
 	 */
-	$post_types = array(
+	$blog_layout_options   = require __DIR__ . '/blog/layout.php';
+	$blog_styles_options   = require __DIR__ . '/blog/styles.php';
+	$blog_settings_options = require __DIR__ . '/blog/settings.php';
+
+	$pages = array(
 		'post_types_title' => array(
 			'type'     => 'trove-group-title',
-			'title'    => __( 'Post types', 'trove' ),
+			'title'    => __( 'Pages', 'trove' ),
 			'priority' => 130,
 		),
-
 		'blog' => array(
 			'title'     => __( 'Blog Posts', 'trove' ),
 			'container' => array( 'priority' => 135 ),
 			'tabs'        => array(
 				'layout' => array(
 					'label'   => __( 'Layout', 'trove' ),
-					'options' => require __DIR__ . '/blog/layout.php',
+					'options' => $blog_layout_options,
 				),
 				'styles' => array(
 					'label'   => __( 'Styles', 'trove' ),
-					'options' => require __DIR__ . '/blog/styles.php',
+					'options' => $blog_styles_options,
 				),
 				'settings' => array(
 					'label'   => __( 'Settings', 'trove' ),
-					'options' => require __DIR__ . '/blog/settings.php',
+					'options' => $blog_settings_options,
 				)
+			),
+		),
+		'search_page' => array(
+			'title'     => __( 'Search page', 'trove' ),
+			'container' => array( 'priority' => 136 ),
+			'tabs'      => array(
+				'layout'   => array( 'label' => __( 'Layout', 'trove' ), 'options' => trove_prefixed_options( $blog_layout_options, 'trove_blog_', 'trove_search_page_' ) ),
+				'styles'   => array( 'label' => __( 'Styles', 'trove' ), 'options' => trove_prefixed_options( $blog_styles_options, 'trove_blog_', 'trove_search_page_' ) ),
+				'settings' => array( 'label' => __( 'Settings', 'trove' ), 'options' => trove_prefixed_options( $blog_settings_options, 'trove_blog_', 'trove_search_page_' ) ),
+			),
+		),
+		'author_page' => array(
+			'title'     => __( 'Author page', 'trove' ),
+			'container' => array( 'priority' => 137 ),
+			'tabs'      => array(
+				'layout'   => array( 'label' => __( 'Layout', 'trove' ), 'options' => trove_prefixed_options( $blog_layout_options, 'trove_blog_', 'trove_author_page_' ) ),
+				'styles'   => array( 'label' => __( 'Styles', 'trove' ), 'options' => trove_prefixed_options( $blog_styles_options, 'trove_blog_', 'trove_author_page_' ) ),
+				'settings' => array( 'label' => __( 'Settings', 'trove' ), 'options' => trove_prefixed_options( $blog_settings_options, 'trove_blog_', 'trove_author_page_' ) ),
+			),
+		),
+		'archive_page' => array(
+			'title'     => __( 'Archive page', 'trove' ),
+			'container' => array( 'priority' => 138 ),
+			'tabs'      => array(
+				'layout'   => array( 'label' => __( 'Layout', 'trove' ), 'options' => trove_prefixed_options( $blog_layout_options, 'trove_blog_', 'trove_archive_page_' ) ),
+				'styles'   => array( 'label' => __( 'Styles', 'trove' ), 'options' => trove_prefixed_options( $blog_styles_options, 'trove_blog_', 'trove_archive_page_' ) ),
+				'settings' => array( 'label' => __( 'Settings', 'trove' ), 'options' => trove_prefixed_options( $blog_settings_options, 'trove_blog_', 'trove_archive_page_' ) ),
 			),
 		),
 	);
 
-	$post_types = apply_filters( 'trove_customizer_options_post_types', $post_types );
+	$pages = apply_filters( 'trove_customizer_options_pages', $pages );
 
 	$woocommerce = array();
 	if( class_exists( 'woocommerce' ) ) {
@@ -281,7 +353,7 @@ function get_options() {
 		'site_group_title' => array(
 			'type'     => 'trove-group-title',
 			'title'    => __( 'Site', 'trove' ),
-			'priority' => 140,
+			'priority' => 180,
 		),
 	);
 
@@ -292,7 +364,7 @@ function get_options() {
 	 */
 	$extensions = apply_filters( 'trove_customizer_options_extensions', array() );
 
-	$merged = array_merge( $general, $post_types, $woocommerce, $extensions, $site );
+	$merged = array_merge( $general, $pages, $woocommerce, $extensions, $site );
 
 	/**
 	 * Filter the full declarative Customizer config (Blocksy-style).

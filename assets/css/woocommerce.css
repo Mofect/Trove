@@ -1,3 +1,37 @@
+/*
+ * Store notice — keep it in document flow so it stacks above `.trove-announcement-bar`
+ * (WooCommerce default `position:absolute; top:0` removes it from flow and overlaps the next bar).
+ */
+body p.demo_store,
+body .woocommerce-store-notice {
+	position: relative;
+	top: auto;
+	left: auto;
+	right: auto;
+	z-index: 1;
+	width: 100%;
+	box-sizing: border-box;
+	background-color: var(--trove-store-notice-background, #720eec);
+	color: var(--trove-store-notice-text, #ffffff);
+}
+
+body p.demo_store a,
+body .woocommerce-store-notice a {
+	color: var(--trove-store-notice-link, #ffffff);
+}
+
+body p.demo_store a:hover,
+body p.demo_store a:focus,
+body .woocommerce-store-notice a:hover,
+body .woocommerce-store-notice a:focus {
+	color: var(--trove-store-notice-link-hover, #e8defc);
+}
+
+body.admin-bar p.demo_store,
+body.admin-bar .woocommerce-store-notice {
+	top: auto;
+}
+
 /* WooCommerce Mini Cart Icon
 --------------------------------------------- */
 
@@ -9,9 +43,27 @@
  * Header mini-cart count badge (Customizer → Colors: Cart badge / Cart count).
  * !important beats WooCommerce Interactivity inline badge colors when theme vars are set.
  */
-.site-header .site-header__woo .wc-block-mini-cart .wc-block-mini-cart__badge {
+.site-header .site-header__buttons .wc-block-mini-cart .wc-block-mini-cart__badge {
 	background-color: var(--trove-header-cart-badge-bg) !important;
 	color: var(--trove-header-cart-count) !important;
+}
+
+.site-header .site-header__buttons .wc-block-mini-cart .wc-block-mini-cart__button {
+	background: transparent;
+	border: 0;
+	color: inherit;
+}
+
+.site-header .site-header__buttons .wc-block-mini-cart .wc-block-mini-cart__button:hover,
+.site-header .site-header__buttons .wc-block-mini-cart .wc-block-mini-cart__button:focus-visible {
+	background: transparent;
+	border-color: transparent;
+	color: inherit;
+}
+
+.site-header .site-header__buttons .wc-block-mini-cart .wc-block-mini-cart__button .wc-block-mini-cart__icon {
+	width: 25px;
+	height: 25px;
 }
 
 /* Editor: WooCommerce account and cart icons (PHP replace runs on frontend only). */

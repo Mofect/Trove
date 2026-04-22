@@ -75,22 +75,6 @@ final class Heading_Control extends WP_Customize_Control {
 	}
 
 	/**
-	 * Ordered swatch colors for one scheme (matches definition order).
-	 *
-	 * @param array<string, string> $colors Sanitized theme_mod => color.
-	 * @return list<string>
-	 */
-	private function scheme_preview_swatches( array $colors ) {
-		$swatches = array();
-		foreach ( trove_global_color_scheme_setting_keys() as $key ) {
-			if ( isset( $colors[ $key ] ) ) {
-				$swatches[] = $colors[ $key ];
-			}
-		}
-		return $swatches;
-	}
-
-	/**
 	 * @return void
 	 */
 	public function render_content() {
@@ -134,8 +118,24 @@ final class Heading_Control extends WP_Customize_Control {
 				>
 					<ul class="trove-cz-heading-menu__list" role="none">
 						<?php
+						$swatch_titles = get_color_scheme_swatch_titles();
 						foreach ( $schemes as $index => $scheme ) {
-							$swatches = $this->scheme_preview_swatches( $scheme['colors'] );
+							$keys_order    = trove_global_color_scheme_setting_keys();
+							$grouped       = array();
+							$emitted_norms = array();
+							foreach ( $keys_order as $sk ) {
+								if ( ! isset( $scheme['colors'][ $sk ] ) ) {
+									continue;
+								}
+								$norm = trove_normalize_color_for_scheme_dedupe( $scheme['colors'][ $sk ] );
+								if ( '' === $norm ) {
+									continue;
+								}
+								if ( ! isset( $grouped[ $norm ] ) ) {
+									$grouped[ $norm ] = array();
+								}
+								$grouped[ $norm ][] = $sk;
+							}
 							?>
 							<li class="trove-cz-heading-menu__item" role="none">
 								<button
@@ -148,9 +148,30 @@ final class Heading_Control extends WP_Customize_Control {
 									<span class="trove-cz-scheme-item__label"><?php echo esc_html( $scheme['label'] ); ?></span>
 									<span class="trove-cz-scheme-item__swatches" aria-hidden="true">
 										<?php
-										foreach ( $swatches as $hex ) {
+										foreach ( $keys_order as $sk ) {
+											if ( ! isset( $scheme['colors'][ $sk ] ) ) {
+												continue;
+											}
+											$norm = trove_normalize_color_for_scheme_dedupe( $scheme['colors'][ $sk ] );
+											if ( '' === $norm || isset( $emitted_norms[ $norm ] ) ) {
+												continue;
+											}
+											$emitted_norms[ $norm ] = true;
+											$hex                    = $scheme['colors'][ $sk ];
+											$title_parts            = array();
+											foreach ( $grouped[ $norm ] as $gk ) {
+												$t = isset( $swatch_titles[ $gk ] ) ? trim( (string) $swatch_titles[ $gk ] ) : '';
+												if ( '' !== $t && ! in_array( $t, $title_parts, true ) ) {
+													$title_parts[] = $t;
+												}
+											}
+											$title = implode( ' · ', $title_parts );
 											?>
-											<span class="trove-cz-scheme-swatch" style="background-color: <?php echo esc_attr( $hex ); ?>"></span>
+											<span
+												class="trove-cz-scheme-swatch"
+												style="background-color: <?php echo esc_attr( $hex ); ?>"
+												<?php echo '' !== $title ? ' title="' . esc_attr( $title ) . '"' : ''; ?>
+											></span>
 											<?php
 										}
 										?>

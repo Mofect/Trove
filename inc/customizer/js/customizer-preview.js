@@ -46,6 +46,280 @@
 		} );
 	}
 
+	function bindButtonThemeVars() {
+		if ( typeof wp === 'undefined' || ! wp.customize ) {
+			return;
+		}
+
+		function clampRadius( raw ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				n = 6;
+			}
+			return Math.max( 0, Math.min( 32, n ) );
+		}
+
+		function clampWidth( raw ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				n = 1;
+			}
+			return Math.max( 0, Math.min( 8, n ) );
+		}
+
+		function clampTextFontSize( raw ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				n = 14;
+			}
+			return Math.max( 10, Math.min( 24, n ) );
+		}
+
+		wp.customize( 'trove_button_border_radius', function ( value ) {
+			function onChange( newVal ) {
+				document.documentElement.style.setProperty(
+					'--trove-button-border-radius',
+					clampRadius( newVal ) + 'px'
+				);
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_button_border_width', function ( value ) {
+			function onChange( newVal ) {
+				document.documentElement.style.setProperty(
+					'--trove-button-border-width',
+					clampWidth( newVal ) + 'px'
+				);
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_button_text_font_size', function ( value ) {
+			function onChange( newVal ) {
+				document.documentElement.style.setProperty(
+					'--trove-button-font-size',
+					clampTextFontSize( newVal ) + 'px'
+				);
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_button_secondary_border_radius', function ( value ) {
+			function onChange( newVal ) {
+				document.documentElement.style.setProperty(
+					'--trove-button-secondary-border-radius',
+					clampRadius( newVal ) + 'px'
+				);
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_button_secondary_border_width', function ( value ) {
+			function onChange( newVal ) {
+				document.documentElement.style.setProperty(
+					'--trove-button-secondary-border-width',
+					clampWidth( newVal ) + 'px'
+				);
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_button_secondary_text_font_size', function ( value ) {
+			function onChange( newVal ) {
+				document.documentElement.style.setProperty(
+					'--trove-button-secondary-font-size',
+					clampTextFontSize( newVal ) + 'px'
+				);
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		function parsePaddingJson( raw ) {
+			var fb = { top: 5, right: 20, bottom: 5, left: 20 };
+			var o;
+			try {
+				o = typeof raw === 'string' && raw ? JSON.parse( raw ) : {};
+			} catch ( err ) {
+				o = {};
+			}
+			function px( v, d ) {
+				var n = parseInt( v, 10 );
+				if ( isNaN( n ) ) {
+					return d;
+				}
+				return Math.max( 0, Math.min( 60, n ) );
+			}
+			return {
+				top: px( o.top, fb.top ),
+				right: px( o.right, fb.right ),
+				bottom: px( o.bottom, fb.bottom ),
+				left: px( o.left, fb.left ),
+			};
+		}
+
+		function paddingVarsDecl( sides ) {
+			return (
+				'--trove-button-padding-top:' +
+				sides.top +
+				'px;--trove-button-padding-right:' +
+				sides.right +
+				'px;--trove-button-padding-bottom:' +
+				sides.bottom +
+				'px;--trove-button-padding-left:' +
+				sides.left +
+				'px'
+			);
+		}
+
+		function secondaryPaddingVarsDecl( sides ) {
+			return (
+				'--trove-button-secondary-padding-top:' +
+				sides.top +
+				'px;--trove-button-secondary-padding-right:' +
+				sides.right +
+				'px;--trove-button-secondary-padding-bottom:' +
+				sides.bottom +
+				'px;--trove-button-secondary-padding-left:' +
+				sides.left +
+				'px'
+			);
+		}
+
+		function syncButtonPaddingPreview() {
+			var bp =
+				typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.responsiveBreakpoints
+					? troveCustomizerPreview.responsiveBreakpoints
+					: { tablet: 1024, phone: 781 };
+			var pc = wp.customize( 'trove_button_padding_pc' ).get();
+			var tb = wp.customize( 'trove_button_padding_tablet' ).get();
+			var ph = wp.customize( 'trove_button_padding_phone' ).get();
+			var css = ':root{' + paddingVarsDecl( parsePaddingJson( pc ) ) + '}';
+			css +=
+				'@media (max-width:' +
+				bp.tablet +
+				'px){:root{' +
+				paddingVarsDecl( parsePaddingJson( tb ) ) +
+				'}}';
+			css +=
+				'@media (max-width:' +
+				bp.phone +
+				'px){:root{' +
+				paddingVarsDecl( parsePaddingJson( ph ) ) +
+				'}}';
+			var el = document.getElementById( 'trove-preview-button-padding' );
+			if ( ! el ) {
+				el = document.createElement( 'style' );
+				el.id = 'trove-preview-button-padding';
+				document.head.appendChild( el );
+			}
+			el.textContent = css;
+		}
+
+		function syncButtonSecondaryPaddingPreview() {
+			var bp =
+				typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.responsiveBreakpoints
+					? troveCustomizerPreview.responsiveBreakpoints
+					: { tablet: 1024, phone: 781 };
+			var pc = wp.customize( 'trove_button_secondary_padding_pc' ).get();
+			var tb = wp.customize( 'trove_button_secondary_padding_tablet' ).get();
+			var ph = wp.customize( 'trove_button_secondary_padding_phone' ).get();
+			var css = ':root{' + secondaryPaddingVarsDecl( parsePaddingJson( pc ) ) + '}';
+			css +=
+				'@media (max-width:' +
+				bp.tablet +
+				'px){:root{' +
+				secondaryPaddingVarsDecl( parsePaddingJson( tb ) ) +
+				'}}';
+			css +=
+				'@media (max-width:' +
+				bp.phone +
+				'px){:root{' +
+				secondaryPaddingVarsDecl( parsePaddingJson( ph ) ) +
+				'}}';
+			var el = document.getElementById( 'trove-preview-button-secondary-padding' );
+			if ( ! el ) {
+				el = document.createElement( 'style' );
+				el.id = 'trove-preview-button-secondary-padding';
+				document.head.appendChild( el );
+			}
+			el.textContent = css;
+		}
+
+		var padIds = [
+			'trove_button_padding_pc',
+			'trove_button_padding_tablet',
+			'trove_button_padding_phone',
+		];
+		var padReady = 0;
+		padIds.forEach( function ( sid ) {
+			wp.customize( sid, function ( value ) {
+				value.bind( syncButtonPaddingPreview );
+				padReady += 1;
+				if ( padReady === padIds.length ) {
+					syncButtonPaddingPreview();
+				}
+			} );
+		} );
+
+		var pad2Ids = [
+			'trove_button_secondary_padding_pc',
+			'trove_button_secondary_padding_tablet',
+			'trove_button_secondary_padding_phone',
+		];
+		var pad2Ready = 0;
+		pad2Ids.forEach( function ( sid ) {
+			wp.customize( sid, function ( value ) {
+				value.bind( syncButtonSecondaryPaddingPreview );
+				pad2Ready += 1;
+				if ( pad2Ready === pad2Ids.length ) {
+					syncButtonSecondaryPaddingPreview();
+				}
+			} );
+		} );
+	}
+
+	function bindTextFieldThemeVars() {
+		if ( typeof wp === 'undefined' || ! wp.customize ) {
+			return;
+		}
+		function clamp( raw, min, max, d ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				n = d;
+			}
+			return Math.max( min, Math.min( max, n ) );
+		}
+		var map = [
+			[ 'trove_input_field_height', '--trove-input-field-height', 28, 80, 42 ],
+			[ 'trove_input_field_text_size', '--trove-input-field-text-size', 10, 24, 16 ],
+			[ 'trove_input_field_border_width', '--trove-input-field-border-width', 0, 8, 1 ],
+			[ 'trove_input_field_border_radius', '--trove-input-field-border-radius', 0, 32, 3 ],
+			[ 'trove_textarea_field_height', '--trove-textarea-field-height', 60, 400, 120 ],
+			[ 'trove_textarea_field_text_size', '--trove-textarea-field-text-size', 10, 24, 16 ],
+			[ 'trove_textarea_field_border_width', '--trove-textarea-field-border-width', 0, 8, 1 ],
+			[ 'trove_textarea_field_border_radius', '--trove-textarea-field-border-radius', 0, 32, 3 ],
+		];
+		map.forEach( function ( row ) {
+			wp.customize( row[ 0 ], function ( value ) {
+				function onChange( newVal ) {
+					document.documentElement.style.setProperty(
+						row[ 1 ],
+						clamp( newVal, row[ 2 ], row[ 3 ], row[ 4 ] ) + 'px'
+					);
+				}
+				value.bind( onChange );
+				onChange( value.get() );
+			} );
+		} );
+	}
+
 	function formatCssFloatStr( num ) {
 		var s = String( Math.round( num * 10000 ) / 10000 );
 		if ( s.indexOf( '.' ) !== -1 ) {
@@ -97,6 +371,19 @@
 			return p + '%';
 		}
 		return '1.5';
+	}
+
+	function fontLetterSpacingCss( lsVal, unitVal ) {
+		var unit = unitVal ? String( unitVal ).toLowerCase() : 'em';
+		if ( unit !== 'px' && unit !== 'rem' && unit !== 'em' ) {
+			unit = 'em';
+		}
+		var v = parseFloat( lsVal );
+		if ( isNaN( v ) ) {
+			v = 0;
+		}
+		v = Math.max( -10, Math.min( 10, v ) );
+		return formatCssFloatStr( v ) + unit;
 	}
 
 	function getFontWeightsMap() {
@@ -175,6 +462,16 @@
 			return;
 		}
 
+		function getCustomizeValue( id, fallback ) {
+			try {
+				var inst = wp.customize.instance ? wp.customize.instance( id ) : null;
+				if ( inst && typeof inst.get === 'function' ) {
+					return inst.get();
+				}
+			} catch ( err ) {}
+			return fallback;
+		}
+
 		var cfg =
 			typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.typography
 				? troveCustomizerPreview.typography
@@ -195,10 +492,72 @@
 			} );
 		} );
 
-		function applyNumberUnitVar( numberSetting, pair ) {
-			var numberVal = wp.customize( numberSetting ).get();
-			var unitVal = wp.customize( pair.unit ).get();
-			var css = pair.mode === 'line_height' ? fontBaseLineHeightCss( numberVal, unitVal ) : fontBaseSizeCss( numberVal, unitVal );
+		function applyNumberUnitVar( numberSetting, pair, changedDevice ) {
+			var unitVal = getCustomizeValue( pair.unit, 'px' );
+			var isLineHeight =
+				pair.mode === 'line_height' ||
+				/line-height/.test( String( pair.var || '' ) ) ||
+				/line_height/.test( String( numberSetting || '' ) );
+			var isLetterSpacing =
+				pair.mode === 'letter_spacing' ||
+				/letter-spacing/.test( String( pair.var || '' ) ) ||
+				/letter_spacing/.test( String( numberSetting || '' ) );
+			var mode = isLineHeight ? 'line_height' : ( isLetterSpacing ? 'letter_spacing' : 'size' );
+
+			if ( pair.responsive ) {
+				var cfg =
+					typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.responsiveBreakpoints
+						? troveCustomizerPreview.responsiveBreakpoints
+						: { tablet: 1024, phone: 781 };
+				var pcVal = getCustomizeValue( numberSetting + '_pc', 0 );
+				var tbVal = getCustomizeValue( numberSetting + '_tablet', pcVal );
+				var phVal = getCustomizeValue( numberSetting + '_phone', tbVal );
+				var format = mode === 'line_height'
+					? fontBaseLineHeightCss
+					: ( mode === 'letter_spacing' ? fontLetterSpacingCss : fontBaseSizeCss );
+				var css =
+					':root{' +
+					pair.var +
+					':' +
+					format( pcVal, unitVal ) +
+					'}' +
+					'@media (max-width:' +
+					cfg.tablet +
+					'px){:root{' +
+					pair.var +
+					':' +
+					format( tbVal, unitVal ) +
+					'}}' +
+					'@media (max-width:' +
+					cfg.phone +
+					'px){:root{' +
+					pair.var +
+					':' +
+					format( phVal, unitVal ) +
+					'}}';
+				var sid = numberSetting.replace( /[^a-z0-9_-]/gi, '-' );
+				var el = document.getElementById( 'trove-preview-typography-' + sid );
+				if ( ! el ) {
+					el = document.createElement( 'style' );
+					el.id = 'trove-preview-typography-' + sid;
+					document.head.appendChild( el );
+				}
+				el.textContent = css;
+				var activeDevice = changedDevice || 'pc';
+				var currentVal = pcVal;
+				if ( activeDevice === 'tablet' ) {
+					currentVal = tbVal;
+				} else if ( activeDevice === 'phone' ) {
+					currentVal = phVal;
+				}
+				document.documentElement.style.setProperty( pair.var, format( currentVal, unitVal ) );
+				return;
+			}
+
+			var numberVal = getCustomizeValue( numberSetting, 0 );
+			var css = mode === 'line_height'
+				? fontBaseLineHeightCss( numberVal, unitVal )
+				: ( mode === 'letter_spacing' ? fontLetterSpacingCss( numberVal, unitVal ) : fontBaseSizeCss( numberVal, unitVal ) );
 			document.documentElement.style.setProperty( pair.var, css );
 		}
 
@@ -208,18 +567,176 @@
 				: {};
 		Object.keys( numberUnitPairs ).forEach( function ( numberSetting ) {
 			var pair = numberUnitPairs[ numberSetting ];
-			wp.customize( numberSetting, function ( value ) {
-				value.bind( function () {
-					applyNumberUnitVar( numberSetting, pair );
-				} );
-				wp.customize( pair.unit, function ( unitValue ) {
-					unitValue.bind( function () {
-						applyNumberUnitVar( numberSetting, pair );
+			var valueIds = pair.responsive
+				? [ numberSetting + '_pc', numberSetting + '_tablet', numberSetting + '_phone' ]
+				: [ numberSetting ];
+			var lastChangedDevice = 'pc';
+			var ready = 0;
+			valueIds.forEach( function ( valueId ) {
+				wp.customize( valueId, function ( value ) {
+					var dev = 'pc';
+					if ( pair.responsive ) {
+						if ( /_tablet$/.test( valueId ) ) {
+							dev = 'tablet';
+						} else if ( /_phone$/.test( valueId ) ) {
+							dev = 'phone';
+						}
+					}
+					value.bind( function () {
+						lastChangedDevice = dev;
+						applyNumberUnitVar( numberSetting, pair, dev );
 					} );
-					applyNumberUnitVar( numberSetting, pair );
+					ready += 1;
+					if ( ready === valueIds.length ) {
+						wp.customize( pair.unit, function ( unitValue ) {
+							unitValue.bind( function () {
+								applyNumberUnitVar( numberSetting, pair, lastChangedDevice );
+							} );
+							applyNumberUnitVar( numberSetting, pair, lastChangedDevice );
+						} );
+					}
 				} );
 			} );
 		} );
+
+		function deviceFromPreviewedDevice( previewDevice ) {
+			if ( previewDevice === 'tablet' ) {
+				return 'tablet';
+			}
+			if ( previewDevice === 'mobile' ) {
+				return 'phone';
+			}
+			return 'pc';
+		}
+
+		function deviceFromFrameElementClass() {
+			var frame = window.frameElement;
+			if ( ! frame ) {
+				return null;
+			}
+			var node = frame;
+			while ( node ) {
+				if ( node.classList ) {
+					if ( node.classList.contains( 'preview-mobile' ) ) {
+						return 'phone';
+					}
+					if ( node.classList.contains( 'preview-tablet' ) ) {
+						return 'tablet';
+					}
+					if ( node.classList.contains( 'preview-desktop' ) ) {
+						return 'pc';
+					}
+				}
+				node = node.parentElement;
+			}
+			return null;
+		}
+
+		function deviceFromParentOverlayClass() {
+			try {
+				if ( !window.parent || !window.parent.document ) {
+					return null;
+				}
+				var doc = window.parent.document;
+				var targets = [
+					doc.querySelector( '.wp-full-overlay' ),
+					doc.body,
+					doc.documentElement,
+				];
+				var i;
+				for ( i = 0; i < targets.length; i++ ) {
+					var el = targets[ i ];
+					if ( !el || !el.classList ) {
+						continue;
+					}
+					if ( el.classList.contains( 'preview-mobile' ) ) {
+						return 'phone';
+					}
+					if ( el.classList.contains( 'preview-tablet' ) ) {
+						return 'tablet';
+					}
+					if ( el.classList.contains( 'preview-desktop' ) ) {
+						return 'pc';
+					}
+				}
+			} catch ( err ) {}
+			return null;
+		}
+
+		function detectResponsiveDevice() {
+			var fromParent = deviceFromParentOverlayClass();
+			if ( fromParent ) {
+				return fromParent;
+			}
+			var fromFrame = deviceFromFrameElementClass();
+			if ( fromFrame ) {
+				return fromFrame;
+			}
+			return 'pc';
+		}
+
+		var currentResponsiveDevice = detectResponsiveDevice();
+
+		function refreshResponsiveTypographyForDevice( device ) {
+			var resolved = device;
+			if ( resolved !== 'pc' && resolved !== 'tablet' && resolved !== 'phone' ) {
+				resolved = detectResponsiveDevice();
+			}
+			currentResponsiveDevice = resolved;
+			Object.keys( numberUnitPairs ).forEach( function ( numberSetting ) {
+				var pair = numberUnitPairs[ numberSetting ];
+				if ( pair && pair.responsive ) {
+					applyNumberUnitVar( numberSetting, pair, resolved );
+				}
+			} );
+		}
+
+		if ( wp.customize && wp.customize.previewedDevice ) {
+			wp.customize.previewedDevice.bind( function ( previewDevice ) {
+				var device = deviceFromPreviewedDevice( previewDevice );
+				currentResponsiveDevice = device;
+				refreshResponsiveTypographyForDevice( device );
+			} );
+		}
+		if ( wp.customize && wp.customize.preview && typeof wp.customize.preview.bind === 'function' ) {
+			wp.customize.preview.bind( 'trove-responsive-device-change', function ( payload ) {
+				var device = payload && payload.device ? String( payload.device ) : 'pc';
+				if ( device !== 'pc' && device !== 'tablet' && device !== 'phone' ) {
+					device = currentResponsiveDevice || 'pc';
+				}
+				currentResponsiveDevice = device;
+				refreshResponsiveTypographyForDevice( device );
+			} );
+		}
+		if ( typeof MutationObserver !== 'undefined' && window.frameElement ) {
+			var observedNodes = [];
+			var n = window.frameElement;
+			while ( n ) {
+				observedNodes.push( n );
+				n = n.parentElement;
+			}
+			observedNodes.forEach( function ( node ) {
+				var frameDeviceObserver = new MutationObserver( function () {
+					refreshResponsiveTypographyForDevice( null );
+				} );
+				frameDeviceObserver.observe( node, { attributes: true, attributeFilter: [ 'class' ] } );
+			} );
+		}
+		// Failsafe: if any device-switch event chain is missed, keep preview typography
+		// in sync by polling current device and reapplying responsive vars on change.
+		(function startResponsiveDeviceWatcher() {
+			var lastDevice = currentResponsiveDevice || detectResponsiveDevice();
+			window.setInterval( function () {
+				var next = detectResponsiveDevice();
+				if ( next !== lastDevice ) {
+					lastDevice = next;
+				}
+				currentResponsiveDevice = next;
+				// Always reapply in case device class changed but message chain was missed.
+				refreshResponsiveTypographyForDevice( next );
+			}, 220 );
+		})();
+		refreshResponsiveTypographyForDevice( null );
 
 		var weightFamilyMap =
 			typeof troveCustomizerPreview !== 'undefined' && troveCustomizerPreview.weightFamilies
@@ -242,6 +759,24 @@
 
 	function getHeaderEl() {
 		return document.querySelector( 'header.site-header' );
+	}
+
+	function getFooterEl() {
+		return document.querySelector( 'footer.site-footer' );
+	}
+
+	function applyFooterTopBorder( newVal ) {
+		var footer = getFooterEl();
+		var enabled =
+			newVal === true ||
+			newVal === 1 ||
+			newVal === '1' ||
+			newVal === 'true';
+
+		if ( ! footer ) {
+			return;
+		}
+		footer.classList.toggle( 'trove-footer-has-top-border', !! enabled );
 	}
 
 	function isVerticalHeaderLayout( layout ) {
@@ -516,6 +1051,14 @@
 			onChange( value.get() );
 		} );
 
+		wp.customize( 'trove_footer_top_border', function ( value ) {
+			function onChange( newVal ) {
+				applyFooterTopBorder( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
 		wp.customize( 'trove_header_sticky', function ( value ) {
 			function onChange( newVal ) {
 				applyHeaderSticky( newVal );
@@ -527,38 +1070,6 @@
 		wp.customize( 'trove_header_menu_alignment', function ( value ) {
 			function onChange( newVal ) {
 				applyHeaderMenuAlignment( newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_announcement_background', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-announcement-background', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_announcement_text_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-announcement-text', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_announcement_link_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-announcement-link', newVal );
-			}
-			value.bind( onChange );
-			onChange( value.get() );
-		} );
-
-		wp.customize( 'trove_announcement_link_hover_color', function ( value ) {
-			function onChange( newVal ) {
-				applyRootCssColorVar( '--trove-announcement-link-hover', newVal );
 			}
 			value.bind( onChange );
 			onChange( value.get() );
@@ -714,8 +1225,8 @@
 				if ( typeof MutationObserver === 'undefined' ) {
 					return;
 				}
-				var woo = document.querySelector( 'header.site-header .site-header__woo' );
-				if ( ! woo ) {
+				var buttons = document.querySelector( 'header.site-header .site-header__buttons' );
+				if ( ! buttons ) {
 					return;
 				}
 				var t = null;
@@ -748,7 +1259,7 @@
 					}, 0 );
 				}
 				var observer = new MutationObserver( syncFromCustomizer );
-				observer.observe( woo, { childList: true, subtree: true } );
+				observer.observe( buttons, { childList: true, subtree: true } );
 			} )();
 		}
 
@@ -973,18 +1484,131 @@
 		} )();
 	}
 
+	/**
+	 * General → Layout live preview: :root vars + .site-main + wide chrome (postMessage).
+	 */
+	function trovePreviewSyncLayout() {
+		if ( typeof wp === 'undefined' || ! wp.customize ) {
+			return;
+		}
+
+		function clampContentWidth( raw ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				return 800;
+			}
+			if ( n < 600 || n > 1400 ) {
+				return 800;
+			}
+			return n;
+		}
+
+		function clampContentWideWidth( raw ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				return 1200;
+			}
+			if ( n < 800 || n > 2400 ) {
+				return 1200;
+			}
+			return n;
+		}
+
+		function clampVerticalSpacing( raw ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				return 0;
+			}
+			return Math.min( 200, Math.max( 0, n ) );
+		}
+
+		function clampHorizontalSpacing( raw ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				return 0;
+			}
+			return Math.min( 200, Math.max( 0, n ) );
+		}
+
+		function getLayoutSetting( id, fallback ) {
+			try {
+				var s = wp.customize( id );
+				if ( s && typeof s.get === 'function' ) {
+					return s.get();
+				}
+			} catch ( err ) {}
+			return fallback;
+		}
+
+		var rawNarrow = getLayoutSetting( 'trove_content_width', 800 );
+		var rawWide = getLayoutSetting( 'trove_content_wide_width', 1200 );
+		var rawVert = getLayoutSetting( 'trove_content_vertical_spacing', 48 );
+		var rawHoriz = getLayoutSetting( 'trove_content_horizontal_spacing', 20 );
+
+		var narrowPx = clampContentWidth( rawNarrow ) + 'px';
+		var widePx = clampContentWideWidth( rawWide ) + 'px';
+		var vertPx = clampVerticalSpacing( rawVert ) + 'px';
+		var horizPx = clampHorizontalSpacing( rawHoriz ) + 'px';
+
+		var root = document.documentElement;
+		root.style.setProperty( '--trove-content-width', narrowPx );
+		root.style.setProperty( '--trove-content-wide-width', widePx );
+		root.style.setProperty( '--trove-wide', widePx );
+		root.style.setProperty( '--trove-content-vertical-spacing', vertPx );
+		root.style.setProperty( '--trove-content-horizontal-spacing', horizPx );
+
+		var main = document.querySelector( 'main.site-main' );
+		if ( main ) {
+			var useWide =
+				document.body &&
+				( document.body.classList.contains( 'trove-blog-layout--grid' ) ||
+					document.body.classList.contains( 'trove-blog-layout--masonry' ) );
+			main.style.maxWidth = useWide ? widePx : narrowPx;
+			main.style.paddingTop = vertPx;
+			main.style.paddingBottom = vertPx;
+			main.style.paddingLeft = horizPx;
+			main.style.paddingRight = horizPx;
+		}
+
+		document.querySelectorAll( '.site-header__inner, .site-footer__inner, .trove-announcement-bar__inner' ).forEach( function ( el ) {
+			el.style.maxWidth = widePx;
+			el.style.paddingLeft = horizPx;
+			el.style.paddingRight = horizPx;
+		} );
+	}
+
 	function bindBlogLayout() {
 		if ( typeof wp === 'undefined' || ! wp.customize ) {
 			return;
 		}
 
 		var posKeys = [ 'top', 'left', 'right' ];
+		var postsPrefix = 'trove_blog_';
+
+		if ( document.body ) {
+			if ( document.body.classList.contains( 'search' ) ) {
+				postsPrefix = 'trove_search_page_';
+			} else if ( document.body.classList.contains( 'author' ) ) {
+				postsPrefix = 'trove_author_page_';
+			} else if (
+				document.body.classList.contains( 'category' ) ||
+				document.body.classList.contains( 'tag' ) ||
+				document.body.classList.contains( 'date' ) ||
+				document.body.classList.contains( 'archive' )
+			) {
+				postsPrefix = 'trove_archive_page_';
+			}
+		}
+
+		function postsSettingId( suffix ) {
+			return postsPrefix + suffix;
+		}
 
 		function getBlogListFeaturedPos() {
 			var pos = 'top';
 			try {
-				if ( wp.customize( 'trove_blog_list_featured_position' ) ) {
-					pos = wp.customize( 'trove_blog_list_featured_position' ).get() || 'top';
+				if ( wp.customize( postsSettingId( 'list_featured_position' ) ) ) {
+					pos = wp.customize( postsSettingId( 'list_featured_position' ) ).get() || 'top';
 				}
 			} catch ( err ) {
 				pos = 'top';
@@ -1046,9 +1670,10 @@
 				}
 			}
 			moveBlogPaginationOutsideLoop();
+			trovePreviewSyncLayout();
 		}
 
-		wp.customize( 'trove_blog_layout', function ( value ) {
+		wp.customize( postsSettingId( 'layout' ), function ( value ) {
 			function onChange( newVal ) {
 				applyBlogLayout( newVal );
 			}
@@ -1056,7 +1681,7 @@
 			onChange( value.get() );
 		} );
 
-		wp.customize( 'trove_blog_list_featured_position', function ( value ) {
+		wp.customize( postsSettingId( 'list_featured_position' ), function ( value ) {
 			function onChange( newVal ) {
 				applyBlogListFeaturedPosition( newVal );
 			}
@@ -1073,7 +1698,7 @@
 			document.body.classList.toggle( 'trove-blog-boxed', on );
 		}
 
-		wp.customize( 'trove_blog_boxed_style', function ( value ) {
+		wp.customize( postsSettingId( 'boxed_style' ), function ( value ) {
 			function onChange( newVal ) {
 				applyBlogBoxed( newVal );
 			}
@@ -1090,7 +1715,7 @@
 			document.documentElement.style.setProperty( '--trove-blog-boxed-radius', n + 'px' );
 		}
 
-		wp.customize( 'trove_blog_boxed_border_radius', function ( value ) {
+		wp.customize( postsSettingId( 'boxed_border_radius' ), function ( value ) {
 			function onChange( newVal ) {
 				applyBlogBoxedRadius( newVal );
 			}
@@ -1118,10 +1743,10 @@
 		}
 
 		function applyBlogLoopPartVisibility() {
-			var showImg = getBlogPartSetting( 'trove_blog_show_featured_image', true );
-			var showD = getBlogPartSetting( 'trove_blog_show_date', true );
-			var showA = getBlogPartSetting( 'trove_blog_show_author', true );
-			var showR = getBlogPartSetting( 'trove_blog_show_continue_reading', true );
+			var showImg = getBlogPartSetting( postsSettingId( 'show_featured_image' ), true );
+			var showD = getBlogPartSetting( postsSettingId( 'show_date' ), true );
+			var showA = getBlogPartSetting( postsSettingId( 'show_author' ), true );
+			var showR = getBlogPartSetting( postsSettingId( 'show_continue_reading' ), true );
 
 			document.querySelectorAll( '.trove-blog-loop .entry-card__media--blog' ).forEach( function ( el ) {
 				el.hidden = ! showImg;
@@ -1149,10 +1774,10 @@
 		}
 
 		[
-			'trove_blog_show_featured_image',
-			'trove_blog_show_date',
-			'trove_blog_show_author',
-			'trove_blog_show_continue_reading',
+			postsSettingId( 'show_featured_image' ),
+			postsSettingId( 'show_date' ),
+			postsSettingId( 'show_author' ),
+			postsSettingId( 'show_continue_reading' ),
 		].forEach( function ( sid ) {
 			wp.customize( sid, function ( value ) {
 				value.bind( applyBlogLoopPartVisibility );
@@ -1406,6 +2031,27 @@
 		} );
 	}
 
+	/**
+	 * General → Layout: bind postMessage settings to trovePreviewSyncLayout().
+	 */
+	function bindLayout() {
+		if ( typeof wp === 'undefined' || ! wp.customize ) {
+			return;
+		}
+
+		[
+			'trove_content_width',
+			'trove_content_wide_width',
+			'trove_content_vertical_spacing',
+			'trove_content_horizontal_spacing',
+		].forEach( function ( sid ) {
+			wp.customize( sid, function ( value ) {
+				value.bind( trovePreviewSyncLayout );
+				trovePreviewSyncLayout();
+			} );
+		} );
+	}
+
 	/*
 	 * Run immediately in the preview iframe. WordPress does not fire
 	 * wp.customize.bind( 'ready' ) here — the core script triggers
@@ -1415,9 +2061,12 @@
 	 */
 	if ( typeof wp !== 'undefined' && wp.customize ) {
 		bindGlobalColors();
+		bindButtonThemeVars();
+		bindTextFieldThemeVars();
 		bindTypography();
 		bindGoogleFont();
 		bindHeaderSettings();
+		bindLayout();
 		bindBlogLayout();
 		bindFooterSettings();
 	}

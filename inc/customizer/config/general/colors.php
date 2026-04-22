@@ -7,69 +7,35 @@
 
 namespace Trove\Customizer\Config;
 
+use function \Trove\Customizer\trove_customizer_color_scheme_presets_raw;
+use function \Trove\Customizer\trove_customizer_default;
+
 defined( 'ABSPATH' ) || exit;
+
+$scheme_labels = array(
+	__( 'Preset: Light', 'trove' ),
+	__( 'Preset: Dark', 'trove' ),
+);
+$color_schemes = array();
+foreach ( trove_customizer_color_scheme_presets_raw() as $i => $preset_row ) {
+	$color_schemes[] = array(
+		'label'  => isset( $scheme_labels[ $i ] ) ? $scheme_labels[ $i ] : '',
+		'colors' => $preset_row['colors'],
+	);
+}
 
 $colors = array(
 	'trove_cz_heading_global' => array(
-		'type'     => 'heading',
-		'label'    => __( 'Color Schemes', 'trove' ),
-		'priority' => 0,
-		'color_schemes' => array(
-			array(
-				'label'  => __( 'Preset: Light', 'trove' ),
-				'colors' => array(
-					'trove_color_page_background' => '#ffffff',
-					'trove_color_base_text'       => '#111111',
-					'trove_color_headings'        => '#000000',
-					'trove_color_link'            => '#064fff',
-					'trove_color_link_hover'      => '#003dcc',
-					'trove_color_selection_text'  => '#ffffff',
-					'trove_color_selection_bg'    => '#22c55e',
-					'trove_color_border'          => '#eeeeee',
-					'trove_color_accent'          => '#064fff',
-					'trove_header_background'     => '#ffffff',
-					'trove_header_text_color'     => '#111111',
-					'trove_header_link_color'     => '#064fff',
-					'trove_header_link_hover_color' => '#003dcc',
-					'trove_footer_background'     => '#eeeeee',
-					'trove_footer_text_color'     => '#111111',
-					'trove_footer_link_color'     => '#064fff',
-					'trove_footer_link_hover_color' => '#003dcc',
-					'trove_header_cart_badge_color' => '#064fff',
-					'trove_header_cart_count_color' => '#ffffff',
-				),
-			),
-			array(
-				'label'  => __( 'Preset: Dark', 'trove' ),
-				'colors' => array(
-					'trove_color_page_background' => '#0f172a',
-					'trove_color_base_text'       => '#e2e8f0',
-					'trove_color_headings'        => '#f8fafc',
-					'trove_color_link'            => '#38bdf8',
-					'trove_color_link_hover'      => '#7dd3fc',
-					'trove_color_selection_text'  => '#0f172a',
-					'trove_color_selection_bg'    => '#4ade80',
-					'trove_color_border'          => '#334155',
-					'trove_color_accent'          => '#38bdf8',
-					'trove_header_background'     => '#0f172a',
-					'trove_header_text_color'     => '#e2e8f0',
-					'trove_header_link_color'     => '#38bdf8',
-					'trove_header_link_hover_color' => '#7dd3fc',
-					'trove_footer_background'     => '#1e293b',
-					'trove_footer_text_color'     => '#e2e8f0',
-					'trove_footer_link_color'     => '#38bdf8',
-					'trove_footer_link_hover_color' => '#7dd3fc',
-					'trove_header_cart_badge_color' => '#38bdf8',
-					'trove_header_cart_count_color' => '#ffffff',
-				),
-			),
-		),
+		'type'            => 'heading',
+		'label'           => __( 'Color Schemes', 'trove' ),
+		'priority'        => 0,
+		'color_schemes'   => $color_schemes,
 	),
 
 	'trove_color_page_background' => array(
 		'label'             => __( 'Page background', 'trove' ),
 		'type'              => 'color',
-		'default'           => '#ffffff',
+		'default'           => trove_customizer_default( 'trove_color_page_background', '#ffffff' ),
 		'priority'          => 1,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -79,7 +45,7 @@ $colors = array(
 	'trove_color_base_text' => array(
 		'label'             => __( 'Base Text', 'trove' ),
 		'type'              => 'color',
-		'default'           => '#111111',
+		'default'           => trove_customizer_default( 'trove_color_base_text', '#111111' ),
 		'priority'          => 2,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -89,7 +55,7 @@ $colors = array(
 	'trove_color_headings' => array(
 		'label'             => __( 'Headings', 'trove' ),
 		'type'              => 'color',
-		'default'           => '#000000',
+		'default'           => trove_customizer_default( 'trove_color_headings', '#000000' ),
 		'priority'          => 2,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -97,43 +63,43 @@ $colors = array(
 	),
 
 	'trove_pair_links'    => array(
-		'type'        => 'color_pair',
-		'label'       => __( 'Links', 'trove' ),
-		'priority'    => 2,
-		'transport'   => 'postMessage',
+		'type'         => 'color_pair',
+		'label'        => __( 'Links', 'trove' ),
+		'priority'     => 2,
+		'transport'    => 'postMessage',
 		'swatch_hints' => array(
 			'left'  => __( 'Initial', 'trove' ),
 			'right' => __( 'Hover', 'trove' ),
 		),
-		'pair'        => array(
+		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_color_link',
-				'default' => '#064fff',
+				'default' => trove_customizer_default( 'trove_color_link', '#333333' ),
 			),
 			'right' => array(
 				'setting' => 'trove_color_link_hover',
-				'default' => '#003dcc',
+				'default' => trove_customizer_default( 'trove_color_link_hover', '#064FFF' ),
 			),
 		),
 	),
 
 	'trove_pair_selection' => array(
-		'type'        => 'color_pair',
-		'label'       => __( 'Text Selection', 'trove' ),
-		'priority'    => 4,
-		'transport'   => 'postMessage',
+		'type'         => 'color_pair',
+		'label'        => __( 'Text Selection', 'trove' ),
+		'priority'     => 4,
+		'transport'    => 'postMessage',
 		'swatch_hints' => array(
 			'left'  => __( 'Text', 'trove' ),
 			'right' => __( 'Background', 'trove' ),
 		),
-		'pair'        => array(
+		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_color_selection_text',
-				'default' => '#ffffff',
+				'default' => trove_customizer_default( 'trove_color_selection_text', '#ffffff' ),
 			),
 			'right' => array(
 				'setting' => 'trove_color_selection_bg',
-				'default' => '#22c55e',
+				'default' => trove_customizer_default( 'trove_color_selection_bg', '#38BDF8' ),
 			),
 		),
 	),
@@ -141,7 +107,7 @@ $colors = array(
 	'trove_color_border'  => array(
 		'label'             => __( 'Borders', 'trove' ),
 		'type'              => 'color',
-		'default'           => '#eeeeee',
+		'default'           => trove_customizer_default( 'trove_color_border', '#eeeeee' ),
 		'priority'          => 5,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -151,42 +117,42 @@ $colors = array(
 	'trove_color_accent'  => array(
 		'label'             => __( 'Accent', 'trove' ),
 		'type'              => 'color',
-		'default'           => '#064fff',
+		'default'           => trove_customizer_default( 'trove_color_accent', '#064FFF' ),
 		'priority'          => 6,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
 		'swatch_hint'       => __( 'Focus & highlights', 'trove' ),
 	),
 
-	'trove_cz_heading_header' => array(
+	'trove_cz_heading_announcement' => array(
 		'type'     => 'heading',
-		'label'    => __( 'Header', 'trove' ),
+		'label'    => __( 'Announcement bar', 'trove' ),
 		'priority' => 7,
 	),
 
-	'trove_header_background' => array(
-		'label'             => __( 'Header background', 'trove' ),
+	'trove_announcement_background' => array(
+		'label'             => __( 'Background', 'trove' ),
 		'type'              => 'color',
-		'default'           => '#ffffff',
+		'default'           => trove_customizer_default( 'trove_announcement_background', '#064fff' ),
 		'priority'          => 8,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
-		'swatch_hint'       => __( 'Header area', 'trove' ),
+		'swatch_hint'       => __( 'Announcement bar', 'trove' ),
 	),
 
-	'trove_header_text_color' => array(
-		'label'             => __( 'Header text', 'trove' ),
+	'trove_announcement_text_color' => array(
+		'label'             => __( 'Text', 'trove' ),
 		'type'              => 'color',
-		'default'           => '#111111',
+		'default'           => trove_customizer_default( 'trove_announcement_text_color', 'rgba(255, 255, 255, 0.8)' ),
 		'priority'          => 9,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
-		'swatch_hint'       => __( 'Header text', 'trove' ),
+		'swatch_hint'       => __( 'Announcement text', 'trove' ),
 	),
 
-	'trove_pair_header_links' => array(
+	'trove_pair_announcement_links' => array(
 		'type'         => 'color_pair',
-		'label'        => __( 'Header links', 'trove' ),
+		'label'        => __( 'Announcement links', 'trove' ),
 		'priority'     => 10,
 		'transport'    => 'postMessage',
 		'swatch_hints' => array(
@@ -195,45 +161,45 @@ $colors = array(
 		),
 		'pair'         => array(
 			'left'  => array(
-				'setting' => 'trove_header_link_color',
-				'default' => '#064fff',
+				'setting' => 'trove_announcement_link_color',
+				'default' => trove_customizer_default( 'trove_announcement_link_color', 'rgba(255, 255, 255, 1)' ),
 			),
 			'right' => array(
-				'setting' => 'trove_header_link_hover_color',
-				'default' => '#003dcc',
+				'setting' => 'trove_announcement_link_hover_color',
+				'default' => trove_customizer_default( 'trove_announcement_link_hover_color', 'rgba(255, 255, 255, 0.8)' ),
 			),
 		),
 	),
 
-	'trove_cz_heading_footer' => array(
+	'trove_cz_heading_header' => array(
 		'type'     => 'heading',
-		'label'    => __( 'Footer', 'trove' ),
+		'label'    => __( 'Header', 'trove' ),
 		'priority' => 11,
 	),
 
-	'trove_footer_background' => array(
-		'label'             => __( 'Footer background', 'trove' ),
+	'trove_header_background' => array(
+		'label'             => __( 'Header background', 'trove' ),
 		'type'              => 'color',
-		'default'           => '#eeeeee',
+		'default'           => trove_customizer_default( 'trove_header_background', '#ffffff' ),
 		'priority'          => 12,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
-		'swatch_hint'       => __( 'Footer area', 'trove' ),
+		'swatch_hint'       => __( 'Header area', 'trove' ),
 	),
 
-	'trove_footer_text_color' => array(
-		'label'             => __( 'Footer text', 'trove' ),
+	'trove_header_text_color' => array(
+		'label'             => __( 'Header text', 'trove' ),
 		'type'              => 'color',
-		'default'           => '#111111',
+		'default'           => trove_customizer_default( 'trove_header_text_color', '#111111' ),
 		'priority'          => 13,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
-		'swatch_hint'       => __( 'Footer text', 'trove' ),
+		'swatch_hint'       => __( 'Header text', 'trove' ),
 	),
 
-	'trove_pair_footer_links' => array(
+	'trove_pair_header_links' => array(
 		'type'         => 'color_pair',
-		'label'        => __( 'Footer links', 'trove' ),
+		'label'        => __( 'Header links', 'trove' ),
 		'priority'     => 14,
 		'transport'    => 'postMessage',
 		'swatch_hints' => array(
@@ -242,12 +208,59 @@ $colors = array(
 		),
 		'pair'         => array(
 			'left'  => array(
+				'setting' => 'trove_header_link_color',
+				'default' => trove_customizer_default( 'trove_header_link_color', '#000000' ),
+			),
+			'right' => array(
+				'setting' => 'trove_header_link_hover_color',
+				'default' => trove_customizer_default( 'trove_header_link_hover_color', '#666666' ),
+			),
+		),
+	),
+
+	'trove_cz_heading_footer' => array(
+		'type'     => 'heading',
+		'label'    => __( 'Footer', 'trove' ),
+		'priority' => 15,
+	),
+
+	'trove_footer_background' => array(
+		'label'             => __( 'Footer background', 'trove' ),
+		'type'              => 'color',
+		'default'           => trove_customizer_default( 'trove_footer_background', '#eeeeee' ),
+		'priority'          => 16,
+		'transport'         => 'postMessage',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'swatch_hint'       => __( 'Footer area', 'trove' ),
+	),
+
+	'trove_footer_text_color' => array(
+		'label'             => __( 'Footer text', 'trove' ),
+		'type'              => 'color',
+		'default'           => trove_customizer_default( 'trove_footer_text_color', '#111111' ),
+		'priority'          => 17,
+		'transport'         => 'postMessage',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'swatch_hint'       => __( 'Footer text', 'trove' ),
+	),
+
+	'trove_pair_footer_links' => array(
+		'type'         => 'color_pair',
+		'label'        => __( 'Footer links', 'trove' ),
+		'priority'     => 18,
+		'transport'    => 'postMessage',
+		'swatch_hints' => array(
+			'left'  => __( 'Link', 'trove' ),
+			'right' => __( 'Hover', 'trove' ),
+		),
+		'pair'         => array(
+			'left'  => array(
 				'setting' => 'trove_footer_link_color',
-				'default' => '#064fff',
+				'default' => trove_customizer_default( 'trove_footer_link_color', '#000000' ),
 			),
 			'right' => array(
 				'setting' => 'trove_footer_link_hover_color',
-				'default' => '#003dcc',
+				'default' => trove_customizer_default( 'trove_footer_link_hover_color', '#666666' ),
 			),
 		),
 	),
@@ -260,14 +273,14 @@ if ( class_exists( 'WooCommerce' ) ) {
 			'trove_cz_heading_woocommerce_colors' => array(
 				'type'     => 'heading',
 				'label'    => __( 'WooCommerce', 'trove' ),
-				'priority' => 14,
+				'priority' => 19,
 			),
 			'trove_header_cart_badge_color' => array(
 				'label'             => __( 'Cart badge', 'trove' ),
 				'description'       => __( 'Background color of the cart item count badge next to the mini cart icon.', 'trove' ),
 				'type'              => 'color',
-				'default'           => '#064fff',
-				'priority'          => 15,
+				'default'           => trove_customizer_default( 'trove_header_cart_badge_color', '#ff0000' ),
+				'priority'          => 20,
 				'transport'         => 'postMessage',
 				'sanitize_callback' => 'sanitize_hex_color',
 				'swatch_hint'       => __( 'Cart badge', 'trove' ),
@@ -276,11 +289,57 @@ if ( class_exists( 'WooCommerce' ) ) {
 				'label'             => __( 'Cart count', 'trove' ),
 				'description'       => __( 'Text color for the number inside the cart badge.', 'trove' ),
 				'type'              => 'color',
-				'default'           => '#ffffff',
-				'priority'          => 16,
+				'default'           => trove_customizer_default( 'trove_header_cart_count_color', '#ffffff' ),
+				'priority'          => 21,
 				'transport'         => 'postMessage',
 				'sanitize_callback' => 'sanitize_hex_color',
 				'swatch_hint'       => __( 'Cart count', 'trove' ),
+			),
+			'trove_cz_heading_store_notice' => array(
+				'type'     => 'heading',
+				'label'    => __( 'Store notice', 'trove' ),
+				'priority' => 22,
+			),
+			'trove_store_notice_background' => array(
+				'label'             => __( 'Notice bar background', 'trove' ),
+				'description'       => __( 'Background for the WooCommerce store notice bar.', 'trove' ),
+				'type'              => 'color',
+				'default'           => trove_customizer_default( 'trove_store_notice_background', '#720eec' ),
+				'priority'          => 23,
+				'transport'         => 'postMessage',
+				'sanitize_callback' => 'sanitize_hex_color',
+				'swatch_hint'       => __( 'Store notice background', 'trove' ),
+			),
+			'trove_store_notice_text_color' => array(
+				'label'             => __( 'Notice bar text', 'trove' ),
+				'description'       => __( 'Text color for the store notice message.', 'trove' ),
+				'type'              => 'color',
+				'default'           => trove_customizer_default( 'trove_store_notice_text_color', '#ffffff' ),
+				'priority'          => 24,
+				'transport'         => 'postMessage',
+				'sanitize_callback' => 'sanitize_hex_color',
+				'swatch_hint'       => __( 'Store notice text', 'trove' ),
+			),
+			'trove_pair_store_notice_links' => array(
+				'type'         => 'color_pair',
+				'label'        => __( 'Notice bar links', 'trove' ),
+				'description'  => __( 'Link and hover colors for links in the store notice (including dismiss).', 'trove' ),
+				'priority'     => 25,
+				'transport'    => 'postMessage',
+				'swatch_hints' => array(
+					'left'  => __( 'Link', 'trove' ),
+					'right' => __( 'Hover', 'trove' ),
+				),
+				'pair'         => array(
+					'left'  => array(
+						'setting' => 'trove_store_notice_link_color',
+						'default' => trove_customizer_default( 'trove_store_notice_link_color', '#ffffff' ),
+					),
+					'right' => array(
+						'setting' => 'trove_store_notice_link_hover_color',
+						'default' => trove_customizer_default( 'trove_store_notice_link_hover_color', '#e8defc' ),
+					),
+				),
 			),
 		)
 	);

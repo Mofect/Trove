@@ -422,6 +422,80 @@ final class Options_Registry {
 	}
 
 	/**
+	 * Responsive TRBL padding (JSON string per device).
+	 *
+	 * @param WP_Customize_Manager $wp_customize Customizer instance.
+	 * @param string               $section_id   Section id.
+	 * @param string               $setting_id   Base theme mod (e.g. trove_button_padding).
+	 * @param array<string, mixed> $field        Field definition.
+	 * @param string|null          $tab_slug     Tab key.
+	 * @param int                  $control_priority Priority.
+	 */
+	private function add_responsive_spacing_field( WP_Customize_Manager $wp_customize, $section_id, $setting_id, array $field, $tab_slug = null, $control_priority = 10 ) {
+		$devices = array(
+			'pc'     => __( 'PC', 'trove' ),
+			'tablet' => __( 'Tablet', 'trove' ),
+			'phone'  => __( 'Phone', 'trove' ),
+		);
+		if ( ! empty( $field['responsive_labels'] ) && is_array( $field['responsive_labels'] ) ) {
+			foreach ( $devices as $key => $label ) {
+				if ( isset( $field['responsive_labels'][ $key ] ) && is_string( $field['responsive_labels'][ $key ] ) ) {
+					$devices[ $key ] = $field['responsive_labels'][ $key ];
+				}
+			}
+		}
+
+		$min       = isset( $field['input_attrs']['min'] ) ? (int) $field['input_attrs']['min'] : 0;
+		$max       = isset( $field['input_attrs']['max'] ) ? (int) $field['input_attrs']['max'] : 60;
+		$transport = isset( $field['transport'] ) ? $field['transport'] : 'refresh';
+
+		$fb           = trove_default_button_padding_sides();
+		$raw_defaults = isset( $field['default'] ) && is_array( $field['default'] ) ? $field['default'] : array();
+
+		foreach ( $devices as $suffix => $_label ) {
+			$sub_id = $setting_id . '_' . $suffix;
+			$merged = array_merge(
+				array( 'linked' => false ),
+				$fb,
+				isset( $raw_defaults[ $suffix ] ) && is_array( $raw_defaults[ $suffix ] ) ? $raw_defaults[ $suffix ] : array()
+			);
+			$default_json = trove_sanitize_spacing_box_json( $merged, $min, $max, $fb );
+			$wp_customize->add_setting(
+				$sub_id,
+				array(
+					'default'           => $default_json,
+					'transport'         => $transport,
+					'sanitize_callback' => function ( $value ) use ( $min, $max, $fb ) {
+						return trove_sanitize_spacing_box_json( $value, $min, $max, $fb );
+					},
+				)
+			);
+		}
+
+		$input_attrs = isset( $field['input_attrs'] ) && is_array( $field['input_attrs'] ) ? $field['input_attrs'] : array();
+
+		$wp_customize->add_control(
+			new Responsive_Spacing_Control(
+				$wp_customize,
+				$setting_id . '_responsive_spacing',
+				array(
+					'label'               => isset( $field['label'] ) ? $field['label'] : '',
+					'description'         => isset( $field['description'] ) ? $field['description'] : '',
+					'section'             => $section_id,
+					'priority'            => $control_priority,
+					'settings'            => array(
+						'pc'     => $setting_id . '_pc',
+						'tablet' => $setting_id . '_tablet',
+						'phone'  => $setting_id . '_phone',
+					),
+					'trove_device_labels' => $devices,
+					'trove_input_attrs'   => $input_attrs,
+				)
+			)
+		);
+	}
+
+	/**
 	 * @param WP_Customize_Manager    $wp_customize Customizer instance.
 	 * @param string                  $section_id   Section id.
 	 * @param string                  $setting_id   Theme mod key (base id when responsive).
@@ -442,6 +516,66 @@ final class Options_Registry {
 
 		if ( 'color_pair' === $type ) {
 			$this->add_color_pair_field( $wp_customize, $section_id, $setting_id, $field, $tab_slug, $control_priority );
+			if ( null !== $tab_slug && '' !== $tab_slug ) {
+				$this->remember_control_tab( $section_id, $setting_id, $tab_slug );
+			}
+			return;
+		}
+
+		if ( 'responsive_spacing' === $type ) {
+			$this->add_responsive_spacing_field( $wp_customize, $section_id, $setting_id, $field, $tab_slug, $control_priority );
+			if ( null !== $tab_slug && '' !== $tab_slug ) {
+				$this->remember_control_tab( $section_id, $setting_id . '_responsive_spacing', $tab_slug );
+			}
+			return;
+		}
+
+		if ( 'tip' === $type ) {
+			$wp_customize->add_setting(
+				$setting_id,
+				array(
+					'default'           => '',
+					'transport'         => isset( $field['transport'] ) ? $field['transport'] : 'refresh',
+					'sanitize_callback' => '__return_empty_string',
+				)
+			);
+			$wp_customize->add_control(
+				new Tip_Control(
+					$wp_customize,
+					$setting_id,
+					array(
+						'description' => isset( $field['description'] ) ? $field['description'] : '',
+						'section'     => $section_id,
+						'priority'    => $control_priority,
+					)
+				)
+			);
+			if ( null !== $tab_slug && '' !== $tab_slug ) {
+				$this->remember_control_tab( $section_id, $setting_id, $tab_slug );
+			}
+			return;
+		}
+
+		if ( 'divider' === $type ) {
+			$wp_customize->add_setting(
+				$setting_id,
+				array(
+					'default'           => '',
+					'transport'         => isset( $field['transport'] ) ? $field['transport'] : 'refresh',
+					'sanitize_callback' => '__return_empty_string',
+				)
+			);
+			$wp_customize->add_control(
+				new Divider_Control(
+					$wp_customize,
+					$setting_id,
+					array(
+						'label'    => isset( $field['label'] ) ? $field['label'] : '',
+						'section'  => $section_id,
+						'priority' => $control_priority,
+					)
+				)
+			);
 			if ( null !== $tab_slug && '' !== $tab_slug ) {
 				$this->remember_control_tab( $section_id, $setting_id, $tab_slug );
 			}
@@ -686,6 +820,37 @@ final class Options_Registry {
 						'section'     => $section_id,
 						'priority'    => $control_priority,
 						'max_items'   => $max_items,
+					)
+				)
+			);
+			if ( null !== $tab_slug && '' !== $tab_slug ) {
+				$this->remember_control_tab( $section_id, $setting_id, $tab_slug );
+			}
+			return;
+		}
+
+		if ( 'range_number' === $type ) {
+			$transport = isset( $field['transport'] ) ? $field['transport'] : 'refresh';
+			$sanitize  = isset( $field['sanitize_callback'] ) ? $field['sanitize_callback'] : array( $this, 'sanitize_by_type' );
+			$wp_customize->add_setting(
+				$setting_id,
+				array(
+					'default'           => $default,
+					'transport'         => $transport,
+					'sanitize_callback' => $sanitize,
+				)
+			);
+			$wp_customize->add_control(
+				new Range_Number_Control(
+					$wp_customize,
+					$setting_id,
+					array(
+						'label'       => isset( $field['label'] ) ? $field['label'] : '',
+						'description' => isset( $field['description'] ) ? $field['description'] : '',
+						'section'     => $section_id,
+						'priority'    => $control_priority,
+						'input_attrs' => isset( $field['input_attrs'] ) && is_array( $field['input_attrs'] ) ? $field['input_attrs'] : array(),
+						'unit'        => isset( $field['unit'] ) ? (string) $field['unit'] : 'px',
 					)
 				)
 			);
@@ -971,6 +1136,7 @@ final class Options_Registry {
 			case 'number':
 				return is_numeric( $value ) ? 0 + $value : 0;
 			case 'range':
+			case 'trove_range_number':
 				return is_numeric( $value ) ? absint( round( (float) $value ) ) : 0;
 			default:
 				return sanitize_text_field( (string) $value );

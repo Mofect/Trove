@@ -1,0 +1,58 @@
+/* Range + number + unit (General → Layout widths) */
+.trove-cz-range-number__row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+	margin-top: 6px;
+}
+
+.trove-cz-range-number__range {
+	flex: 1 1 auto;
+	min-width: 0;
+	height: 2px;
+	accent-color: #2271b1;
+}
+
+.trove-cz-range-number__value-wrap {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	flex: 0 0 auto;
+	max-width: 100%;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	overflow: hidden;
+	background: #fff;
+}
+
+.trove-cz-range-number__number {
+	width: 4.25rem;
+	min-width: 0;
+	margin: 0;
+	padding: 0 6px;
+	line-height: 1.4;
+	min-height: 30px;
+	border: none !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+	font-size: 13px;
+}
+
+.trove-cz-range-number__number:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+.trove-cz-range-number__unit {
+	display: flex;
+	align-items: center;
+	padding: 0 8px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: #646970;
+	border-left: 1px solid #dcdcde;
+	background: #f6f7f7;
+	user-select: none;
+}

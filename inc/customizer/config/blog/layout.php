@@ -7,6 +7,8 @@
 
 namespace Trove\Customizer\Config;
 
+use function \Trove\Customizer\trove_customizer_default;
+
 defined( 'ABSPATH' ) || exit;
 
 return array(
@@ -14,7 +16,7 @@ return array(
 		'label'             => __( 'Blog layout', 'trove' ),
 		'description'       => __( 'Layout for the blog home page and post archives (categories, tags, author, date).', 'trove' ),
 		'type'              => 'image_radio',
-		'default'           => 'list',
+		'default'           => (string) trove_customizer_default( 'trove_blog_layout', 'list' ),
 		'transport'         => 'postMessage',
 		'choices'           => array(
 			'list'    => array(

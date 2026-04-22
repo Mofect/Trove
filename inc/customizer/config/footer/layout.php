@@ -7,13 +7,15 @@
 
 namespace Trove\Customizer\Config;
 
+use function \Trove\Customizer\trove_customizer_default;
+
 defined( 'ABSPATH' ) || exit;
 
 return array(
 	'trove_footer_layout' => array(
 		'label'       => __( 'Footer layout', 'trove' ),
 		'type'        => 'image_radio',
-		'default'     => 'footer-1',
+		'default'     => (string) trove_customizer_default( 'trove_footer_layout', 'footer-1' ),
 		'transport'   => 'postMessage',
 		'choices'     => array(
 			'footer-1' => array(
@@ -36,5 +38,12 @@ return array(
 			
 		),
 		'sanitize_callback' => 'sanitize_text_field',
-	)
+	),
+	'trove_footer_top_border' => array(
+		'label'             => __( 'Show top border', 'trove' ),
+		'type'              => 'switch',
+		'default'           => (bool) trove_customizer_default( 'trove_footer_top_border', true ),
+		'transport'         => 'postMessage',
+		'sanitize_callback' => 'wp_validate_boolean',
+	),
 );

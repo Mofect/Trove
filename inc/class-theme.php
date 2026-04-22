@@ -46,7 +46,12 @@ class TroveTheme {
 		}
 		$families = array();
 		foreach ( $ids as $setting_id ) {
-			$family = \Trove\Customizer\sanitize_google_font_family( get_theme_mod( $setting_id, 'system' ) );
+			$family = \Trove\Customizer\sanitize_google_font_family(
+				get_theme_mod(
+					$setting_id,
+					(string) \Trove\Customizer\trove_customizer_default( $setting_id, 'system' )
+				)
+			);
 			if ( 'system' === $family ) {
 				continue;
 			}
@@ -222,6 +227,14 @@ class TroveTheme {
 			true
 		);
 
+		wp_enqueue_script(
+			'trove-header-search-toggle',
+			get_template_directory_uri() . '/assets/js/header-search-toggle.js',
+			array(),
+			TROVE_THEME_VERSION,
+			true
+		);
+
 		global $wp_query;
 		$blog_infinite = \Trove\is_blog_listing_view()
 			&& 'infinite_scroll' === \Trove\get_blog_pagination_type()
@@ -279,7 +292,7 @@ class TroveTheme {
 	 * @return string
 	 */
 	public static function replace_account_icon( $block_content ) {
-		$custom_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 20 20" fill="none"><path d="M13.654 5.972a3.683 3.683 0 1 1-7.366 0 3.683 3.683 0 0 1 7.366 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"></path><path d="M10 12.352c2.18-.006 4.098.797 5.208 2.504.502.772.114 1.775-.743 2.109-1.37.532-2.88.75-4.465.746-1.584.004-3.095-.214-4.465-.746-.858-.334-1.245-1.337-.743-2.11C5.9 13.149 7.817 12.347 10 12.353Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"></path></svg>';
+		$custom_icon = '<svg width="23" height="23" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 		$block_content = preg_replace(
 			'/<svg[^>]*>.*?<\/svg>/s',
@@ -292,13 +305,13 @@ class TroveTheme {
 	}
 
 	/**
-	 * Replaces the default WooCommerce mini-cart icon with a custom SVG at 20x20.
+	 * Replaces the default WooCommerce mini-cart icon with a custom SVG.
 	 *
 	 * @param string $block_content The block content.
 	 * @return string
 	 */
 	public static function replace_mini_cart_icon( $block_content ) {
-		$custom_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M11.1322 4.15145C11.1322 2.41555 9.72495 1.00833 7.98905 1.00833C7.15314 1.00479 6.35025 1.33437 5.75792 1.9242C5.16559 2.51404 4.83261 3.31553 4.83262 4.15145M11.0322 14.9918H4.9591C2.72828 14.9918 1.01688 14.186 1.503 10.943L2.06903 6.54799C2.36869 4.92982 3.40086 4.31052 4.3065 4.31052H11.7115C12.6304 4.31052 13.6027 4.97644 13.9489 6.54799L14.515 10.943C14.9278 13.8198 13.263 14.9918 11.0322 14.9918Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.1969 7.43457H10.1663M6.30981 7.43457H6.2793" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+		$custom_icon = '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 11.01V11M16 11.01V11M8 8V7C8 5.93913 8.42143 4.92172 9.17157 4.17157C9.92172 3.42143 10.9391 3 12 3C13.0609 3 14.0783 3.42143 14.8284 4.17157C15.5786 4.92172 16 5.93913 16 7V8M8 8H6.84027C5.80009 8 4.93356 8.79732 4.84718 9.83391L4.18051 17.8339C4.08334 18.9999 5.00352 20 6.1736 20H17.8264C18.9965 20 19.9167 18.9999 19.8195 17.8339L19.1528 9.83391C19.0664 8.79732 18.1999 8 17.1597 8H16M8 8H16" transform="translate(0 1)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 		$block_content = preg_replace(
 			'/<svg[^>]*class="[^"]*wc-block-mini-cart__icon[^"]*"[^>]*>.*?<\/svg>/s',

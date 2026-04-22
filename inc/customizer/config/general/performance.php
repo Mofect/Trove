@@ -7,6 +7,8 @@
 
 namespace Trove\Customizer\Config;
 
+use function \Trove\Customizer\trove_customizer_default;
+
 defined( 'ABSPATH' ) || exit;
 
 return array(
@@ -14,6 +16,6 @@ return array(
 		'label'       => __( 'Options', 'trove' ),
 		'description' => __( 'Add performance-related settings here as needed.', 'trove' ),
 		'type'        => 'text',
-		'default'     => '',
+		'default'     => (string) trove_customizer_default( 'trove_perf_placeholder', '' ),
 	),
 );

@@ -7,6 +7,8 @@
 
 namespace Trove\Customizer\Config;
 
+use function \Trove\Customizer\trove_customizer_default;
+
 defined( 'ABSPATH' ) || exit;
 
 return array(
@@ -14,7 +16,7 @@ return array(
 		'label'             => __( 'Logo', 'trove' ),
 		'description'       => __( 'Optional. When set, this image is used in the header instead of the logo from Site Identity.', 'trove' ),
 		'type'              => 'image',
-		'default'           => '',
+		'default'           => (string) trove_customizer_default( 'trove_header_logo', '' ),
 		'transport'         => 'refresh',
 		'sanitize_callback' => 'esc_url_raw',
 	),
@@ -22,7 +24,7 @@ return array(
 		'label'             => __( 'Logo width', 'trove' ),
 		'description'       => __( 'Maximum width for the header logo.', 'trove' ),
 		'type'              => 'range',
-		'default'           => 200,
+		'default'           => (int) trove_customizer_default( 'trove_header_logo_width', 200 ),
 		'input_attrs'       => array(
 			'min'  => 40,
 			'max'  => 400,
@@ -34,7 +36,7 @@ return array(
 	'trove_header_sticky' => array(
 		'label'             => __( 'Sticky header', 'trove' ),
 		'type'              => 'select',
-		'default'           => 'none',
+		'default'           => (string) trove_customizer_default( 'trove_header_sticky', 'none' ),
 		'transport'         => 'postMessage',
 		'choices'           => array(
 			'none'         => __( 'None', 'trove' ),
@@ -50,7 +52,7 @@ return array(
 	'trove_header_bottom_border' => array(
 		'label'             => __( 'Show bottom border', 'trove' ),
 		'type'              => 'switch',
-		'default'           => false,
+		'default'           => (bool) trove_customizer_default( 'trove_header_bottom_border', false ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'wp_validate_boolean',
 	),

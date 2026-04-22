@@ -58,6 +58,20 @@
 		return v || fallback || '#000000';
 	}
 
+	/**
+	 * @param {*} next Value from ColorPicker onChange (string or rare legacy object).
+	 * @return {string}
+	 */
+	function coercePickerOnChangeValue( next ) {
+		if ( next == null ) {
+			return '';
+		}
+		if ( typeof next === 'object' && typeof next.hex === 'string' ) {
+			return String( next.hex ).trim();
+		}
+		return String( next ).trim();
+	}
+
 	function mountPicker( input ) {
 		var $input = $( input );
 		if ( $input.hasClass( 'trove-cz-gb-picker-inited' ) ) {
@@ -88,14 +102,26 @@
 		);
 
 		function commit( next ) {
-			var color = sanitizeColor( next, current );
+			var raw = coercePickerOnChangeValue( next );
+			var color = sanitizeColor( raw, current );
+			/* Keep controlled ColorPicker in sync: props only update when we re-render the root. */
+			if ( color === current ) {
+				renderPicker();
+				return;
+			}
 			current = color;
 			updating = true;
 			$input.val( color ).trigger( 'change' );
 			if ( sid && wp.customize( sid ) ) {
 				wp.customize( sid ).set( color );
 			}
+			try {
+				if ( $.fn.wpColorPicker && typeof $input.wpColorPicker === 'function' ) {
+					$input.wpColorPicker( 'color', color );
+				}
+			} catch ( _sync ) {}
 			updating = false;
+			renderPicker();
 		}
 
 		function renderPicker() {

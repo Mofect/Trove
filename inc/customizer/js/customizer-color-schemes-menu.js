@@ -11,6 +11,48 @@
 		return typeof troveCzColorSchemes !== 'undefined' ? troveCzColorSchemes : null;
 	}
 
+	/**
+	 * Match PHP trove_normalize_color_for_scheme_dedupe() so preset + live swatches dedupe the same way.
+	 *
+	 * @param {string} raw Trimmed color string.
+	 * @return {string} Non-empty key, or '' if invalid / empty.
+	 */
+	function normalizeColorForSchemeDedupe( raw ) {
+		var s = raw != null ? String( raw ).trim() : '';
+		var m;
+		var r;
+		var g;
+		var b;
+		var a;
+		var h;
+		var hex;
+		if ( s === '' ) {
+			return '';
+		}
+		if ( s.charAt( 0 ) === '#' ) {
+			hex = s.slice( 1 ).toLowerCase();
+			if ( hex.length === 3 ) {
+				hex = hex.charAt( 0 ) + hex.charAt( 0 ) + hex.charAt( 1 ) + hex.charAt( 1 ) + hex.charAt( 2 ) + hex.charAt( 2 );
+			}
+			if ( hex.length !== 6 || !/^[0-9a-f]{6}$/.test( hex ) ) {
+				return s.toLowerCase();
+			}
+			r = parseInt( hex.slice( 0, 2 ), 16 );
+			g = parseInt( hex.slice( 2, 4 ), 16 );
+			b = parseInt( hex.slice( 4, 6 ), 16 );
+			return r + '|' + g + '|' + b + '|1.00000';
+		}
+		m = s.match( /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(0|0?\.\d+|1(?:\.0+)?)\s*)?\)\s*$/i );
+		if ( m ) {
+			r = Math.min( 255, Math.max( 0, parseInt( m[ 1 ], 10 ) ) );
+			g = Math.min( 255, Math.max( 0, parseInt( m[ 2 ], 10 ) ) );
+			b = Math.min( 255, Math.max( 0, parseInt( m[ 3 ], 10 ) ) );
+			a = m[ 4 ] !== undefined ? Math.min( 1, Math.max( 0, parseFloat( m[ 4 ] ) ) ) : 1;
+			return r + '|' + g + '|' + b + '|' + a.toFixed( 5 );
+		}
+		return s.toLowerCase();
+	}
+
 	function closeAllMenus() {
 		document.querySelectorAll( '.trove-cz-heading-menu' ).forEach( function ( menu ) {
 			menu.setAttribute( 'hidden', 'hidden' );
@@ -122,11 +164,70 @@
 	}
 
 	function buildSwatches( wrap, colors, keys ) {
+		var c = cfg();
+		var titles = c && c.swatchTitles && typeof c.swatchTitles === 'object' ? c.swatchTitles : {};
+		var grouped = {};
+		var emitted = {};
+		var norm;
+		var groupKeys;
+		var titleParts;
+		var title;
+		var sw;
+		var raw;
+		var k;
+		var gki;
+		var t;
 		wrap.innerHTML = '';
 		keys.forEach( function ( key ) {
-			var sw = document.createElement( 'span' );
+			var v = colors[ key ];
+			if ( v == null || String( v ).trim() === '' ) {
+				norm = '__empty__';
+			} else {
+				norm = normalizeColorForSchemeDedupe( String( v ).trim() );
+				if ( norm === '' ) {
+					norm = '__raw__' + key;
+				}
+			}
+			if ( ! grouped[ norm ] ) {
+				grouped[ norm ] = [];
+			}
+			grouped[ norm ].push( key );
+		} );
+		keys.forEach( function ( key ) {
+			var v = colors[ key ];
+			if ( v == null || String( v ).trim() === '' ) {
+				norm = '__empty__';
+				raw = 'transparent';
+			} else {
+				raw = String( v ).trim();
+				norm = normalizeColorForSchemeDedupe( raw );
+				if ( norm === '' ) {
+					norm = '__raw__' + key;
+				}
+			}
+			if ( emitted[ norm ] ) {
+				return;
+			}
+			emitted[ norm ] = true;
+			groupKeys = grouped[ norm ] || [ key ];
+			titleParts = [];
+			for ( gki = 0; gki < groupKeys.length; gki++ ) {
+				k = groupKeys[ gki ];
+				t = titles[ k ];
+				if ( t && String( t ).trim() !== '' ) {
+					t = String( t ).trim();
+					if ( titleParts.indexOf( t ) === -1 ) {
+						titleParts.push( t );
+					}
+				}
+			}
+			title = titleParts.join( ' · ' );
+			sw = document.createElement( 'span' );
 			sw.className = 'trove-cz-scheme-swatch';
-			sw.style.backgroundColor = colors[ key ] && String( colors[ key ] ).trim() !== '' ? String( colors[ key ] ) : 'transparent';
+			sw.style.backgroundColor = raw;
+			if ( title !== '' ) {
+				sw.setAttribute( 'title', title );
+			}
 			wrap.appendChild( sw );
 		} );
 	}

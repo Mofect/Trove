@@ -7,6 +7,8 @@
 
 namespace Trove\Customizer\Config;
 
+use function \Trove\Customizer\trove_customizer_default;
+
 defined( 'ABSPATH' ) || exit;
 
 return array(
@@ -14,7 +16,7 @@ return array(
 		'label'       => __( 'Header layout', 'trove' ),
 		'description' => __( 'Image radio control — pick a layout thumbnail.', 'trove' ),
 		'type'        => 'image_radio',
-		'default'     => 'horizontal-left-logo',
+		'default'     => (string) trove_customizer_default( 'trove_header_layout', 'horizontal-left-logo' ),
 		'transport'   => 'postMessage',
 		'choices'     => array(
 			'horizontal-left-logo' => array(
@@ -44,7 +46,7 @@ return array(
 	'trove_header_menu_alignment' => array(
 		'label'             => __( 'Menu alignment', 'trove' ),
 		'type'              => 'alignment',
-		'default'           => 'right',
+		'default'           => (string) trove_customizer_default( 'trove_header_menu_alignment', 'right' ),
 		'transport'         => 'postMessage',
 		'choices'           => array(
 			'left'   => __( 'Left', 'trove' ),

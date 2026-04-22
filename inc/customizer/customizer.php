@@ -9,6 +9,7 @@ namespace Trove\Customizer;
 
 defined( 'ABSPATH' ) || exit;
 
+require_once __DIR__ . '/setting-data.php';
 require_once __DIR__ . '/config/options.php';
 require_once __DIR__ . '/google-fonts.php';
 require_once __DIR__ . '/responsive.php';
@@ -186,9 +187,11 @@ function flatten_woocommerce_panel_to_root( $wp_customize ) {
 }
 
 /**
- * Places Shop group title and WooCommerce sections directly below Blog Posts (root-level WC sections after {@see flatten_woocommerce_panel_to_root()}).
+ * Places Shop group title and WooCommerce sections after Blog Posts and Pages sections (Search / Author / Archive).
  *
- * Order: Shop group title → legacy Trove WooCommerce heading (if any) → Trove WooCommerce section (if any) → former WC panel sections.
+ * Root-level WC sections are ordered after {@see flatten_woocommerce_panel_to_root()}.
+ *
+ * Order: Blog Posts → Search page → Author page → Archive page → Shop group title → … → former WC panel sections.
  *
  * @param \WP_Customize_Manager $wp_customize Customizer manager.
  * @return void
@@ -204,7 +207,19 @@ function position_woocommerce_below_blog_posts( $wp_customize ) {
 	}
 
 	$base = (int) $blog->priority + 1;
-	$n    = 0;
+
+	/*
+	 * Without this, $base stays at blog+1 (e.g. 136) and collides with Pages sections
+	 * (search/author/archive use 136–138), so the WooCommerce group title can appear between Blog and Search.
+	 */
+	foreach ( array( 'trove_section_search_page', 'trove_section_author_page', 'trove_section_archive_page' ) as $pages_section_id ) {
+		$pages_sec = $wp_customize->get_section( $pages_section_id );
+		if ( $pages_sec ) {
+			$base = max( $base, (int) $pages_sec->priority + 1 );
+		}
+	}
+
+	$n = 0;
 
 	$shop_gt = $wp_customize->get_section( 'trove_gt_shop_group_title' );
 	if ( $shop_gt ) {
@@ -234,19 +249,12 @@ function position_woocommerce_below_blog_posts( $wp_customize ) {
 }
 
 /**
- * Swatch hover labels for color controls (Global Colors + e.g. Footer → Styles).
+ * Swatch hints from a flat options config (color + color_pair rows).
  *
+ * @param array<string, mixed> $config Section options array.
  * @return array<string, string|array{left:string, right:string}>
  */
-function get_color_swatch_hints_export() {
-	$path = __DIR__ . '/config/general/colors.php';
-	if ( ! is_readable( $path ) ) {
-		return array();
-	}
-	$config = require $path;
-	if ( ! is_array( $config ) ) {
-		return array();
-	}
+function trove_swatch_hints_from_flat_options_config( array $config ) {
 	$out = array();
 	foreach ( $config as $control_id => $field ) {
 		if ( ! is_array( $field ) || empty( $field['type'] ) ) {
@@ -263,7 +271,71 @@ function get_color_swatch_hints_export() {
 			);
 		}
 	}
+	return $out;
+}
 
+/**
+ * Swatch hover labels for color controls (Global Colors, General → Button pairs, etc.).
+ *
+ * @return array<string, string|array{left:string, right:string}>
+ */
+function get_color_swatch_hints_export() {
+	$merged = array();
+	foreach ( array( 'colors.php', 'button.php', 'text-field.php' ) as $file ) {
+		$path = __DIR__ . '/config/general/' . $file;
+		if ( ! is_readable( $path ) ) {
+			continue;
+		}
+		$config = require $path;
+		if ( ! is_array( $config ) ) {
+			continue;
+		}
+		$merged = array_merge( $merged, trove_swatch_hints_from_flat_options_config( $config ) );
+	}
+	return $merged;
+}
+
+/**
+ * Map each global color scheme setting id → short label for preset swatch tooltips.
+ *
+ * Uses `swatch_hint` / `swatch_hints` from colors.php where present, else control `label`.
+ *
+ * @return array<string, string>
+ */
+function get_color_scheme_swatch_titles() {
+	$path = __DIR__ . '/config/general/colors.php';
+	if ( ! is_readable( $path ) ) {
+		return array();
+	}
+	$config = require $path;
+	if ( ! is_array( $config ) ) {
+		return array();
+	}
+	$out = array();
+	foreach ( $config as $control_id => $field ) {
+		if ( ! is_array( $field ) || empty( $field['type'] ) ) {
+			continue;
+		}
+		if ( 'color' === $field['type'] ) {
+			if ( ! empty( $field['swatch_hint'] ) ) {
+				$out[ (string) $control_id ] = (string) $field['swatch_hint'];
+			} elseif ( ! empty( $field['label'] ) ) {
+				$out[ (string) $control_id ] = (string) $field['label'];
+			}
+			continue;
+		}
+		if ( 'color_pair' === $field['type'] && ! empty( $field['pair'] ) && is_array( $field['pair'] ) ) {
+			$hints = isset( $field['swatch_hints'] ) && is_array( $field['swatch_hints'] ) ? $field['swatch_hints'] : array();
+			if ( ! empty( $field['pair']['left']['setting'] ) ) {
+				$sid = (string) $field['pair']['left']['setting'];
+				$out[ $sid ] = isset( $hints['left'] ) ? (string) $hints['left'] : '';
+			}
+			if ( ! empty( $field['pair']['right']['setting'] ) ) {
+				$sid = (string) $field['pair']['right']['setting'];
+				$out[ $sid ] = isset( $hints['right'] ) ? (string) $hints['right'] : '';
+			}
+		}
+	}
 	return $out;
 }
 
@@ -319,6 +391,13 @@ function enqueue_customizer_ui_assets() {
 	);
 
 	wp_enqueue_style(
+		'trove-customizer-range-number',
+		$dir . '/inc/customizer/css/customizer-range-number.css',
+		array( 'customize-controls' ),
+		$ver
+	);
+
+	wp_enqueue_style(
 		'trove-customizer-inline-heading',
 		$dir . '/inc/customizer/css/customizer-inline-heading.css',
 		array( 'customize-controls' ),
@@ -367,10 +446,25 @@ function enqueue_customizer_ui_assets() {
 		true
 	);
 
+	wp_enqueue_style(
+		'trove-customizer-responsive-spacing',
+		$dir . '/inc/customizer/css/customizer-responsive-spacing.css',
+		array( 'trove-customizer-responsive-tabs' ),
+		$ver
+	);
+
+	wp_enqueue_script(
+		'trove-customizer-responsive-spacing',
+		$dir . '/inc/customizer/js/customizer-responsive-spacing.js',
+		array( 'customize-controls', 'trove-customizer-responsive-tabs' ),
+		$ver,
+		true
+	);
+
 	wp_enqueue_script(
 		'trove-customizer-section-tabs',
 		$dir . '/inc/customizer/js/customizer-section-tabs.js',
-		array( 'customize-controls', 'trove-customizer-responsive-tabs' ),
+		array( 'customize-controls', 'trove-customizer-responsive-tabs', 'trove-customizer-responsive-spacing' ),
 		$ver,
 		true
 	);
@@ -428,6 +522,14 @@ function enqueue_customizer_ui_assets() {
 		true
 	);
 
+	wp_enqueue_script(
+		'trove-customizer-range-number',
+		$dir . '/inc/customizer/js/customizer-range-number.js',
+		array( 'customize-controls' ),
+		$ver,
+		true
+	);
+
 	wp_enqueue_style(
 		'trove-customizer-repeater-text',
 		$dir . '/inc/customizer/css/customizer-repeater-text.css',
@@ -465,9 +567,10 @@ function enqueue_customizer_ui_assets() {
 		'trove-customizer-color-schemes-menu',
 		'troveCzColorSchemes',
 		array(
-			'keys'       => trove_global_color_scheme_setting_keys(),
-			'storageKey' => 'trove_wp_custom_color_schemes_u' . get_current_user_id(),
-			'i18n'       => array(
+			'keys'         => trove_global_color_scheme_setting_keys(),
+			'swatchTitles' => get_color_scheme_swatch_titles(),
+			'storageKey'   => 'trove_wp_custom_color_schemes_u' . get_current_user_id(),
+			'i18n'         => array(
 				'promptName'    => __( 'Name this color scheme', 'trove' ),
 				'emptyName'     => __( 'Please enter a name.', 'trove' ),
 				'deleteScheme'  => __( 'Remove color scheme', 'trove' ),

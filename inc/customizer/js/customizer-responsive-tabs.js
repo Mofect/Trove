@@ -6,6 +6,8 @@
 
 	var controlsRoot =
 		document.getElementById("customize-theme-controls") || document.body;
+	var responsiveControlStates = [];
+	var globalResponsiveDevice = "pc";
 
 	/**
 	 * Trove option keys (pc/tablet/phone) -> Customizer preview frame keys (desktop/tablet/mobile).
@@ -40,6 +42,17 @@
 		}
 	}
 
+	function notifyPreviewResponsiveDevice(trove) {
+		if (!api.previewer || typeof api.previewer.send !== "function") {
+			return;
+		}
+		try {
+			api.previewer.send("trove-responsive-device-change", { device: trove });
+		} catch (err) {
+			// Preview channel may be unavailable in edge contexts.
+		}
+	}
+
 	function parseSettings(root) {
 		var raw = root.getAttribute("data-settings");
 		if (!raw) {
@@ -50,6 +63,26 @@
 		} catch (e) {
 			return null;
 		}
+	}
+
+	function isValidResponsiveDevice(device) {
+		return device === "pc" || device === "tablet" || device === "phone";
+	}
+
+	function syncAllResponsiveControls(device, sourceRoot) {
+		if (!isValidResponsiveDevice(device)) {
+			return;
+		}
+		globalResponsiveDevice = device;
+		responsiveControlStates.forEach(function (state) {
+			if (!state || !state.root || typeof state.activate !== "function") {
+				return;
+			}
+			if (sourceRoot && state.root === sourceRoot) {
+				return;
+			}
+			state.activate(device, true);
+		});
 	}
 
 	function wireUnitSelect(root, settingsMap) {
@@ -137,7 +170,10 @@
 			writeInputValue(s.get());
 		}
 
-		function activate(device) {
+		function activate(device, fromSync) {
+			if (!isValidResponsiveDevice(device)) {
+				return;
+			}
 			if (device === active) {
 				return;
 			}
@@ -149,7 +185,11 @@
 				tab.setAttribute("aria-selected", on ? "true" : "false");
 			});
 			load(device);
-			setCustomizerPreviewDevice(device);
+			if (!fromSync) {
+				setCustomizerPreviewDevice(device);
+				notifyPreviewResponsiveDevice(device);
+				syncAllResponsiveControls(device, root);
+			}
 		}
 
 		function initColorPicker() {
@@ -186,12 +226,6 @@
 				});
 			} else if (fieldType === "number") {
 				input.addEventListener("change", function () {
-					var s = getSetting(active);
-					if (s) {
-						s.set(readInputValue());
-					}
-				});
-				input.addEventListener("input", function () {
 					var s = getSetting(active);
 					if (s) {
 						s.set(readInputValue());
@@ -239,6 +273,13 @@
 			}
 
 			root.setAttribute("data-trove-r-wired", "1");
+			responsiveControlStates.push({
+				root: root,
+				activate: activate,
+			});
+			if (globalResponsiveDevice !== "pc") {
+				activate(globalResponsiveDevice, true);
+			}
 		}
 
 		["pc", "tablet", "phone"].forEach(function (dev) {
