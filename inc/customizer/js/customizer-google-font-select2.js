@@ -6,6 +6,7 @@
  */
 ( function ( $, wp ) {
 	'use strict';
+	var loadedFontCss = {};
 
 	function getDropdownParent() {
 		/* Body avoids overflow:hidden on .accordion-section-content and sidebar panes. */
@@ -19,6 +20,71 @@
 			data.push( { id: families[ i ], text: families[ i ] } );
 		}
 		return data;
+	}
+
+	function fontStackForFamily( familyId ) {
+		if ( ! familyId || familyId === 'system' ) {
+			return '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+		}
+		var safe = String( familyId ).replace( /"/g, '\\"' );
+		return '"' + safe + '", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+	}
+
+	function googleFontCssUrl( familyId ) {
+		var family = String( familyId || '' ).trim();
+		if ( ! family || family === 'system' ) {
+			return '';
+		}
+		return (
+			'https://fonts.googleapis.com/css2?family=' +
+			encodeURIComponent( family ).replace( /%20/g, '+' ) +
+			':wght@400;500;600;700&display=swap'
+		);
+	}
+
+	function ensureFontLoaded( familyId ) {
+		var family = String( familyId || '' ).trim();
+		if ( ! family || family === 'system' || loadedFontCss[ family ] ) {
+			return;
+		}
+		var href = googleFontCssUrl( family );
+		if ( ! href ) {
+			return;
+		}
+		var link = document.createElement( 'link' );
+		link.rel = 'stylesheet';
+		link.href = href;
+		document.head.appendChild( link );
+		loadedFontCss[ family ] = true;
+	}
+
+	function renderFontOption( item ) {
+		if ( ! item || typeof item.text === 'undefined' ) {
+			return item && item.text ? item.text : '';
+		}
+		var familyId = item.id || 'system';
+		ensureFontLoaded( familyId );
+		var $node = $(
+			'<div class="trove-cz-google-font__option">' +
+				'<div class="trove-cz-google-font__option-label"></div>' +
+				'<div class="trove-cz-google-font__option-preview">Sample text</div>' +
+			'</div>'
+		);
+		$node.find( '.trove-cz-google-font__option-label' ).text( item.text );
+		$node.find( '.trove-cz-google-font__option-preview' ).css( 'font-family', fontStackForFamily( familyId ) );
+		return $node;
+	}
+
+	function renderFontSelection( item ) {
+		if ( ! item || typeof item.text === 'undefined' ) {
+			return item && item.text ? item.text : '';
+		}
+		var familyId = item.id || 'system';
+		ensureFontLoaded( familyId );
+		var $node = $( '<span class="trove-cz-google-font__selected"></span>' );
+		$node.text( item.text );
+		$node.css( 'font-family', fontStackForFamily( familyId ) );
+		return $node;
 	}
 
 	function initSelect( $select ) {
@@ -46,6 +112,8 @@
 			width: '100%',
 			allowClear: false,
 			dropdownParent: $parent,
+			templateResult: renderFontOption,
+			templateSelection: renderFontSelection,
 		} );
 
 		if ( current ) {

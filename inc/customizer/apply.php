@@ -1400,7 +1400,6 @@ function render_footer_content_preview_partial() {
  */
 function get_header_classnames() {
 	$classes = array( 'site-header' );
-	$classes[] = 'light-scheme';
 	if ( get_theme_mod( 'trove_header_bottom_border', (bool) trove_customizer_default( 'trove_header_bottom_border', false ) ) ) {
 		$classes[] = 'trove-header-has-border';
 	}

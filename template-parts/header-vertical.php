@@ -7,6 +7,12 @@
 ?>
 <header class="<?php \Trove\Customizer\the_header_class_attr(); ?>" role="banner">
 	<div class="site-header__inner">
+		<button type="button" class="site-header__menu-toggle" aria-expanded="false" aria-controls="trove-primary-nav">
+			<span class="screen-reader-text"><?php esc_html_e( 'Toggle menu', 'trove' ); ?></span>
+			<svg viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M4 7h16M4 12h16M4 17h16"></path>
+			</svg>
+		</button>
 		<div class="site-header__brand">
 			<?php get_template_part( 'template-parts/header', 'brand' ); ?>
 		</div>
@@ -41,7 +47,7 @@
 			</div>
 		<?php endif; ?>
 	</div>
-    <nav class="<?php \Trove\Customizer\the_header_nav_class_attr(); ?>" aria-label="<?php esc_attr_e( 'Primary menu', 'trove' ); ?>">
+    <nav id="trove-primary-nav" class="<?php \Trove\Customizer\the_header_nav_class_attr(); ?>" aria-label="<?php esc_attr_e( 'Primary menu', 'trove' ); ?>">
         <?php
         if ( has_nav_menu( 'primary' ) ) {
             wp_nav_menu(

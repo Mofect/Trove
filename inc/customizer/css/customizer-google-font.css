@@ -50,6 +50,40 @@
 	line-height: 1.4;
 }
 
+.select2-results__option .trove-cz-google-font__option {
+	display: block;
+	padding: 2px 0;
+}
+
+.select2-results__option .trove-cz-google-font__option-label {
+	font-size: 15px;
+	line-height: 1.25;
+	font-weight: 500;
+	margin-bottom: 8px;
+}
+
+.select2-results__option .trove-cz-google-font__option-preview {
+	font-size: 30px;
+	line-height: 1.15;
+	font-weight: 400;
+}
+
+body.wp-customizer .select2-results__option {
+	padding-top: 10px;
+	padding-bottom: 12px;
+	border-bottom: 1px dashed #ddd;
+}
+
+body.wp-customizer .select2-results__option:last-child {
+	border-bottom: 0;
+}
+
+.select2-selection__rendered .trove-cz-google-font__selected {
+	display: inline-block;
+	font-size: 1em;
+	line-height: 1.35;
+}
+
 /* Select2 attaches the dropdown to body; raise above .wp-full-overlay (~500000) */
 body.wp-customizer .select2-dropdown {
 	z-index: 600000 !important;

@@ -31,12 +31,23 @@ $show_social        = \Trove\should_render_footer_social_links();
 	    <?php if ( ! empty( $trove_footer_menus ) ) : ?>
 			<div class="site-footer__menus">
 				<?php foreach ( $trove_footer_menus as $menu_obj ) : ?>
+					<?php $menu_list_id = 'site-footer-menu-' . (string) $menu_obj->term_id; ?>
 					<nav class="site-footer__menu-col" aria-label="<?php echo esc_attr( $menu_obj->name ); ?>">
-						<h3 class="site-footer__menu-title"><?php echo esc_html( $menu_obj->name ); ?></h3>
+						<h3 class="site-footer__menu-title">
+							<button
+								class="site-footer__menu-toggle"
+								type="button"
+								aria-expanded="true"
+								aria-controls="<?php echo esc_attr( $menu_list_id ); ?>"
+							>
+								<span class="site-footer__menu-toggle-text"><?php echo esc_html( $menu_obj->name ); ?></span>
+							</button>
+						</h3>
 						<?php
 						wp_nav_menu(
 							array(
 								'menu'        => $menu_obj->term_id,
+								'menu_id'     => $menu_list_id,
 								'container'   => false,
 								'menu_class'  => 'site-footer__menu-list',
 								'depth'       => 1,

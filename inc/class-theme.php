@@ -235,6 +235,22 @@ class TroveTheme {
 			true
 		);
 
+		wp_enqueue_script(
+			'trove-header-menu-toggle',
+			get_template_directory_uri() . '/assets/js/header-menu-toggle.js',
+			array(),
+			TROVE_THEME_VERSION,
+			true
+		);
+
+		wp_enqueue_script(
+			'trove-footer-menu-toggle',
+			get_template_directory_uri() . '/assets/js/footer-menu-toggle.js',
+			array(),
+			TROVE_THEME_VERSION,
+			true
+		);
+
 		global $wp_query;
 		$blog_infinite = \Trove\is_blog_listing_view()
 			&& 'infinite_scroll' === \Trove\get_blog_pagination_type()
