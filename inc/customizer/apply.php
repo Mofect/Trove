@@ -47,6 +47,12 @@ function trove_color_theme_mod_definitions() {
 		'trove_store_notice_text_color'       => '--trove-store-notice-text',
 		'trove_store_notice_link_color'       => '--trove-store-notice-link',
 		'trove_store_notice_link_hover_color' => '--trove-store-notice-link-hover',
+		'trove_woo_info_message_background'   => '--trove-woo-info-message-bg',
+		'trove_woo_info_message_text'         => '--trove-woo-info-message-text',
+		'trove_woo_failed_message_background' => '--trove-woo-failed-message-bg',
+		'trove_woo_failed_message_text'       => '--trove-woo-failed-message-text',
+		'trove_woo_success_message_background' => '--trove-woo-success-message-bg',
+		'trove_woo_success_message_text'       => '--trove-woo-success-message-text',
 	);
 	$cached = array();
 	foreach ( $map as $key => $var ) {
@@ -745,7 +751,7 @@ function trove_text_field_color_theme_mod_definitions() {
 		'trove_textarea_field_text_color'   => '--trove-textarea-field-text-color',
 	);
 	$fallbacks = array(
-		'trove_input_field_border_color'    => '#eeeeee',
+		'trove_input_field_border_color'    => '#dddddd',
 		'trove_input_field_text_color'      => '#111111',
 		'trove_textarea_field_border_color' => '#eeeeee',
 		'trove_textarea_field_text_color'   => '#111111',

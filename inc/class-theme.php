@@ -184,7 +184,7 @@ class TroveTheme {
 		}
 		add_editor_style( 'assets/css/base.css' );
 		if ( class_exists( 'WooCommerce' ) ) {
-			add_editor_style( 'assets/css/woocommerce.css' );
+			add_editor_style( 'assets/css/shop.css' );
 		}
 	}
 
@@ -213,7 +213,7 @@ class TroveTheme {
 		if ( class_exists( 'WooCommerce' ) ) {
 			wp_enqueue_style(
 				'trove-woocommerce',
-				get_template_directory_uri() . '/assets/css/woocommerce.css',
+				get_template_directory_uri() . '/assets/css/shop.css',
 				array( 'trove-style' ),
 				TROVE_THEME_VERSION
 			);
@@ -250,6 +250,53 @@ class TroveTheme {
 			TROVE_THEME_VERSION,
 			true
 		);
+
+		if ( class_exists( 'WooCommerce' ) && function_exists( 'is_product' ) && is_product() ) {
+			$ajax_cart_deps = array( 'jquery' );
+			wp_enqueue_script(
+				'sticksy',
+				get_template_directory_uri() . '/assets/js/sticksy.min.js',
+				array(),
+				TROVE_THEME_VERSION,
+				true
+			);
+			$ajax_cart_deps[] = 'sticksy';
+			// Let Woo add localized params; ensures fragment + legacy events behave like core.
+			if ( wp_script_is( 'wc-add-to-cart', 'registered' ) ) {
+				wp_enqueue_script( 'wc-add-to-cart' );
+				$ajax_cart_deps[] = 'wc-add-to-cart';
+			}
+			if ( wp_script_is( 'wc-cart-fragments', 'registered' ) ) {
+				wp_enqueue_script( 'wc-cart-fragments' );
+				$ajax_cart_deps[] = 'wc-cart-fragments';
+			}
+			if ( wp_script_is( 'wp-data', 'registered' ) ) {
+				wp_enqueue_script( 'wp-data' );
+				$ajax_cart_deps[] = 'wp-data';
+			}
+			// After Woo (loads wp-data + block cart store when mini-cart is present).
+			if ( wp_script_is( 'wc-block-mini-cart', 'registered' ) ) {
+				wp_enqueue_script( 'wc-block-mini-cart' );
+				$ajax_cart_deps[] = 'wc-block-mini-cart';
+			}
+
+			wp_enqueue_script(
+				'trove-product-ajax-cart',
+				get_template_directory_uri() . '/assets/js/shop.js',
+				array_values( array_unique( $ajax_cart_deps ) ),
+				TROVE_THEME_VERSION,
+				true
+			);
+			wp_localize_script(
+				'trove-product-ajax-cart',
+				'troveProductAjaxCart',
+				array(
+					'ajaxUrl'         => \WC_AJAX::get_endpoint( 'add_to_cart' ),
+					'storeCartUrl'    => rest_url( 'wc/store/v1/cart' ),
+					'storeApiNonce'   => wp_create_nonce( 'wc_store_api' ),
+				)
+			);
+		}
 
 		global $wp_query;
 		$blog_infinite = \Trove\is_blog_listing_view()
@@ -327,7 +374,7 @@ class TroveTheme {
 	 * @return string
 	 */
 	public static function replace_mini_cart_icon( $block_content ) {
-		$custom_icon = '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 11.01V11M16 11.01V11M8 8V7C8 5.93913 8.42143 4.92172 9.17157 4.17157C9.92172 3.42143 10.9391 3 12 3C13.0609 3 14.0783 3.42143 14.8284 4.17157C15.5786 4.92172 16 5.93913 16 7V8M8 8H6.84027C5.80009 8 4.93356 8.79732 4.84718 9.83391L4.18051 17.8339C4.08334 18.9999 5.00352 20 6.1736 20H17.8264C18.9965 20 19.9167 18.9999 19.8195 17.8339L19.1528 9.83391C19.0664 8.79732 18.1999 8 17.1597 8H16M8 8H16" transform="translate(0 1)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+		$custom_icon = '<svg class="wc-block-mini-cart__icon" width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 11.01V11M16 11.01V11M8 8V7C8 5.93913 8.42143 4.92172 9.17157 4.17157C9.92172 3.42143 10.9391 3 12 3C13.0609 3 14.0783 3.42143 14.8284 4.17157C15.5786 4.92172 16 5.93913 16 7V8M8 8H6.84027C5.80009 8 4.93356 8.79732 4.84718 9.83391L4.18051 17.8339C4.08334 18.9999 5.00352 20 6.1736 20H17.8264C18.9965 20 19.9167 18.9999 19.8195 17.8339L19.1528 9.83391C19.0664 8.79732 18.1999 8 17.1597 8H16M8 8H16" transform="translate(0 1)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 		$block_content = preg_replace(
 			'/<svg[^>]*class="[^"]*wc-block-mini-cart__icon[^"]*"[^>]*>.*?<\/svg>/s',

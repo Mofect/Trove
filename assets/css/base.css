@@ -137,11 +137,11 @@ textarea,
 select {
 	border: var(--trove-input-field-border-width, 1px) solid var(--trove-input-field-border-color, var(--trove-border));
 	border-radius: var(--trove-input-field-border-radius, 3px);
-	padding: 0.5em 0.75em;
-	font-family: inherit;
 	font-size: var(--trove-input-field-text-size, inherit);
 	color: var(--trove-input-field-text-color, inherit);
 	height: var(--trove-input-field-height, auto);
+	padding: 0.5em 0.75em;
+	font-family: inherit;
 }
 
 textarea {
@@ -154,8 +154,12 @@ textarea {
 }
 
 input:focus,
-textarea:focus,
 select:focus {
+	outline: 1px solid var(--trove-accent);
+	outline-offset: -1px;
+}
+
+textarea:focus {
 	outline: 2px solid var(--trove-accent);
 	outline-offset: -1px;
 }
@@ -288,7 +292,7 @@ body.trove-blog-layout--masonry .site-main {
 	padding: 0.5em 0.25rem;
 	background-color: var(--trove-announcement-background, var(--trove-accent, #000));
 	color: var(--trove-announcement-text, var(--trove-header-text, rgba(255, 255, 255, 0.92)));
-	border-bottom: 1px solid var(--trove-header-border, rgba(255, 255, 255, 0.12));
+	border-bottom: 1px solid var(--trove-border, rgba(255, 255, 255, 0.12));
 	position: relative;
 	z-index: 800;
 	outline: none;
@@ -416,15 +420,9 @@ body.trove-blog-layout--masonry .site-main {
 }
 
 .site-header {
-	padding-top: 20px;
-	padding-bottom: 20px;
+	height: 85px;
 	background-color: var(--trove-header-background, #111827);
 	color: var(--trove-header-text, rgba(255, 255, 255, 0.92));
-}
-
-.site-header.light-scheme {
-	background-color: var(--trove-header-background, #fff);
-	color: var(--trove-header-text, var(--trove-text));
 }
 
 .site-header.trove-header-sticky-always,
@@ -433,11 +431,6 @@ body.trove-blog-layout--masonry .site-main {
 	top: 0;
 	z-index: 501;
 	background-color: var(--trove-header-background, #111827);
-}
-
-.site-header.light-scheme.trove-header-sticky-always,
-.site-header.light-scheme.trove-header-sticky-on_scroll_up {
-	background-color: var(--trove-header-background, #fff);
 }
 
 /* Avoid overlapping WordPress admin bar when logged in. */
@@ -469,6 +462,7 @@ body.admin-bar .site-header.trove-header-sticky-on_scroll_up {
 	margin-left: auto;
 	margin-right: auto;
 	padding: 0 var(--trove-content-horizontal-spacing);
+	height: 100%;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -531,10 +525,6 @@ body.admin-bar .site-header.trove-header-sticky-on_scroll_up {
 	text-decoration: none;
 }
 
-.site-header.light-scheme .site-header__title-link {
-	color: var(--trove-header-text, var(--trove-text));
-}
-
 .site-header__title-link:hover {
 	color: var(--trove-header-link-hover, var(--trove-link-hover));
 }
@@ -544,11 +534,6 @@ body.admin-bar .site-header.trove-header-sticky-on_scroll_up {
 	font-size: 14px;
 	color: inherit;
 	opacity: 0.9;
-}
-
-.site-header.light-scheme .site-header__tagline {
-	color: var(--trove-header-text, var(--trove-text));
-	opacity: 1;
 }
 
 body.has-custom-logo .site-header__title-link,
@@ -563,6 +548,7 @@ body.has-custom-logo .site-header__tagline {
 	align-items: center;
 	flex: 1 1 auto;
 	min-width: 0;
+	height: 100%;
 }
 
 .site-header__nav-left {
@@ -574,7 +560,7 @@ body.has-custom-logo .site-header__tagline {
 }
 
 .site-header__nav .primary-menu,
-.site-header__nav .primary-menu ul {
+.site-header__nav .primary-menu > ul {
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -583,11 +569,8 @@ body.has-custom-logo .site-header__tagline {
 	flex-wrap: nowrap;
 	align-items: center;
 	justify-content: flex-end;
-	gap: 2rem;
-	overflow-x: auto;
-	overflow-y: hidden;
-	-webkit-overflow-scrolling: touch;
-	scrollbar-width: thin;
+	gap: 3rem;
+	height: 100%;
 	font-size: var(--trove-menu-font-size);
 	font-weight: var(--trove-menu-font-weight);
 	line-height: var(--trove-menu-font-line-height);
@@ -597,6 +580,9 @@ body.has-custom-logo .site-header__tagline {
 
 .site-header__nav .primary-menu > li {
 	flex: 0 0 auto;
+	height: 100%;
+	display: flex;
+	align-items: center;
 }
 
 .site-header__nav .primary-menu a {
@@ -605,21 +591,57 @@ body.has-custom-logo .site-header__tagline {
 	white-space: nowrap;
 }
 
-.site-header.light-scheme .site-header__nav .primary-menu a {
-	color: var(--trove-header-link, var(--trove-text));
-}
-
 .site-header__nav .primary-menu a:hover {
 	color: var(--trove-header-link-hover, #fff);
 }
 
-.site-header.light-scheme .site-header__nav .primary-menu a:hover {
-	color: var(--trove-header-link-hover, var(--trove-link-hover));
+@media (min-width: 1024px) {
+	.site-header__nav .primary-menu {
+		overflow: visible;
+	}
+
+	.site-header__nav .primary-menu > .menu-item-has-children > a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+	}
+
+	.site-header__nav .primary-menu > .menu-item-has-children > a::after {
+		content: '';
+		width: 0.55rem;
+		height: 0.55rem;
+		border-right: 1.5px solid currentColor;
+		border-bottom: 1.5px solid currentColor;
+		transform: rotate(45deg) translateY(-0.08rem);
+		opacity: 0.9;
+		flex-shrink: 0;
+	}
+
+	.site-header__nav .primary-menu > li > .sub-menu {
+		display: none;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		height: auto;
+	}
+
+	.site-header__nav .primary-menu > li:hover > .sub-menu,
+	.site-header__nav .primary-menu > li:focus-within > .sub-menu {
+		display: flex;
+	}
+
+	.site-header__nav .primary-menu .sub-menu li {
+		position: relative;
+		display: block;
+		height: auto;
+	}
 }
 
 /* Dropdowns: keep top-level items in a row; open submenus below. */
 .site-header__nav .primary-menu li {
 	position: relative;
+	display: flex;
+	align-items: center;
 }
 
 .site-header__nav .primary-menu .sub-menu {
@@ -627,14 +649,12 @@ body.has-custom-logo .site-header__tagline {
 	left: 0;
 	top: 100%;
 	z-index: 200;
-	min-width: 12rem;
+	min-width: 14rem;
 	margin: 0;
-	padding: 0.35rem 0;
+	padding: 0;
 	list-style: none;
-	background: var(--trove-header-background, #1f2937);
-	border: 1px solid var(--trove-header-border, rgba(255, 255, 255, 0.12));
-	border-radius: 4px;
-	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+	background: var(--trove-header-background);
+	border: 1px solid var(--trove-border);
 	display: none;
 	flex-direction: column;
 	align-items: stretch;
@@ -642,25 +662,37 @@ body.has-custom-logo .site-header__tagline {
 	white-space: nowrap;
 }
 
-.site-header.light-scheme .site-header__nav .primary-menu .sub-menu {
-	background: #fff;
-	border: 1px solid var(--trove-header-border, var(--trove-border));
-	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+.site-header__nav .primary-menu .sub-menu li {
+	padding: 1rem 2rem;
 }
-
-.site-header__nav .primary-menu .sub-menu a {
-	display: block;
-	padding: 0.35rem 0.9rem;
+.site-header__nav .primary-menu .sub-menu li:first-child {
+	padding-top: 2rem;
+}
+.site-header__nav .primary-menu .sub-menu li:last-child {
+	padding-bottom: 2rem;
 }
 
 .site-header__nav .primary-menu li:hover > .sub-menu,
 .site-header__nav .primary-menu li:focus-within > .sub-menu {
 	display: flex;
+	animation: trove-submenu-reveal 0.18s ease both;
 }
 
 .site-header__nav .primary-menu .sub-menu .sub-menu {
-	top: 0;
+	position: absolute;
+	top: -1px;
 	left: 100%;
+}
+
+@keyframes trove-submenu-reveal {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .site-header__buttons {
@@ -679,23 +711,11 @@ body.has-custom-logo .site-header__tagline {
 	text-decoration: none;
 }
 
-.site-header.light-scheme .site-header__buttons a,
-.site-header.light-scheme .site-header__buttons .site-header__search-toggle {
-	color: var(--trove-header-link, var(--trove-text));
-}
-
 .site-header__buttons a:hover,
 .site-header__buttons a:focus-visible,
 .site-header__buttons .site-header__search-toggle:hover,
 .site-header__buttons .site-header__search-toggle:focus-visible {
 	color: var(--trove-header-link-hover, #fff);
-}
-
-.site-header.light-scheme .site-header__buttons a:hover,
-.site-header.light-scheme .site-header__buttons a:focus-visible,
-.site-header.light-scheme .site-header__buttons .site-header__search-toggle:hover,
-.site-header.light-scheme .site-header__buttons .site-header__search-toggle:focus-visible {
-	color: var(--trove-header-link-hover, var(--trove-link-hover));
 }
 
 .site-header__search {
@@ -725,10 +745,6 @@ body.has-custom-logo .site-header__tagline {
 	padding: 0;
 	color: var(--trove-header-link, rgba(255, 255, 255, 0.85));
 	cursor: pointer;
-}
-
-.site-header.light-scheme .site-header__menu-toggle {
-	color: var(--trove-header-link, var(--trove-text));
 }
 
 .site-header__menu-toggle:hover,
@@ -813,7 +829,7 @@ body.has-custom-logo .site-header__tagline {
 	}
 }
 
-@media (max-width: 782px) {
+@media (max-width: 1023px) {
 	.site-header__buttons {
 		gap: 0;
 	}
@@ -828,16 +844,12 @@ body.has-custom-logo .site-header__tagline {
 		margin-top: 0;
 		padding: 0;
 		background: var(--trove-header-background, #ffffff);
-		border-right: 1px solid var(--trove-header-border, var(--trove-border, #e5e7eb));
+		border-right: 1px solid var(--trove-border, #e5e7eb);
 		box-shadow: 10px 0 20px rgba(0, 0, 0, 0.03);
 		transform: translateX(-104%);
 		transition: transform 0.24s ease;
 		z-index: 999;
 		overflow: hidden;
-	}
-
-	.site-header.light-scheme .site-header__nav {
-		background: #ffffff;
 	}
 
 	.site-header.is-menu-open .site-header__nav {
@@ -856,7 +868,7 @@ body.has-custom-logo .site-header__tagline {
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;
-		gap: 1.2rem;
+		gap: 2rem;
 		position: absolute;
 		inset: 0;
 		overflow-y: auto;
@@ -910,14 +922,14 @@ body.has-custom-logo .site-header__tagline {
 
 	/* Phone off-canvas: submenus are full panels, never hover dropdowns. */
 	.site-header__nav--offcanvas .site-header__menu-level.sub-menu {
-		position: absolute !important;
-		inset: 0 !important;
-		min-width: 0 !important;
-		left: 0 !important;
-		top: 0 !important;
-		border: 0 !important;
-		box-shadow: none !important;
-		display: flex !important;
+		position: absolute;
+		inset: 0;
+		min-width: 0;
+		left: 0;
+		top: 0;
+		border: 0;
+		box-shadow: none;
+		display: flex;
 	}
 
 	.site-header__nav--offcanvas .primary-menu li:hover > .sub-menu,
@@ -928,6 +940,7 @@ body.has-custom-logo .site-header__tagline {
 	.site-header__nav--offcanvas .site-header__menu-level li {
 		width: 100%;
 		position: static;
+		height: auto;
 	}
 
 	.site-header__nav--offcanvas .site-header__menu-level a {
@@ -962,10 +975,15 @@ body.has-custom-logo .site-header__tagline {
 		gap: 0.6rem;
 	}
 
-	.site-header__menu-back-btn::before {
-		content: '\2039';
-		font-size: 1.8rem;
-		line-height: 1;
+	.site-header__menu-back-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	.site-header__menu-back-icon svg {
+		display: block;
 	}
 
 	.site-header__menu-back-btn:hover,
@@ -1010,10 +1028,6 @@ body.has-custom-logo .site-header__tagline {
 	background: rgba(0, 0, 0, 0.06);
 }
 
-.site-header.light-scheme .site-header__search-form {
-	background: rgba(0, 0, 0, 0.06);
-}
-
 .site-header__search-form input[type="search"] {
 	flex: 1 1 auto;
 	min-width: 0;
@@ -1045,11 +1059,7 @@ body.has-custom-logo .site-header__tagline {
 
 /* Customizer: header bottom border (Trove Options → Header). */
 .site-header.trove-header-has-border {
-	border-bottom: 1px solid var(--trove-header-border, rgba(255, 255, 255, 0.12));
-}
-
-.site-header.light-scheme.trove-header-has-border {
-	border-bottom-color: var(--trove-header-border, var(--trove-border, #eee));
+	border-bottom: 1px solid var(--trove-border, rgb(0 0 0 / 5%));
 }
 
 /* Header layout: menu left, logo centered in the bar, utilities right. */
@@ -1115,7 +1125,7 @@ body.has-custom-logo .site-header__tagline {
 }
 
 .site-header[class*="trove-header__vertical-"].trove-header-has-border .site-header__nav {
-	border-top: 1px solid var(--trove-header-border, var(--trove-border));
+	border-top: 1px solid var(--trove-border);
 }
 
 .site-header.trove-header__vertical-centered-logo .site-header__buttons {

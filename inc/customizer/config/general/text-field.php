@@ -67,7 +67,7 @@ return array(
 	'trove_input_field_border_color' => array(
 		'label'             => __( 'Border color', 'trove' ),
 		'type'              => 'color',
-		'default'           => (string) trove_customizer_default( 'trove_input_field_border_color', '#eeeeee' ),
+		'default'           => (string) trove_customizer_default( 'trove_input_field_border_color', '#dddddd' ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
 		'swatch_hint'       => __( 'Input border', 'trove' ),

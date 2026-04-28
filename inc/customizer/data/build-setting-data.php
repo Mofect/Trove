@@ -34,6 +34,12 @@ $defaults = array(
 	'trove_store_notice_text_color'         => '#ffffff',
 	'trove_store_notice_link_color'         => '#ffffff',
 	'trove_store_notice_link_hover_color'   => '#e8defc',
+	'trove_woo_info_message_background'     => '#eef4ff',
+	'trove_woo_info_message_text'           => '#1f3f8f',
+	'trove_woo_failed_message_background'   => '#ffe8ee',
+	'trove_woo_failed_message_text'         => '#8b1f43',
+	'trove_woo_success_message_background'  => '#e9f8ec',
+	'trove_woo_success_message_text'        => '#216e39',
 	'trove_content_width'                   => 800,
 	'trove_content_wide_width'              => 1200,
 	'trove_content_vertical_spacing'        => 48,
@@ -66,7 +72,7 @@ $defaults = array(
 	'trove_input_field_text_size'           => 16,
 	'trove_input_field_border_width'        => 1,
 	'trove_input_field_border_radius'       => 3,
-	'trove_input_field_border_color'        => '#eeeeee',
+	'trove_input_field_border_color'        => '#dddddd',
 	'trove_input_field_text_color'          => '#111111',
 	'trove_textarea_field_height'           => 120,
 	'trove_textarea_field_text_size'        => 16,
@@ -266,6 +272,12 @@ $light_colors = array(
 	'trove_store_notice_text_color'         => '#ffffff',
 	'trove_store_notice_link_color'        => '#ffffff',
 	'trove_store_notice_link_hover_color'  => '#e8defc',
+	'trove_woo_info_message_background'    => '#eef4ff',
+	'trove_woo_info_message_text'          => '#1f3f8f',
+	'trove_woo_failed_message_background'  => '#ffe8ee',
+	'trove_woo_failed_message_text'        => '#8b1f43',
+	'trove_woo_success_message_background' => '#e9f8ec',
+	'trove_woo_success_message_text'       => '#216e39',
 );
 
 $dark_colors = array(
@@ -296,6 +308,12 @@ $dark_colors = array(
 	'trove_store_notice_text_color'         => '#ffffff',
 	'trove_store_notice_link_color'        => '#ffffff',
 	'trove_store_notice_link_hover_color'  => '#e8defc',
+	'trove_woo_info_message_background'    => '#18213f',
+	'trove_woo_info_message_text'          => '#c8d4ff',
+	'trove_woo_failed_message_background'  => '#3a1521',
+	'trove_woo_failed_message_text'        => '#ffc2d3',
+	'trove_woo_success_message_background' => '#163425',
+	'trove_woo_success_message_text'       => '#b8f0cf',
 );
 
 $out = array(

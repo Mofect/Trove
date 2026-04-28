@@ -4,8 +4,8 @@
 ( function () {
 	'use strict';
 
-	var MOBILE_BREAKPOINT = 1024;
-	var PHONE_BREAKPOINT = 782;
+	var MOBILE_BREAKPOINT = 1023;
+	var PHONE_BREAKPOINT = 1023;
 
 	function isMobileHeaderViewport() {
 		return window.innerWidth <= MOBILE_BREAKPOINT;
@@ -193,7 +193,14 @@
 				var backItem = document.createElement( 'li' );
 				backItem.className = 'site-header__menu-back';
 				backItem.innerHTML =
-					'<button type="button" class="site-header__menu-back-btn">Back</button>';
+					'<button type="button" class="site-header__menu-back-btn">' +
+						'<span class="site-header__menu-back-icon" aria-hidden="true">' +
+							'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+								'<path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>' +
+							'</svg>' +
+						'</span>' +
+						'<span class="site-header__menu-back-text">Back</span>' +
+					'</button>';
 				submenu.insertBefore( backItem, submenu.firstChild );
 				backItem
 					.querySelector( '.site-header__menu-back-btn' )

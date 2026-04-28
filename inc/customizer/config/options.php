@@ -341,6 +341,14 @@ function get_options() {
 				'title'    => __( 'WooCommerce', 'trove' ),
 				'priority' => 139,
 			),
+			'woocommerce_message_bar' => array(
+				'title'     => __( 'Message bar', 'trove' ),
+				'container' => array(
+					'priority'              => 140,
+					'color_swatches_layout' => true,
+				),
+				'options'   => require __DIR__ . '/woocommerce.php',
+			),
 		);
 	}
 
