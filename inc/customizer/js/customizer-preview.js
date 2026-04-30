@@ -1562,7 +1562,9 @@
 			var useWide =
 				document.body &&
 				( document.body.classList.contains( 'trove-blog-layout--grid' ) ||
-					document.body.classList.contains( 'trove-blog-layout--masonry' ) );
+					document.body.classList.contains( 'trove-blog-layout--masonry' ) ||
+					document.body.classList.contains( 'woocommerce' ) ||
+					document.body.classList.contains( 'woocommerce-page' ) );
 			main.style.maxWidth = useWide ? widePx : narrowPx;
 			main.style.paddingTop = vertPx;
 			main.style.paddingBottom = vertPx;

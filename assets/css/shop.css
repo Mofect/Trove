@@ -90,14 +90,22 @@ body.admin-bar .woocommerce-store-notice {
 :where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce a.button,
 :where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce button.button,
 :where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce input.button,
-.woocommerce div.product form.cart .button {
-	background-color: var(--trove-button-primary-bg, #111111);
-	border: var(--trove-button-primary-border-width, 1px) solid var(--trove-button-primary-border, #111111);
-	border-radius: var(--trove-button-primary-radius, 3px);
-	color: var(--trove-button-primary-text, #ffffff);
-	font-size: var(--trove-button-primary-font-size, 15px);
-	font-weight: var(--trove-button-primary-font-weight, 500);
-	padding: var(--trove-button-primary-padding, 8px 24px);
+.woocommerce div.product form.cart .button,
+.woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) #respond input#submit.alt, 
+.woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) a.button.alt, 
+.woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) button.button.alt, 
+.woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) input.button.alt, 
+:where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce #respond input#submit.alt, 
+:where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce a.button.alt, 
+:where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce button.button.alt, 
+:where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce input.button.alt {
+	background-color: var(--trove-button-bg, #111111);
+	border: var(--trove-button-border-width, 1px) solid var(--trove-button-border, #111111);
+	border-radius: var(--trove-button-radius, 3px);
+	color: var(--trove-button-text, #ffffff);
+	font-size: var(--trove-button-font-size, 15px);
+	font-weight: var(--trove-button-font-weight, 500);
+	padding: var(--trove-button-padding, 10px 24px);
 }
 
 .woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) #respond input#submit:hover,
@@ -117,10 +125,18 @@ body.admin-bar .woocommerce-store-notice {
 :where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce input.button:hover,
 :where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce input.button:focus-visible,
 .woocommerce div.product form.cart .button:hover,
-.woocommerce div.product form.cart .button:focus-visible {
-	background-color: var(--trove-button-primary-bg-hover, #222222);
-	border-color: var(--trove-button-primary-border-hover, #222222);
-	color: var(--trove-button-primary-text-hover, #ffffff);
+.woocommerce div.product form.cart .button:focus-visible,
+.woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) #respond input#submit.alt:hover, 
+.woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) a.button.alt:hover, 
+.woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) button.button.alt:hover, 
+.woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) input.button.alt:hover, 
+:where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce #respond input#submit.alt:hover, 
+:where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce a.button.alt:hover, 
+:where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce button.button.alt:hover, 
+:where(body:not(.woocommerce-block-theme-has-button-styles)):where(:not(.edit-post-visual-editor)) .woocommerce input.button.alt:hover {
+	background-color: var(--trove-button-bg-hover, #222222);
+	border-color: var(--trove-button-border-hover, #222222);
+	color: var(--trove-button-text-hover, #ffffff);
 }
 
 /*
@@ -153,12 +169,12 @@ body.admin-bar .woocommerce-store-notice {
 		:disabled,
 		:disabled[disabled]
 	):hover {
-	background-color: var(--trove-button-primary-bg, #111111) !important;
-	border-color: var(--trove-button-primary-border, #111111) !important;
-	color: var(--trove-button-primary-text, #ffffff) !important;
+	background-color: var(--trove-button-bg, #111111) !important;
+	border-color: var(--trove-button-border, #111111) !important;
+	color: var(--trove-button-text, #ffffff) !important;
 	cursor: not-allowed;
 	opacity: 0.5;
-	padding: var(--trove-button-primary-padding, 8px 24px);
+	padding: var(--trove-button-padding, 8px 24px);
 }
 
 .woocommerce-EditAccountForm.edit-account em {
@@ -322,18 +338,18 @@ h2.wc-block-mini-cart__title {
 }
 
 .wc-block-mini-cart__footer .wc-block-components-button:last-child {
-	background-color: var(--trove-button-primary-bg, #111111);
-	border-width: var(--trove-button-primary-border-width, 1px);
+	background-color: var(--trove-button-bg, #111111);
+	border-width: var(--trove-button-border-width, 1px);
 	border-style: solid;
-	border-color: var(--trove-button-primary-border, #111111);
-	color: var(--trove-button-primary-text, #ffffff);
+	border-color: var(--trove-button-border, #111111);
+	color: var(--trove-button-text, #ffffff);
 }
 
 .wc-block-mini-cart__footer .wc-block-components-button:last-child:hover,
 .wc-block-mini-cart__footer .wc-block-components-button:last-child:focus-visible {
-	background-color: var(--trove-button-primary-bg-hover, #222222);
-	border-color: var(--trove-button-primary-border-hover, #222222);
-	color: var(--trove-button-primary-text-hover, #ffffff);
+	background-color: var(--trove-button-bg-hover, #222222);
+	border-color: var(--trove-button-border-hover, #222222);
+	color: var(--trove-button-text-hover, #ffffff);
 }
 
 
@@ -687,6 +703,35 @@ body.woocommerce-page .site-main {
 	font-size: 1.2rem;
 }
 
+#add_payment_method #payment, 
+.woocommerce-cart #payment, 
+.woocommerce-checkout #payment {
+	background: transparent;
+	border: var(--trove-border-width) solid var(--trove-border);
+}
+
+#add_payment_method #payment ul.payment_methods, 
+.woocommerce-cart #payment ul.payment_methods, 
+.woocommerce-checkout #payment ul.payment_methods,
+.wc-upe-form.wc-payment-form {
+	border: 1px solid #eee;
+}
+
+#add_payment_method #payment div.payment_box, 
+.woocommerce-cart #payment div.payment_box, 
+.woocommerce-checkout #payment div.payment_box {
+	background: #f7f7f7;
+}
+
+#add_payment_method #payment div.payment_box::before, 
+.woocommerce-cart #payment div.payment_box::before, 
+.woocommerce-checkout #payment div.payment_box::before {
+	border: 1em solid #f7f7f7;
+	border-right-color: transparent;
+    border-left-color: transparent;
+    border-top-color: transparent;
+}
+
 /* Failed: pink */
 .woocommerce-account .woocommerce-orders-table__row--status-failed .woocommerce-orders-table__cell-order-status > span {
 	background-color: #ffe6ef;
@@ -863,9 +908,9 @@ body.woocommerce-page .site-main {
 
 /* Single product: AJAX add to cart — loading = disabled: gray, spinner vertically centered. */
 body.single-product .woocommerce form.cart .single_add_to_cart_button.loading {
-	background-color: var(--trove-button-primary-bg, #111111);
-	border-color: var(--trove-button-primary-border, #111111);
-	color: var(--trove-button-primary-text, #ffffff);
+	background-color: var(--trove-button-bg, #111111);
+	border-color: var(--trove-button-border, #111111);
+	color: var(--trove-button-text, #ffffff);
 	cursor: not-allowed;
 	opacity: 0.5;
 }
@@ -919,21 +964,350 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 
 .woocommerce:where(body:not(.woocommerce-uses-block-theme)) div.product p.price,
 .woocommerce:where(body:not(.woocommerce-uses-block-theme)) div.product span.price {
-  color: var(--trove-base-text);
+    color: var(--trove-text);
+}
+
+/* Tabs */
+.woocommerce div.product .woocommerce-tabs ul.tabs {
+	padding: 0;
+	margin-bottom: 2.5em;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs::before {
+	border-color: var(--trove-border);
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li {
+	background: transparent;
+	border: 0;
+}
+.woocommerce div.product .woocommerce-tabs ul.tabs li::before,
+.woocommerce div.product .woocommerce-tabs ul.tabs li::after {
+	display: none;
+}
+.woocommerce div.product .woocommerce-tabs ul.tabs li.active {
+	border-bottom: 1px solid var(--trove-text);
+	background: transparent;
+}
+.woocommerce-Tabs-panel h2 {
+	font-size: var(--trove-h3-font-size);
+	line-height: var(--trove-h3-font-line-height);
 }
 
 .related.products h2 {
 	margin-top: 10rem;
 }
 
-.woocommerce span.onsale {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 4.8rem;
-	height: 4.8rem;
-	min-width: 4.8rem;
-	min-height: 4.8rem;
+.comment-reply-title {
+	font-weight: 600;
+	display: block;
+	margin-bottom: 1.5rem;
+}
+
+.comment-form label {
+	margin-bottom: 1rem;
+	display: block;
+}
+
+.woocommerce #reviews #comments ol.commentlist {
+	padding: 0;
+}
+
+.woocommerce #reviews #comments ol.commentlist li {
+	border: 0;
+	background: #f9f9f9;
+    width: 49%;
+    padding: 1rem;
+    border-radius: 5px;
+	float: left;
+}
+
+.woocommerce #reviews #comments ol.commentlist li:nth-child(2n+2) {
+	float: right;
+}
+
+.woocommerce #reviews #comments ol.commentlist li img.avatar {
 	padding: 0;
 	border-radius: 50%;
+	width: 40px;
+	top: 1rem;
+    left: 1rem;
+}
+
+.woocommerce #reviews #comments ol.commentlist li .comment-text p.meta {
+	font-size: 1.6rem;
+	color: var(--trove-text);
+}
+
+.woocommerce #reviews #comments ol.commentlist li .comment-text {
+	border: 0;
+	padding: .6em 0 0;
+}
+
+.woocommerce p.stars a:hover,
+.woocommerce p.stars a.active,
+.woocommerce p.stars.selected a:not(.active)::before {
+	color: rgb(255, 163, 15);
+}
+
+/* Product card */
+.woocommerce ul.products li.product .woocommerce-loop-category__title, 
+.woocommerce ul.products li.product .woocommerce-loop-product__title, 
+.woocommerce ul.products li.product h3 {
+	letter-spacing: 0;
+}
+.woocommerce ul.products li.product .button {
+    background: transparent;
+    border: 0;
+    color: #000;
+    padding: 0 2rem 0 0;
+	margin: 0;
+}
+
+.woocommerce ul.products li.product .button:not(.loading) {
+	opacity: 0;
+	visibility: hidden;
+}
+
+.woocommerce ul.products li.product:hover .button {
+	visibility: visible;
+	opacity: 1;
+	transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.woocommerce ul.products li.product .button:hover {
+	text-decoration: underline;
+}
+
+.woocommerce ul.products li.product .button::after {
+	top: 0;
+	right: 0;
+}
+
+.woocommerce ul.products li.product .button.added::after,
+.woocommerce a.added_to_cart {
+	display: none;
+}
+
+.woocommerce:where(body:not(.woocommerce-uses-block-theme)) ul.products li.product .price,
+.woocommerce ul.products li.product a.woocommerce-loop-product__link:hover {
+	color: var(--trove-text);
+}
+
+.woocommerce .woocommerce-result-count {
+	margin: .5em 0 2em;
+}
+.woocommerce .woocommerce-ordering {
+	margin: 0 0 2em;
+}
+
+/* Pagination */
+.woocommerce nav.woocommerce-pagination ul,
+.woocommerce nav.woocommerce-pagination ul li {
+	border: 0;
+	font-size: 1.8rem;
+}
+
+.woocommerce nav.woocommerce-pagination ul li a, 
+.woocommerce nav.woocommerce-pagination ul li span {
+	padding: 0.5rem 1rem;
+}
+
+.woocommerce nav.woocommerce-pagination ul li a:focus, 
+.woocommerce nav.woocommerce-pagination ul li a:hover, 
+.woocommerce nav.woocommerce-pagination ul li span.current {
+	color: var(--trove-text);
+	font-weight: 600;
+	background: transparent;
+	border-bottom: 2px solid var(--trove-text);
+}
+
+/* Badges */
+.woocommerce span.onsale {
+	min-width: auto;
+	min-height: auto;
+	background: #000;
+	padding: 0.5rem 1rem;
+	border-radius: 50%;
+	line-height: 1;
+	border-radius: var(--trove-button-radius, 3px);
+}
+
+.woocommerce span.onsale,
+.woocommerce ul.products li.product .onsale {
+	top: 0;
+    left: 0;
+    right: auto;
+    margin: .5em 0 0 .5em;
+}
+
+/* WooCommerce breadcrumb */
+.woocommerce-breadcrumb {
+	max-width: var(--trove-content-wide-width);
+	margin: 1em auto !important;
+	padding-left: var(--trove-content-horizontal-spacing, 20px) !important;
+	padding-right: var(--trove-content-horizontal-spacing, 20px) !important;
+}
+
+/* Shop sidebar layout */
+.shop-main {
+	display: flex;
+	gap: 40px;
+	align-items: flex-start;
+	width: 100%;
+	flex-wrap: wrap;
+}
+
+.trove-shop-filters {
+	flex: 0 0 260px;
+	width: 260px;
+}
+
+.trove-products {
+	flex: 1;
+	min-width: 0;
+}
+
+.trove-shop-widget {
+	margin-bottom: 5rem;
+}
+
+.trove-shop-widget .widget-title {
+	font-size: 1.8rem;
+	font-weight: 600;
+	margin: 0 0 2rem;
+	border-bottom: 1px solid var(--trove-border);
+	padding-bottom: 1.5rem;
+}
+
+.trove-shop-widget ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.trove-shop-widget ul li {
+	margin-bottom: .7rem;
+}
+
+.trove-shop-widget ul li a {
+	color: var(--trove-text);
+	text-decoration: none;
+}
+
+.trove-shop-widget ul li a:hover {
+	color: var(--trove-link-hover);
+}
+
+.trove-shop-widget ul ul.children {
+	margin: 1rem 0;
+}
+
+.trove-shop-widget ul ul.children li::before {
+	content: '-';
+	opacity: 0.2;
+	margin-right: 0.5rem;
+}
+
+/* Price filter widget */
+.trove-shop-widget--price .price_slider_wrapper {
+	padding-top: 0.5rem;
+}
+
+/* Slider track */
+.trove-shop-widget--price .price_slider {
+	position: relative !important;
+	background: #e5e5e5 !important;
+	height: 4px !important;
+	border-radius: 2px;
+	margin-bottom: 2rem;
+	border: none !important;
+}
+
+/* Selected range */
+.trove-shop-widget--price .price_slider .ui-slider-range {
+	background: #1a1a1a !important;
+	border-radius: 2px;
+	position: absolute;
+	z-index: 1;
+	border: none !important;
+}
+
+/* Slider handles */
+.trove-shop-widget--price .price_slider .ui-slider-handle {
+	position: absolute !important;
+	display: block !important;
+	visibility: visible !important;
+	opacity: 1 !important;
+	z-index: 3 !important;
+	background: #1a1a1a !important;
+	border-radius: 50% !important;
+	width: 16px !important;
+	height: 16px !important;
+	top: 50% !important;
+	margin-top: -8px !important;
+	margin-left: -8px !important;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+	cursor: ew-resize !important;
+}
+
+.trove-shop-widget--price .price_slider .ui-slider-handle:focus,
+.trove-shop-widget--price .price_slider .ui-slider-handle:active {
+	outline: none !important;
+	box-shadow: 0 0 0 3px rgba(26,26,26,0.15) !important;
+}
+
+/* Amount row */
+.trove-shop-widget--price .price_slider_amount {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-top: 0.5rem;
+}
+
+/* Price label */
+.trove-shop-widget--price .price_label {
+	font-size: 1.2rem;
+	color: var(--trove-text);
+}
+
+/* Filter button */
+.trove-shop-widget--price .price_slider_amount .button {
+	background: #f0f0f0;
+	color: #1a1a1a;
+	border: none;
+	border-radius: 999px;
+	padding: 0.5rem 1.25rem;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: background 0.2s ease;
+	margin: 0;
+	line-height: 1.5;
+}
+
+.trove-shop-widget--price .price_slider_amount .button:hover {
+	background: #000;
+	color: #fff;
+	text-decoration: none;
+}
+
+.trove-shop-widget--price .price_slider_amount .clear {
+	display: none;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+	.shop-main {
+		flex-direction: column;
+	}
+
+	.trove-shop-filters {
+		flex: 1 1 auto;
+		width: 100%;
+	}
 }

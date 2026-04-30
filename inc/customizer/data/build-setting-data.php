@@ -40,6 +40,7 @@ $defaults = array(
 	'trove_woo_failed_message_text'         => '#8b1f43',
 	'trove_woo_success_message_background'  => '#e9f8ec',
 	'trove_woo_success_message_text'        => '#216e39',
+	'trove_woo_enable_filter'               => true,
 	'trove_content_width'                   => 800,
 	'trove_content_wide_width'              => 1200,
 	'trove_content_vertical_spacing'        => 48,

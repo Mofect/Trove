@@ -22,12 +22,45 @@ require_once __DIR__ . '/class-manager.php';
 function bootstrap_customizer() {
 	$manager = new Manager();
 	add_action( 'customize_register', array( $manager, 'register' ), 10 );
+	add_action( 'customize_register', __NAMESPACE__ . '\\trove_migrate_woocommerce_product_catalog_controls', 20 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\flatten_woocommerce_panel_to_root', 9997 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\position_woocommerce_below_blog_posts', 9998 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\reorder_core_sections_above_additional_css', 9999 );
 	add_action( 'customize_controls_enqueue_scripts', __NAMESPACE__ . '\\enqueue_customizer_ui_assets' );
 }
 bootstrap_customizer();
+
+/**
+ * Moves all native WooCommerce Product catalog controls into the theme's own
+ * woocommerce_product_catalog section and removes the native section.
+ *
+ * @param \WP_Customize_Manager $wp_customize Customizer manager.
+ * @return void
+ */
+function trove_migrate_woocommerce_product_catalog_controls( $wp_customize ) {
+	if ( ! $wp_customize instanceof \WP_Customize_Manager ) {
+		return;
+	}
+
+	$native_section_id = 'woocommerce_product_catalog';
+	$theme_section_id  = 'trove_section_woocommerce_product_catalog';
+
+	if ( ! $wp_customize->get_section( $native_section_id ) ) {
+		return;
+	}
+
+	if ( ! $wp_customize->get_section( $theme_section_id ) ) {
+		return;
+	}
+
+	foreach ( $wp_customize->controls() as $control ) {
+		if ( $native_section_id === $control->section ) {
+			$control->section = $theme_section_id;
+		}
+	}
+
+	$wp_customize->remove_section( $native_section_id );
+}
 
 /**
  * Sanitize announcement / repeater lines stored as JSON array of strings (max 10 non-empty lines).

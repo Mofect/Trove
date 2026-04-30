@@ -349,6 +349,14 @@ function get_options() {
 				),
 				'options'   => require __DIR__ . '/woocommerce.php',
 			),
+			'woocommerce_product_catalog' => array(
+				'title'     => __( 'Product catalog', 'trove' ),
+				'container' => array(
+					'priority'              => 141,
+					'color_swatches_layout' => true,
+				),
+				'options'   => require __DIR__ . '/woocommerce/product-catalog.php',
+			),
 		);
 	}
 
