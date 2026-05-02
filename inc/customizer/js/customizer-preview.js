@@ -2054,6 +2054,111 @@
 		} );
 	}
 
+	function bindWooSingleProduct() {
+		if ( typeof wp === 'undefined' || ! wp.customize ) {
+			return;
+		}
+
+		function normalizeStackedCols( raw ) {
+			var n = parseInt( raw, 10 );
+			if ( isNaN( n ) ) {
+				n = 4;
+			}
+			return Math.max( 1, Math.min( 6, n ) );
+		}
+
+		function applyWooStackedGalleryColumns( raw ) {
+			var cols = normalizeStackedCols( raw );
+			var galleries = document.querySelectorAll(
+				'.single-product .woocommerce-product-gallery.trove-woo-gallery--stacked, .woocommerce-product-gallery.trove-woo-gallery--stacked'
+			);
+			galleries.forEach( function ( gallery ) {
+				Array.prototype.slice.call( gallery.classList ).forEach( function ( cls ) {
+					if ( cls.indexOf( 'trove-woo-gallery--stacked-cols-' ) === 0 ) {
+						gallery.classList.remove( cls );
+					}
+				} );
+				gallery.classList.add( 'trove-woo-gallery--stacked-cols-' + cols );
+			} );
+		}
+
+		function syncWooSingleProductSummaryMinHeight() {
+			var products = document.querySelectorAll(
+				'.single-product div.product, .woocommerce.single-product div.product'
+			);
+			products.forEach( function ( product ) {
+				var summary = product.querySelector( 'div.summary' );
+				var gallery =
+					product.querySelector( '.woocommerce-product-gallery' ) ||
+					product.querySelector( 'div.images' );
+				if ( ! summary || ! gallery ) {
+					return;
+				}
+				if ( window.matchMedia && window.matchMedia( '(max-width: 782px)' ).matches ) {
+					summary.style.minHeight = '';
+					return;
+				}
+				var stickyInner = summary.querySelector( ':scope > .trove-product-summary-sticky-inner' );
+				var summaryMeasureTarget = stickyInner || summary;
+				var galleryHeight = Math.ceil( gallery.getBoundingClientRect().height );
+				var summaryHeight = Math.ceil( summaryMeasureTarget.getBoundingClientRect().height );
+				var minHeight = Math.max( galleryHeight, summaryHeight );
+				if ( minHeight > 0 ) {
+					summary.style.minHeight = minHeight + 'px';
+				}
+			} );
+		}
+
+		function normalizeSliderPos( raw ) {
+			var s = raw ? String( raw ).trim() : '';
+			if ( s === 'left' || s === 'right' || s === 'bottom' ) {
+				return s;
+			}
+			return 'bottom';
+		}
+
+		function applyWooSliderGalleryPosition( raw ) {
+			var pos = normalizeSliderPos( raw );
+			var galleries = document.querySelectorAll(
+				'.single-product .woocommerce-product-gallery.trove-woo-gallery--slider, .woocommerce-product-gallery.trove-woo-gallery--slider'
+			);
+			galleries.forEach( function ( gallery ) {
+				gallery.classList.remove(
+					'trove-woo-slider-pos-left',
+					'trove-woo-slider-pos-right',
+					'trove-woo-slider-pos-bottom'
+				);
+				gallery.classList.add( 'trove-woo-slider-pos-' + pos );
+			} );
+			syncWooSingleProductSummaryMinHeight();
+			window.setTimeout( function () {
+				if ( window.jQuery ) {
+					window.jQuery( window ).trigger( 'resize' );
+				} else {
+					window.dispatchEvent( new Event( 'resize' ) );
+				}
+				syncWooSingleProductSummaryMinHeight();
+			}, 50 );
+			window.setTimeout( syncWooSingleProductSummaryMinHeight, 180 );
+		}
+
+		wp.customize( 'trove_woo_single_product_gallery_stacked_columns', function ( value ) {
+			function onChange( newVal ) {
+				applyWooStackedGalleryColumns( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+
+		wp.customize( 'trove_woo_single_product_gallery_slider_position', function ( value ) {
+			function onChange( newVal ) {
+				applyWooSliderGalleryPosition( newVal );
+			}
+			value.bind( onChange );
+			onChange( value.get() );
+		} );
+	}
+
 	/*
 	 * Run immediately in the preview iframe. WordPress does not fire
 	 * wp.customize.bind( 'ready' ) here — the core script triggers
@@ -2069,6 +2174,7 @@
 		bindGoogleFont();
 		bindHeaderSettings();
 		bindLayout();
+		bindWooSingleProduct();
 		bindBlogLayout();
 		bindFooterSettings();
 	}

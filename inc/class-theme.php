@@ -287,6 +287,13 @@ class TroveTheme {
 				TROVE_THEME_VERSION,
 				true
 			);
+			wp_enqueue_script(
+				'trove-product-review-dialog',
+				get_template_directory_uri() . '/assets/js/product-review-dialog.js',
+				array(),
+				TROVE_THEME_VERSION,
+				true
+			);
 			wp_localize_script(
 				'trove-product-ajax-cart',
 				'troveProductAjaxCart',

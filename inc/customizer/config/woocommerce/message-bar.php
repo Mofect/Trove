@@ -1,6 +1,6 @@
 <?php
 /**
- * Customizer fields: WooCommerce > Message bar.
+ * Customizer fields: Woocommerce > Message bar.
  *
  * @package Trove
  */

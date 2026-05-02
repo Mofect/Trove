@@ -880,6 +880,9 @@ final class Options_Registry {
 			'section'     => $section_id,
 			'priority'    => $control_priority,
 		);
+		if ( isset( $field['active_callback'] ) && is_callable( $field['active_callback'] ) ) {
+			$control_args['active_callback'] = $field['active_callback'];
+		}
 
 		if ( 'color' === $type ) {
 			$wp_customize->add_control(

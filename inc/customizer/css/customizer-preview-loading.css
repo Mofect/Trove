@@ -1,0 +1,24 @@
+.trove-cz-preview-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	z-index: 100000;
+	pointer-events: none;
+	opacity: 0;
+	background: transparent;
+	transition: opacity 180ms ease;
+}
+
+.trove-cz-preview-progress.is-active {
+	opacity: 1;
+}
+
+.trove-cz-preview-progress__bar {
+	width: 0;
+	height: 100%;
+	background: linear-gradient(90deg, #4f8df9 0%, #79a9ff 100%);
+	box-shadow: 0 0 8px rgba(79, 141, 249, 0.45);
+	transition: width 220ms ease;
+}

@@ -23,6 +23,7 @@ function bootstrap_customizer() {
 	$manager = new Manager();
 	add_action( 'customize_register', array( $manager, 'register' ), 10 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\trove_migrate_woocommerce_product_catalog_controls', 20 );
+	add_action( 'customize_register', __NAMESPACE__ . '\\remove_woocommerce_checkout_section', 30 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\flatten_woocommerce_panel_to_root', 9997 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\position_woocommerce_below_blog_posts', 9998 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\reorder_core_sections_above_additional_css', 9999 );
@@ -60,6 +61,30 @@ function trove_migrate_woocommerce_product_catalog_controls( $wp_customize ) {
 	}
 
 	$wp_customize->remove_section( $native_section_id );
+}
+
+/**
+ * Removes native WooCommerce Checkout section from Customizer.
+ *
+ * @param \WP_Customize_Manager $wp_customize Customizer manager.
+ * @return void
+ */
+function remove_woocommerce_checkout_section( $wp_customize ) {
+	if ( ! $wp_customize instanceof \WP_Customize_Manager ) {
+		return;
+	}
+
+	if ( ! $wp_customize->get_section( 'woocommerce_checkout' ) ) {
+		return;
+	}
+
+	foreach ( $wp_customize->controls() as $control ) {
+		if ( 'woocommerce_checkout' === $control->section ) {
+			$wp_customize->remove_control( $control->id );
+		}
+	}
+
+	$wp_customize->remove_section( 'woocommerce_checkout' );
 }
 
 /**
@@ -424,6 +449,13 @@ function enqueue_customizer_ui_assets() {
 	);
 
 	wp_enqueue_style(
+		'trove-customizer-preview-loading',
+		$dir . '/inc/customizer/css/customizer-preview-loading.css',
+		array( 'customize-controls' ),
+		$ver
+	);
+
+	wp_enqueue_style(
 		'trove-customizer-range-number',
 		$dir . '/inc/customizer/css/customizer-range-number.css',
 		array( 'customize-controls' ),
@@ -510,6 +542,14 @@ function enqueue_customizer_ui_assets() {
 		true
 	);
 
+	wp_enqueue_script(
+		'trove-customizer-preview-loading',
+		$dir . '/inc/customizer/js/customizer-preview-loading.js',
+		array( 'customize-controls' ),
+		$ver,
+		true
+	);
+
 	wp_register_script(
 		'select2',
 		'https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js',
@@ -553,6 +593,47 @@ function enqueue_customizer_ui_assets() {
 		array( 'customize-controls' ),
 		$ver,
 		true
+	);
+
+	wp_enqueue_script(
+		'trove-customizer-woo-single-product-gallery',
+		$dir . '/inc/customizer/js/customizer-woo-single-product-gallery.js',
+		array( 'customize-controls' ),
+		$ver,
+		true
+	);
+
+	$woo_single_preview_url = '';
+	$woo_catalog_preview_url = '';
+	if ( class_exists( 'WooCommerce' ) && function_exists( 'wc_get_products' ) ) {
+		$catalog_products = wc_get_products(
+			array(
+				'limit'   => 1,
+				'status'  => 'publish',
+				'orderby' => 'modified',
+				'order'   => 'DESC',
+			)
+		);
+		if ( ! empty( $catalog_products[0] ) && is_object( $catalog_products[0] ) && method_exists( $catalog_products[0], 'get_permalink' ) ) {
+			$woo_single_preview_url = $catalog_products[0]->get_permalink();
+		}
+	}
+	if ( class_exists( 'WooCommerce' ) ) {
+		if ( function_exists( 'wc_get_page_permalink' ) ) {
+			$woo_catalog_preview_url = wc_get_page_permalink( 'shop' );
+		}
+		if ( ! $woo_catalog_preview_url ) {
+			$woo_catalog_preview_url = get_post_type_archive_link( 'product' );
+		}
+	}
+
+	wp_localize_script(
+		'trove-customizer-woo-single-product-gallery',
+		'troveWooSingleProductCz',
+		array(
+			'previewProductUrl' => $woo_single_preview_url ? esc_url_raw( $woo_single_preview_url ) : '',
+			'previewCatalogUrl' => $woo_catalog_preview_url ? esc_url_raw( $woo_catalog_preview_url ) : '',
+		)
 	);
 
 	wp_enqueue_script(

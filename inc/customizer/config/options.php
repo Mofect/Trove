@@ -347,16 +347,22 @@ function get_options() {
 					'priority'              => 140,
 					'color_swatches_layout' => true,
 				),
-				'options'   => require __DIR__ . '/woocommerce.php',
+				'options'   => require __DIR__ . '/woocommerce/message-bar.php',
 			),
 			'woocommerce_product_catalog' => array(
 				'title'     => __( 'Product catalog', 'trove' ),
 				'container' => array(
-					'priority'              => 141,
-					'color_swatches_layout' => true,
+					'priority'              => 141
 				),
 				'options'   => require __DIR__ . '/woocommerce/product-catalog.php',
 			),
+			'woocommerce_single_product' => array(
+				'title'     => __( 'Single Product', 'trove' ),
+				'container' => array(
+					'priority'              => 142
+				),
+				'options'   => require __DIR__ . '/woocommerce/single-product.php',
+			)
 		);
 	}
 

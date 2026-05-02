@@ -205,6 +205,20 @@
 		if ( typeof Sticksy !== 'function' ) {
 			return;
 		}
+		/* Matches single-product responsive rules in assets/css/shop.css */
+		var mqSummaryMobile = window.matchMedia( '(max-width: 782px)' );
+		function isProductSummaryMobileViewport() {
+			return mqSummaryMobile.matches === true;
+		}
+		function bindMediaQueryChange( mq, handler ) {
+			if ( mq.addEventListener ) {
+				mq.addEventListener( 'change', handler );
+				return;
+			}
+			if ( mq.addListener ) {
+				mq.addListener( handler );
+			}
+		}
 		var inner = summary.querySelector( ':scope > .trove-product-summary-sticky-inner' );
 		if ( ! inner ) {
 			inner = document.createElement( 'div' );
@@ -217,6 +231,10 @@
 
 		var productRoot = summary.closest( 'div.product' );
 		function syncSummaryStickyRange() {
+			if ( isProductSummaryMobileViewport() ) {
+				summary.style.minHeight = '';
+				return;
+			}
 			if ( ! productRoot ) {
 				return;
 			}
@@ -239,8 +257,40 @@
 			topSpacing: 80,
 			listen: true,
 		} );
+		var summaryStickyOn = ! isProductSummaryMobileViewport();
+		/* Constructor always starts enabled ({ enabled:false } is ignored due to sticksy internals). */
+		if ( ! summaryStickyOn ) {
+			sticky.disable();
+		}
+		summary._troveSticksy = sticky;
 		summary.setAttribute( 'data-trove-sticksy-init', '1' );
+
+		function applyProductSummaryStickyForViewport() {
+			var on = ! isProductSummaryMobileViewport();
+			if ( on !== summaryStickyOn ) {
+				summaryStickyOn = on;
+				if ( on ) {
+					syncSummaryStickyRange();
+					sticky.enable();
+				} else {
+					sticky.disable();
+					summary.style.minHeight = '';
+					summary.classList.remove( 'trove-product-summary-sticky--fixed' );
+				}
+				return;
+			}
+			if ( on ) {
+				syncSummaryStickyRange();
+				sticky.hardRefresh();
+			}
+		}
+		applyProductSummaryStickyForViewport();
+		bindMediaQueryChange( mqSummaryMobile, applyProductSummaryStickyForViewport );
+
 		sticky.onStateChanged = function ( state ) {
+			if ( isProductSummaryMobileViewport() ) {
+				return;
+			}
 			summary.classList.toggle( 'trove-product-summary-sticky--fixed', state === 'fixed' );
 		};
 		window.addEventListener( 'resize', syncSummaryStickyRange );
@@ -250,6 +300,214 @@
 				window.setTimeout( syncSummaryStickyRange, 0 );
 			} );
 		}
+	}
+
+	function initSingleProductSliderThumbCarousel( scope ) {
+		if ( ! document.body.classList.contains( 'single-product' ) ) {
+			return;
+		}
+
+		var roots;
+		if ( scope && scope.querySelectorAll ) {
+			roots = [ scope ];
+		} else {
+			roots = [ document ];
+		}
+
+		roots.forEach( function ( root ) {
+			root
+				.querySelectorAll( '.woocommerce-product-gallery.trove-woo-gallery--slider' )
+				.forEach( function ( gallery ) {
+					var thumbs =
+						gallery.querySelector( 'ol.flex-control-thumbs' ) ||
+						gallery.querySelector( 'ul.flex-control-thumbs' );
+					if ( ! thumbs ) {
+						return;
+					}
+
+					var wrap = thumbs.parentElement;
+					if ( ! wrap || ! wrap.classList.contains( 'trove-woo-slider-thumbs-wrap' ) ) {
+						wrap = document.createElement( 'div' );
+						wrap.className = 'trove-woo-slider-thumbs-wrap';
+						thumbs.parentNode.insertBefore( wrap, thumbs );
+						wrap.appendChild( thumbs );
+					}
+
+					var prev = wrap.querySelector( '.trove-woo-slider-thumbs-nav--prev' );
+					var next = wrap.querySelector( '.trove-woo-slider-thumbs-nav--next' );
+					if ( ! prev ) {
+						prev = document.createElement( 'button' );
+						prev.type = 'button';
+						prev.className = 'trove-woo-slider-thumbs-nav trove-woo-slider-thumbs-nav--prev';
+						prev.setAttribute( 'aria-label', 'Scroll thumbnails left' );
+						prev.textContent = '‹';
+						wrap.appendChild( prev );
+					}
+					if ( ! next ) {
+						next = document.createElement( 'button' );
+						next.type = 'button';
+						next.className = 'trove-woo-slider-thumbs-nav trove-woo-slider-thumbs-nav--next';
+						next.setAttribute( 'aria-label', 'Scroll thumbnails right' );
+						next.textContent = '›';
+						wrap.appendChild( next );
+					}
+
+					if ( wrap.getAttribute( 'data-trove-thumb-carousel-init' ) === '1' ) {
+						return;
+					}
+					wrap.setAttribute( 'data-trove-thumb-carousel-init', '1' );
+
+					function syncThumbWrapHeightToViewport() {
+						if (
+							! gallery.classList.contains( 'trove-woo-slider-pos-left' ) &&
+							! gallery.classList.contains( 'trove-woo-slider-pos-right' )
+						) {
+							wrap.style.height = '';
+							wrap.style.minHeight = '';
+							wrap.style.maxHeight = '';
+							return;
+						}
+						var viewport = gallery.querySelector( '.flex-viewport' );
+						if ( ! viewport ) {
+							return;
+						}
+						var viewportHeight = Math.ceil( viewport.getBoundingClientRect().height );
+						var activeImg = gallery.querySelector( '.flex-active-slide img' );
+						var imageHeight = activeImg
+							? Math.ceil( activeImg.getBoundingClientRect().height )
+							: 0;
+						if ( imageHeight <= 0 && viewportHeight <= 0 ) {
+							return;
+						}
+						var h =
+							imageHeight > 0 && viewportHeight > 0
+								? Math.min( imageHeight, viewportHeight )
+								: Math.max( imageHeight, viewportHeight );
+						if ( h <= 0 ) {
+							return;
+						}
+						/* Hard cap to avoid transient oversized measurements. */
+						h = Math.min( h, Math.max( 260, Math.floor( window.innerHeight * 0.8 ) ) );
+						wrap.style.height = h + 'px';
+						wrap.style.minHeight = h + 'px';
+						wrap.style.maxHeight = h + 'px';
+					}
+
+					function getStep() {
+						var first = thumbs.querySelector( 'li' );
+						if ( ! first ) {
+							return Math.max( 1, Math.round( thumbs.clientWidth / 2 ) );
+						}
+						var w = first.getBoundingClientRect().width;
+						return w > 0 ? w * 4 : Math.max( 1, Math.round( thumbs.clientWidth / 2 ) );
+					}
+
+					function syncNav() {
+						var max = Math.max( 0, thumbs.scrollWidth - thumbs.clientWidth );
+						var atStart = thumbs.scrollLeft <= 1;
+						var atEnd = thumbs.scrollLeft >= max - 1;
+						var noOverflow = max <= 1;
+						prev.hidden = noOverflow;
+						next.hidden = noOverflow;
+						prev.disabled = atStart || noOverflow;
+						next.disabled = atEnd || noOverflow;
+					}
+
+					function nudgeThumbRailForEdgeClick( li ) {
+						if ( ! li ) {
+							return;
+						}
+						var first = thumbs.querySelector( 'li' );
+						if ( ! first ) {
+							return;
+						}
+						var firstRect = first.getBoundingClientRect();
+						var itemWidth = firstRect.width;
+						var itemHeight = firstRect.height;
+						if ( itemWidth <= 0 || itemHeight <= 0 ) {
+							return;
+						}
+						var railRect = thumbs.getBoundingClientRect();
+						var liRect = li.getBoundingClientRect();
+						var isVertical =
+							thumbs.scrollHeight > thumbs.clientHeight + 1 &&
+							thumbs.clientHeight >= thumbs.clientWidth;
+
+						if ( isVertical ) {
+							var bottomEdgeThreshold = railRect.bottom - itemHeight * 0.35;
+							var topEdgeThreshold = railRect.top + itemHeight * 0.35;
+							var nudgeY = itemHeight * 1.5;
+							if ( liRect.bottom > bottomEdgeThreshold ) {
+								thumbs.scrollBy( { top: nudgeY, behavior: 'smooth' } );
+								return;
+							}
+							if ( liRect.top < topEdgeThreshold ) {
+								thumbs.scrollBy( { top: -nudgeY, behavior: 'smooth' } );
+							}
+							return;
+						}
+
+						var rightEdgeThreshold = railRect.right - itemWidth * 0.35;
+						var leftEdgeThreshold = railRect.left + itemWidth * 0.35;
+						var nudgeX = itemWidth * 1.5;
+						if ( liRect.right > rightEdgeThreshold ) {
+							thumbs.scrollBy( { left: nudgeX, behavior: 'smooth' } );
+							return;
+						}
+						if ( liRect.left < leftEdgeThreshold ) {
+							thumbs.scrollBy( { left: -nudgeX, behavior: 'smooth' } );
+						}
+					}
+
+					prev.addEventListener( 'click', function () {
+						thumbs.scrollBy( { left: -getStep(), behavior: 'smooth' } );
+					} );
+					next.addEventListener( 'click', function () {
+						thumbs.scrollBy( { left: getStep(), behavior: 'smooth' } );
+					} );
+					thumbs.addEventListener( 'click', function ( event ) {
+						var target = event.target;
+						if ( ! target || ! target.closest ) {
+							return;
+						}
+						var li = target.closest( 'li' );
+						if ( ! li || ! thumbs.contains( li ) ) {
+							return;
+						}
+						window.setTimeout( function () {
+							nudgeThumbRailForEdgeClick( li );
+						}, 0 );
+					} );
+					thumbs.addEventListener( 'scroll', syncNav, { passive: true } );
+					window.addEventListener( 'resize', syncNav );
+					window.setTimeout( syncNav, 0 );
+					window.addEventListener( 'resize', syncThumbWrapHeightToViewport );
+					window.addEventListener( 'load', syncThumbWrapHeightToViewport );
+					window.setTimeout( syncThumbWrapHeightToViewport, 0 );
+					window.setTimeout( syncThumbWrapHeightToViewport, 120 );
+					window.setTimeout( syncThumbWrapHeightToViewport, 320 );
+					gallery
+						.querySelectorAll( '.woocommerce-product-gallery__image img' )
+						.forEach( function ( img ) {
+							img.addEventListener( 'load', syncThumbWrapHeightToViewport );
+						} );
+					if ( typeof ResizeObserver !== 'undefined' ) {
+						var viewport = gallery.querySelector( '.flex-viewport' );
+						if ( viewport ) {
+							var ro = new ResizeObserver( syncThumbWrapHeightToViewport );
+							ro.observe( viewport );
+						}
+					}
+					if ( window.jQuery ) {
+						window.jQuery( gallery ).on(
+							'woocommerce_gallery_init_zoom woocommerce_gallery_reset_slide_position',
+							function () {
+								window.setTimeout( syncThumbWrapHeightToViewport, 0 );
+							}
+						);
+					}
+				} );
+		} );
 	}
 
 	function readBadgeCountFromDom() {
@@ -916,13 +1174,27 @@
 		initMiniCartQuantitySelectorIntoTotal();
 		initSingleProductQtyButtons();
 		initSingleProductSummarySticksy();
+		initSingleProductSliderThumbCarousel();
 		window.addEventListener( 'load', initSingleProductSummarySticksy, { once: true } );
+		window.addEventListener(
+			'load',
+			function () {
+				initSingleProductSliderThumbCarousel();
+			},
+			{ once: true }
+		);
 		if ( window.jQuery ) {
 			window.jQuery( document.body ).on(
 				'added_to_cart removed_from_cart wc_fragments_refreshed wc_fragments_loaded',
 				function () {
 					clearKnownFalseVariationErrorNotices();
 					window.setTimeout( reconcileBadgeFromLiveState, 0 );
+				}
+			);
+			window.jQuery( '.woocommerce-product-gallery' ).on(
+				'wc-product-gallery-after-init',
+				function () {
+					initSingleProductSliderThumbCarousel( this );
 				}
 			);
 		}

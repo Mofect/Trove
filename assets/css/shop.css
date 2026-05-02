@@ -527,6 +527,15 @@ body.woocommerce-page .site-main {
 	max-width: var(--trove-content-wide-width);
 }
 
+.single-product .site-main {
+	padding-top: 2rem;
+}
+
+.woocommerce div.product div.summary,
+.woocommerce div.product div.images {
+	margin-bottom: 4em;
+}
+
 .woocommerce-account .woocommerce {
 	display: block;
 }
@@ -947,12 +956,244 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
    width: 60%;
 }
 
-.woocommerce div.product .woocommerce-product-gallery__image {
-	margin-bottom: 5px;
-	margin-right: 5px;
-}
-.woocommerce div.product .woocommerce-product-gallery__image:nth-child(4n+4) {
+/* Stacked gallery only; slider uses WooCommerce/Flexslider layout. */
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked .woocommerce-product-gallery__image {
+	margin-bottom: 0;
 	margin-right: 0;
+	width: 100% !important;
+	float: none;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked .woocommerce-product-gallery__image a,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked .woocommerce-product-gallery__image img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+/* 1 column: all images full width (vertical stack). */
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-1 .woocommerce-product-gallery__wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+/* 2–6 columns: first image full width; from second image on, grid fills row-wise. */
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-2 .woocommerce-product-gallery__wrapper,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-3 .woocommerce-product-gallery__wrapper,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-4 .woocommerce-product-gallery__wrapper,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-5 .woocommerce-product-gallery__wrapper,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-6 .woocommerce-product-gallery__wrapper {
+	display: grid;
+	gap: 0.5rem;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-2 .woocommerce-product-gallery__wrapper {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-3 .woocommerce-product-gallery__wrapper {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-4 .woocommerce-product-gallery__wrapper {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-5 .woocommerce-product-gallery__wrapper {
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-6 .woocommerce-product-gallery__wrapper {
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-2 .woocommerce-product-gallery__image:first-child,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-3 .woocommerce-product-gallery__image:first-child,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-4 .woocommerce-product-gallery__image:first-child,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-5 .woocommerce-product-gallery__image:first-child,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-6 .woocommerce-product-gallery__image:first-child {
+	grid-column: 1 / -1;
+}
+
+@media (max-width: 782px) {
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-2 .woocommerce-product-gallery__wrapper,
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-3 .woocommerce-product-gallery__wrapper,
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-4 .woocommerce-product-gallery__wrapper,
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-5 .woocommerce-product-gallery__wrapper,
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--stacked.trove-woo-gallery--stacked-cols-6 .woocommerce-product-gallery__wrapper {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* Slider gallery: one-line thumbnail carousel with arrows; 8 visible by default. */
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider .trove-woo-slider-thumbs-wrap {
+	position: relative;
+	margin-top: 0;
+	padding: 0;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-bottom ol.flex-control-thumbs {
+	--trove-woo-thumb-gap: 0.5rem;
+	--trove-woo-thumb-visible: 6.5;
+	display: flex;
+	flex-wrap: nowrap;
+	gap: var(--trove-woo-thumb-gap);
+	margin-top: 0.5rem;
+	padding: 0;
+	list-style: none;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scroll-behavior: smooth;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-bottom ol.flex-control-thumbs::-webkit-scrollbar {
+	display: none;
+	width: 0;
+	height: 0;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-bottom ol.flex-control-thumbs li {
+	float: none !important;
+	margin: 0 !important;
+	width: auto !important;
+	flex: 0 0 calc((100% - (var(--trove-woo-thumb-gap) * (var(--trove-woo-thumb-visible) - 1))) / var(--trove-woo-thumb-visible));
+	max-width: calc((100% - (var(--trove-woo-thumb-gap) * (var(--trove-woo-thumb-visible) - 1))) / var(--trove-woo-thumb-visible));
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-bottom ol.flex-control-thumbs li img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider .trove-woo-slider-thumbs-nav {
+	display: none !important;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider .trove-woo-slider-thumbs-nav[disabled] {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider .trove-woo-slider-thumbs-nav--prev {
+	left: 0;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider .trove-woo-slider-thumbs-nav--next {
+	right: 0;
+}
+
+/* Left/right: vertical rail beside main image. */
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right {
+	display: flex;
+	align-items: stretch;
+	gap: 0.75rem;
+	min-height: 0;
+	overflow: hidden;
+	max-height: 58rem;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left .flex-viewport,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right .flex-viewport {
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+	order: 1;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left .trove-woo-slider-thumbs-wrap,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right .trove-woo-slider-thumbs-wrap {
+	flex: 0 0 clamp(60px, 16%, 96px);
+	max-width: 96px;
+	min-height: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-self: stretch;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left .trove-woo-slider-thumbs-wrap {
+	order: 0;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right .trove-woo-slider-thumbs-wrap {
+	order: 2;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left ol.flex-control-thumbs,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right ol.flex-control-thumbs {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	gap: 0.5rem;
+	margin: 0 !important;
+	padding: 0;
+	list-style: none;
+	height: 100%;
+	min-height: 0;
+	overflow-y: auto;
+	overflow-x: hidden;
+	max-height: 100%;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left ol.flex-control-thumbs::-webkit-scrollbar,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right ol.flex-control-thumbs::-webkit-scrollbar {
+	display: none;
+	width: 0;
+	height: 0;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left ol.flex-control-thumbs li,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right ol.flex-control-thumbs li {
+	float: none !important;
+	margin: 0 !important;
+	width: 100% !important;
+	max-width: none !important;
+	flex: 0 0 auto;
+}
+
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left ol.flex-control-thumbs li img,
+.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right ol.flex-control-thumbs li img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+@media (max-width: 782px) {
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left,
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right {
+		display: block;
+	}
+
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left .trove-woo-slider-thumbs-wrap,
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right .trove-woo-slider-thumbs-wrap {
+		max-width: none;
+	}
+
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left ol.flex-control-thumbs,
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right ol.flex-control-thumbs {
+		--trove-woo-thumb-gap: 0.5rem;
+		--trove-woo-thumb-visible: 6.5;
+		flex-direction: row;
+		overflow-x: auto;
+		overflow-y: hidden;
+		max-height: none;
+		margin-top: 0.5rem !important;
+	}
+
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-left ol.flex-control-thumbs li,
+	.woocommerce div.product .woocommerce-product-gallery.trove-woo-gallery--slider.trove-woo-slider-pos-right ol.flex-control-thumbs li {
+		width: auto !important;
+		max-width: calc((100% - (var(--trove-woo-thumb-gap) * (var(--trove-woo-thumb-visible) - 1))) / var(--trove-woo-thumb-visible)) !important;
+		flex: 0 0 calc((100% - (var(--trove-woo-thumb-gap) * (var(--trove-woo-thumb-visible) - 1))) / var(--trove-woo-thumb-visible));
+	}
 }
 
 .woocommerce #content div.product div.summary, 
@@ -962,9 +1203,263 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
    width: 35%;
 }
 
+@media (max-width: 782px) {
+	.woocommerce #content div.product div.images,
+	.woocommerce div.product div.images,
+	.woocommerce-page #content div.product div.images,
+	.woocommerce-page div.product div.images,
+	.woocommerce #content div.product div.summary,
+	.woocommerce div.product div.summary,
+	.woocommerce-page #content div.product div.summary,
+	.woocommerce-page div.product div.summary {
+		width: 100%;
+		max-width: 100%;
+		float: none;
+		margin-right: 0;
+	}
+}
+
+/* Full-width block below gallery + summary floats (Woo uses .woocommerce-tabs { clear:both };
+ * collapsible layout omits that wrapper, so #reviews must clear or it slides up beside floats). */
+.woocommerce div.product .woocommerce-tabs,
+.woocommerce div.product #reviews.woocommerce-Reviews {
+	clear: both;
+	float: none;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
 .woocommerce:where(body:not(.woocommerce-uses-block-theme)) div.product p.price,
 .woocommerce:where(body:not(.woocommerce-uses-block-theme)) div.product span.price {
     color: var(--trove-text);
+}
+
+/* Single product — collapsible tabs: Description + Additional information under add to cart */
+.woocommerce div.product div.summary .trove-woo-product-accordion {
+	margin-top: 1.5rem;
+	width: 100%;
+	max-width: 100%;
+}
+
+.woocommerce div.product .trove-woo-accordion__item {
+	border-bottom: 1px solid var(--trove-border, rgba(17, 17, 17, 0.12));
+}
+
+.woocommerce div.product .trove-woo-accordion__summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	list-style: none;
+	cursor: pointer;
+	padding: 1rem 0;
+	margin: 0;
+	font-weight: 600;
+	font-size: 1em;
+	line-height: 1.3;
+	color: var(--trove-text, #111);
+	box-sizing: border-box;
+}
+
+.woocommerce div.product .trove-woo-accordion__summary::-webkit-details-marker {
+	display: none;
+}
+
+.woocommerce div.product .trove-woo-accordion__title {
+	flex: 1;
+	padding-right: 1rem;
+}
+
+.woocommerce div.product .trove-woo-accordion__summary::after {
+	content: "";
+	display: block;
+	flex-shrink: 0;
+	width: 0.65em;
+	height: 0.65em;
+	border-right: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+	transform: rotate(45deg);
+	opacity: 0.65;
+	transition: transform 0.2s ease, opacity 0.2s ease;
+	margin-top: -0.2em;
+}
+
+.woocommerce div.product .trove-woo-accordion__item[open] .trove-woo-accordion__summary::after {
+	transform: rotate(225deg);
+	margin-top: 0.15em;
+}
+
+.woocommerce div.product .trove-woo-accordion__panel {
+	padding: 0 0 1.25rem;
+	margin: 0;
+}
+
+/* Single product — reviews: heading row + modal review form */
+.woocommerce div.product .woocommerce-Reviews-heading-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem 1rem;
+	margin-bottom: 3.25rem;
+}
+
+.woocommerce div.product .woocommerce-Reviews-heading-row .woocommerce-Reviews-title {
+	margin: 0;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.woocommerce div.product .button.trove-woo-review-dialog-open {
+	flex-shrink: 0;
+	background-color: var(--trove-button-secondary-bg, transparent);
+	border-width: 1px;
+	border-style: solid;
+	border-color: var(--trove-button-secondary-border, #111111);
+	color: var(--trove-button-secondary-text, #111111);
+}
+
+.woocommerce div.product .button.trove-woo-review-dialog-open:hover,
+.woocommerce div.product .button.trove-woo-review-dialog-open:focus-visible {
+	background-color: var(--trove-button-secondary-bg-hover, #111111);
+	border-color: var(--trove-button-secondary-border-hover, #111111);
+	color: var(--trove-button-secondary-text-hover, #ffffff);
+}
+
+@media (max-width: 480px) {
+	.woocommerce div.product .woocommerce-Reviews-heading-row .button.trove-woo-review-dialog-open {
+		width: 100%;
+		text-align: center;
+	}
+}
+
+.trove-woo-review-dialog:not([open]) {
+	display: none;
+}
+
+.trove-woo-review-dialog {
+	width: min(100% - 2rem, 52rem);
+	max-height: 90vh;
+	height: fit-content;
+	padding: 0;
+	border: var(--trove-border-width, 1px) solid var(--trove-border, rgba(17, 17, 17, 0.12));
+	border-radius: var(--trove-button-radius, 3px);
+	background: var(--trove-bg, #fff);
+	color: var(--trove-text, #111);
+	box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.12);
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.trove-woo-review-dialog::backdrop {
+	background: rgba(0, 0, 0, 0.45);
+}
+
+.trove-woo-review-dialog__inner {
+	padding: 2.5rem;
+}
+
+.trove-woo-review-dialog__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid var(--trove-border, rgba(17, 17, 17, 0.12));
+}
+
+.trove-woo-review-dialog__title {
+	margin: 0;
+	font-size: 1.15em;
+	font-weight: 600;
+	line-height: 1.3;
+	padding-right: 0.5rem;
+}
+
+.trove-woo-review-dialog-close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin: -0.25rem -0.25rem 0 0;
+	padding: 0.4rem;
+	border: 0;
+	background: transparent;
+	color: var(--trove-text, #111);
+	cursor: pointer;
+	border-radius: var(--trove-button-radius, 3px);
+	line-height: 0;
+}
+
+.trove-woo-review-dialog-close:hover,
+.trove-woo-review-dialog-close:focus-visible {
+	background: rgba(0, 0, 0, 0.06);
+}
+
+.trove-woo-review-dialog #review_form_wrapper {
+	margin: 0;
+	padding: 0;
+}
+
+/* Review modal: Name + Email on one row */
+.trove-woo-review-dialog #commentform,
+.trove-woo-review-dialog form.comment-form {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.75rem 1rem;
+	align-items: start;
+}
+
+.trove-woo-review-dialog #commentform > p {
+	margin: 0 !important;
+}
+
+.trove-woo-review-dialog #commentform > *:not(.comment-form-author):not(.comment-form-email) {
+	grid-column: 1 / -1;
+}
+
+.trove-woo-review-dialog #commentform .comment-form-author input,
+.trove-woo-review-dialog #commentform .comment-form-email input {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.comment-form-cookies-consent {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+.comment-form-cookies-consent input[type="checkbox"] {
+	flex-shrink: 0;
+	margin: 0.5em 0 0;
+}
+
+.comment-form-cookies-consent label {
+	flex: 1;
+	min-width: 0;
+}
+
+.comment-notes,
+.comment-form-cookies-consent {
+	opacity: 0.5;
+	font-size: 1.4rem;
+}
+
+@media (max-width: 28rem) {
+	.trove-woo-review-dialog #commentform,
+	.trove-woo-review-dialog form.comment-form {
+		grid-template-columns: 1fr;
+	}
+
+	.trove-woo-review-dialog #commentform .comment-form-author,
+	.trove-woo-review-dialog #commentform .comment-form-email {
+		grid-column: 1 / -1;
+	}
 }
 
 /* Tabs */
@@ -989,6 +1484,134 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 	border-bottom: 1px solid var(--trove-text);
 	background: transparent;
 }
+
+/* Vertical tabs: nav left, panels right */
+.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: clamp(1.5rem, 4vw, 6rem);
+	width: 100%;
+}
+
+.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs {
+	max-width: 46rem;
+	min-width: 14rem;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+}
+
+.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs::before,
+.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs::after {
+	display: none;
+}
+
+.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs li {
+	float: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	box-sizing: border-box;
+	border: 0;
+	background: transparent;
+}
+
+.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs li a {
+	display: block;
+	width: 100%;
+	padding: 1em 0;
+	box-sizing: border-box;
+	position: relative;
+	border-bottom: 1px solid var(--trove-border);
+}
+
+.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs li.active {
+	background: transparent;
+}
+
+.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs li.active a {
+	border-bottom-color: #000;
+	padding-bottom: calc(0.65em - 2px);
+}
+
+.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs .trove-woo-vertical-tabs__content {
+	flex: 1;
+	min-width: 0;
+	width: 100%;
+}
+
+/* Phone: horizontal tab strip + swipe scroll (Customizer desktop layout does not affect this.) */
+@media (max-width: 782px) {
+	.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs {
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	/*
+	 * Two selectors: `.trove-woo-vertical-tabs ul.tabs` needs equal specificity to the
+	 * desktop vertical-tab column rule so mobile row overrides it.
+	 */
+	.woocommerce div.product .woocommerce-tabs ul.tabs,
+	.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: stretch;
+		gap: 0 1.25rem;
+		max-width: none;
+		min-width: 0;
+		width: 100%;
+		margin-bottom: 1em;
+		padding: 0 0.35rem;
+		padding-bottom: 0.15rem;
+		overflow-x: auto;
+		overflow-y: hidden;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+		scroll-padding-inline: 0.35rem;
+		border-bottom: 1px solid var(--trove-border);
+	}
+
+	.woocommerce div.product .woocommerce-tabs ul.tabs::-webkit-scrollbar {
+		display: none;
+		height: 0;
+		width: 0;
+	}
+
+	.woocommerce div.product .woocommerce-tabs ul.tabs li {
+		float: none;
+		flex: 0 0 auto;
+		width: auto;
+		max-width: none;
+	}
+
+	.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs li {
+		width: auto;
+	}
+
+	.woocommerce div.product .woocommerce-tabs ul.tabs li a {
+		width: auto;
+		max-width: none;
+		white-space: nowrap;
+	}
+
+	/*
+	 * Vertical-desktop uses link bottom borders on the left sidebar; pill row uses
+	 * transparent reserve + active black underline only.
+	 */
+	.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs li a {
+		padding: 0.65em 0.35em calc(0.65em - 2px);
+		border-bottom: 2px solid transparent;
+	}
+
+	.woocommerce div.product .woocommerce-tabs.trove-woo-vertical-tabs ul.tabs li.active a {
+		border-bottom-color: #000;
+	}
+}
+
 .woocommerce-Tabs-panel h2 {
 	font-size: var(--trove-h3-font-size);
 	line-height: var(--trove-h3-font-line-height);
