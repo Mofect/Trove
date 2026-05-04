@@ -165,11 +165,16 @@ final class Heading_Control extends WP_Customize_Control {
 													$title_parts[] = $t;
 												}
 											}
-											$title = implode( ' · ', $title_parts );
+											$title            = implode( ' · ', $title_parts );
+											$swatch_transparent = trove_color_is_transparent_swatch( $hex );
 											?>
 											<span
-												class="trove-cz-scheme-swatch"
-												style="background-color: <?php echo esc_attr( $hex ); ?>"
+												class="trove-cz-scheme-swatch<?php echo $swatch_transparent ? ' trove-cz-swatch-transparent' : ''; ?>"
+												<?php
+												if ( ! $swatch_transparent ) {
+													echo ' style="background-color: ' . esc_attr( $hex ) . '"';
+												}
+												?>
 												<?php echo '' !== $title ? ' title="' . esc_attr( $title ) . '"' : ''; ?>
 											></span>
 											<?php

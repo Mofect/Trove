@@ -328,6 +328,7 @@ h2.wc-block-mini-cart__title {
 	border-style: solid;
 	border-color: var(--trove-button-secondary-border, #111111);
 	color: var(--trove-button-secondary-text, #111111);
+	transition: background-color 0.3s ease, color 0.15s ease, border-color 0.15s ease, transform 0.3s ease;
 }
 
 .wc-block-mini-cart__footer .wc-block-components-button:first-child:hover,
@@ -343,6 +344,7 @@ h2.wc-block-mini-cart__title {
 	border-style: solid;
 	border-color: var(--trove-button-border, #111111);
 	color: var(--trove-button-text, #ffffff);
+	transition: background-color 0.3s ease, color 0.15s ease, border-color 0.15s ease, transform 0.3s ease;
 }
 
 .wc-block-mini-cart__footer .wc-block-components-button:last-child:hover,
@@ -573,6 +575,27 @@ body.woocommerce-page .site-main {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.55rem;
+	position: relative;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li a::after {
+	content: '';
+	position: absolute;
+	bottom: -1.5rem;
+	left: 0;
+	width: 0;
+	height: 1px;
+	background-color: var(--trove-text);
+	transition: width 0.3s ease-in-out;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li.is-active a::after,
+.woocommerce-account .woocommerce-MyAccount-navigation li a:hover::after {
+	width: 100%;
+	transition: width 0.3s ease-in-out;
+}
+.woocommerce-account .woocommerce-MyAccount-navigation li.is-active a {
+	font-weight: 600;
 }
 
 .woocommerce-account .woocommerce-MyAccount-navigation li a::before {
@@ -625,10 +648,6 @@ body.woocommerce-page .site-main {
 .woocommerce-account .woocommerce-MyAccount-navigation-link--customer-logout a::before {
 	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/%3E%3Cpath d='M16 17l5-5-5-5'/%3E%3Cpath d='M21 12H9'/%3E%3C/svg%3E");
 	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/%3E%3Cpath d='M16 17l5-5-5-5'/%3E%3Cpath d='M21 12H9'/%3E%3C/svg%3E");
-}
-
-.woocommerce-account .woocommerce-MyAccount-navigation li.is-active a {
-	font-weight: 700;
 }
 
 .woocommerce-account .trove-my-account-recent-orders__table th,
@@ -686,7 +705,8 @@ body.woocommerce-page .site-main {
 
 /* View/Cancel buttons: secondary style */
 .woocommerce-account .woocommerce-orders-table__cell-order-actions .button.view,
-.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.cancel {
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.cancel,
+.woocommerce-account .cancel.order-actions-button {
 	background-color: var(--trove-button-secondary-bg, transparent);
 	border-width: 1px;
 	border-style: solid;
@@ -697,7 +717,9 @@ body.woocommerce-page .site-main {
 .woocommerce-account .woocommerce-orders-table__cell-order-actions .button.view:hover,
 .woocommerce-account .woocommerce-orders-table__cell-order-actions .button.view:focus-visible,
 .woocommerce-account .woocommerce-orders-table__cell-order-actions .button.cancel:hover,
-.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.cancel:focus-visible {
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.cancel:focus-visible,
+.woocommerce-account .cancel.order-actions-button:hover,
+.woocommerce-account .cancel.order-actions-button:focus-visible {
 	background-color: var(--trove-button-secondary-bg-hover, #111111);
 	border-color: var(--trove-button-secondary-border-hover, #111111);
 	color: var(--trove-button-secondary-text-hover, #ffffff);
@@ -742,6 +764,20 @@ body.woocommerce-page .site-main {
 	border-right-color: transparent;
     border-left-color: transparent;
     border-top-color: transparent;
+}
+
+.woocommerce table.shop_table,
+.woocommerce .woocommerce-customer-details address {
+	border: 1px solid var(--trove-border);
+	padding: 1.2rem;
+	border-radius: 5px;
+}
+
+.woocommerce table.shop_table td,
+.woocommerce table.shop_table tbody th, 
+.woocommerce table.shop_table tfoot td, 
+.woocommerce table.shop_table tfoot th {
+	border-top: 1px solid var(--trove-border);
 }
 
 /* Failed: pink */
@@ -1252,6 +1288,7 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 
 .woocommerce div.product div.summary .product_meta {
 	margin-top: 2rem;
+	font-size: 1.4rem;
 }
 
 .woocommerce div.product .trove-woo-accordion__item {

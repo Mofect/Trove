@@ -28,7 +28,7 @@
 			},
 			clear: function () {
 				updating = true;
-				wp.customize( sid ).set( defHex );
+				wp.customize( sid ).set( '' );
 				updating = false;
 			},
 		} );
@@ -43,12 +43,11 @@
 				if ( v && String( v ).trim() !== '' ) {
 					$input.val( v );
 					$input.wpColorPicker( 'color', v );
-				} else if ( defHex ) {
-					$input.val( defHex );
-					$input.wpColorPicker( 'color', defHex );
 				} else {
 					$input.val( '' );
-					$input.wpColorPicker( 'color', '' );
+					try {
+						$input.wpColorPicker( 'color', '' );
+					} catch ( _e ) {}
 				}
 			} );
 		} );

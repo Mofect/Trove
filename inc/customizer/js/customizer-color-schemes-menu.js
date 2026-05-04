@@ -17,6 +17,45 @@
 	 * @param {string} raw Trimmed color string.
 	 * @return {string} Non-empty key, or '' if invalid / empty.
 	 */
+	function isTransparentSwatchValue( val ) {
+		var s, m, a;
+		if ( val == null ) {
+			return true;
+		}
+		s = String( val ).trim();
+		if ( s === '' ) {
+			return true;
+		}
+		if ( /^transparent$/i.test( s ) ) {
+			return true;
+		}
+		m = s.match( /^#([0-9a-f]{8})$/i );
+		if ( m && parseInt( m[ 1 ].slice( 6, 8 ), 16 ) === 0 ) {
+			return true;
+		}
+		m = s.match( /^#([0-9a-f]{4})$/i );
+		if ( m && m[ 1 ].charAt( 3 ).toLowerCase() === '0' ) {
+			return true;
+		}
+		m = s.match( /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*([0-9.]+)\s*\)$/i );
+		if ( m ) {
+			a = parseFloat( m[ 1 ], 10 );
+			if ( ! isNaN( a ) && a <= 0 ) {
+				return true;
+			}
+		}
+		if ( /^hsla\(/i.test( s ) ) {
+			m = s.match( /,\s*([0-9.]+)\s*\)\s*$/ );
+			if ( m ) {
+				a = parseFloat( m[ 1 ], 10 );
+				if ( ! isNaN( a ) && a <= 0 ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	function normalizeColorForSchemeDedupe( raw ) {
 		var s = raw != null ? String( raw ).trim() : '';
 		var m;
@@ -224,7 +263,11 @@
 			title = titleParts.join( ' · ' );
 			sw = document.createElement( 'span' );
 			sw.className = 'trove-cz-scheme-swatch';
-			sw.style.backgroundColor = raw;
+			if ( isTransparentSwatchValue( raw ) ) {
+				sw.classList.add( 'trove-cz-swatch-transparent' );
+			} else {
+				sw.style.backgroundColor = raw;
+			}
 			if ( title !== '' ) {
 				sw.setAttribute( 'title', title );
 			}

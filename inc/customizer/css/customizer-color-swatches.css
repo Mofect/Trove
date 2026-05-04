@@ -11,9 +11,9 @@
 #customize-theme-controls .trove-cz-swatches li.customize-control-color,
 #customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-columns: minmax(0, 1fr) auto auto;
 	align-items: center;
-	column-gap: 12px;
+	column-gap: 0;
 	row-gap: 8px;
 	margin-bottom: 4px;
 }
@@ -52,6 +52,52 @@
 	grid-column: 2;
 	grid-row: 1;
 	justify-self: end;
+}
+
+/* Clear (×): column 3 */
+#customize-theme-controls .trove-cz-swatches li.customize-control-color > .trove-cz-color-clear,
+#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color > .trove-cz-color-clear {
+	grid-column: 3;
+	grid-row: 1;
+	justify-self: center;
+	align-self: center;
+	box-sizing: border-box;
+	width: 20px;
+	height: 20px;
+	margin: 0;
+	padding: 0;
+	border: none;
+	border-radius: 10px;
+	background: transparent;
+	color: #f00;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	top: -3px;
+	transition: color 0.12s ease, background-color 0.12s ease;
+}
+
+#customize-theme-controls .trove-cz-swatches li.customize-control-color > .trove-cz-color-clear:hover,
+#customize-theme-controls .trove-cz-swatches li.customize-control-color > .trove-cz-color-clear:focus-visible,
+#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color > .trove-cz-color-clear:hover,
+#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color > .trove-cz-color-clear:focus-visible {
+	color: #1d2327;
+	background: transparent;
+}
+
+#customize-theme-controls .trove-cz-swatches li.customize-control-color > .trove-cz-color-clear:focus-visible,
+#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color > .trove-cz-color-clear:focus-visible {
+	outline: 1px solid #2271b1;
+	outline-offset: 1px;
+}
+
+#customize-theme-controls .trove-cz-swatches .trove-cz-color-clear span {
+	display: block;
+	margin-top: -2px;
 }
 
 /* Dual: title → swatches → description */
@@ -137,31 +183,18 @@
 	display: none;
 }
 
-/* No stored color: red diagonal slash on the round swatch (single + dual). */
-#customize-theme-controls .wp-color-result.trove-cz-swatch-empty {
+/*
+ * Empty / transparent / alpha 0: checkerboard swatch (single + dual color controls).
+ * Same pattern on scheme preview dots: .trove-cz-scheme-swatch.trove-cz-swatch-transparent
+ */
+#customize-theme-controls .wp-color-result.trove-cz-swatch-empty,
+#customize-theme-controls .trove-cz-scheme-swatch.trove-cz-swatch-transparent {
 	position: relative;
 	overflow: hidden;
 	border-radius: 50%;
-}
-
-#customize-theme-controls .wp-color-result.trove-cz-swatch-empty::before {
-	content: "";
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	width: 1px;
-	/* Slightly under full diagonal so rounded caps stay inside the circle after clip */
-	height: 85%;
-	background: #dc2626;
-	transform: translate(-50%, -50%) rotate(-45deg);
-	border-radius: 1px;
-	pointer-events: none;
-	z-index: 1;
-}
-
-#customize-theme-controls .wp-picker-container.wp-picker-active .wp-color-result.trove-cz-swatch-empty::before,
-#customize-theme-controls .wp-picker-container.wp-picker-open .wp-color-result.trove-cz-swatch-empty::before {
-	opacity: 0;
+	/* Grey + white tiles (Photoshop-style transparency cue). */
+	background: repeating-conic-gradient(#d4d4d4 0% 25%, #ffffff 0% 50%) 50% / 10px 10px !important;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
 }
 
 /* Swatch hover tooltips (any section using wpColorPicker in Customizer) */

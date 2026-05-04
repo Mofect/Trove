@@ -341,40 +341,25 @@ function get_options() {
 				'title'    => __( 'WooCommerce', 'trove' ),
 				'priority' => 139,
 			),
-			'woocommerce_general' => array(
-				'title'     => __( 'General', 'trove' ),
-				'container' => array(
-					'priority'              => 140,
-					'color_swatches_layout' => true,
-				),
-				'options'   => require __DIR__ . '/woocommerce/general.php',
-			),
 			'woocommerce_message_bar' => array(
 				'title'     => __( 'Message bar', 'trove' ),
 				'container' => array(
-					'priority'              => 141,
+					'priority'              => 140,
 					'color_swatches_layout' => true,
 				),
 				'options'   => require __DIR__ . '/woocommerce/message-bar.php',
 			),
 			'woocommerce_product_catalog' => array(
-				'title'     => __( 'Product images', 'trove' ),
-				'container' => array(
-					'priority'              => 142
-				),
-				'options'   => require __DIR__ . '/woocommerce/product-images.php',
-			),
-			'woocommerce_product_catalog' => array(
 				'title'     => __( 'Product catalog', 'trove' ),
 				'container' => array(
-					'priority'              => 143
+					'priority'              => 141
 				),
 				'options'   => require __DIR__ . '/woocommerce/product-catalog.php',
 			),
 			'woocommerce_single_product' => array(
 				'title'     => __( 'Single Product', 'trove' ),
 				'container' => array(
-					'priority'              => 144
+					'priority'              => 142
 				),
 				'options'   => require __DIR__ . '/woocommerce/single-product.php',
 			)

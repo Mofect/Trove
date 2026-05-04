@@ -172,6 +172,7 @@ input[type="reset"],
 .button,
 .wp-block-button__link,
 .wp-element-button {
+	position: relative;
 	appearance: none;
 	-webkit-appearance: none;
 	box-sizing: border-box;
@@ -189,7 +190,7 @@ input[type="reset"],
 	background-color: var(--trove-button-bg, #111111);
 	border: var(--trove-button-border-width, 1px) solid var(--trove-button-border, #111111);
 	border-radius: var(--trove-button-border-radius, 6px);
-	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+	transition: background-color 0.3s ease, color 0.15s ease, border-color 0.15s ease, transform 0.3s ease;
 }
 
 button:hover,
@@ -206,9 +207,11 @@ input[type="reset"]:focus-visible,
 .wp-block-button__link:focus-visible,
 .wp-element-button:hover,
 .wp-element-button:focus-visible {
+	transform: scale(1.02);
 	color: var(--trove-button-text-hover, #ffffff);
 	background-color: var(--trove-button-bg-hover, #333333);
 	border-color: var(--trove-button-border-hover, #333333);
+	transition: background-color 0.3s ease, color 0.15s ease, border-color 0.15s ease, transform 0.3s ease;
 }
 
 button:focus-visible,
@@ -243,6 +246,7 @@ input[type="reset"]:disabled,
 	background-color: var(--trove-button-secondary-bg, transparent);
 	border: var(--trove-button-secondary-border-width, 1px) solid var(--trove-button-secondary-border, #111111);
 	border-radius: var(--trove-button-secondary-border-radius, 6px);
+	transition: background-color 0.3s ease, color 0.15s ease, border-color 0.15s ease, transform 0.3s ease;
 }
 
 .wp-block-button.is-style-outline .wp-block-button__link:hover,
@@ -253,6 +257,7 @@ input[type="reset"]:disabled,
 .button.is-secondary:focus-visible,
 .wp-element-button.is-secondary:hover,
 .wp-element-button.is-secondary:focus-visible {
+	transition: background-color 0.3s ease, color 0.15s ease, border-color 0.15s ease, transform 0.3s ease;
 	color: var(--trove-button-secondary-text-hover, #ffffff);
 	background-color: var(--trove-button-secondary-bg-hover, #111111);
 	border-color: var(--trove-button-secondary-border-hover, #111111);

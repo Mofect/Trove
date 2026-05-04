@@ -1,6 +1,6 @@
 <?php
 /**
- * Trove Customizer bootstrap — declarative config (Blocksy-style) + registry.
+ * Trove Customizer bootstrap.
  *
  * @package Trove
  */
@@ -25,7 +25,7 @@ function bootstrap_customizer() {
 	add_action( 'customize_register', __NAMESPACE__ . '\\trove_migrate_woocommerce_product_catalog_controls', 20 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\remove_woocommerce_checkout_section', 30 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\flatten_woocommerce_panel_to_root', 9997 );
-	add_action( 'customize_register', __NAMESPACE__ . '\\position_woocommerce_below_blog_posts', 9998 );
+	add_action( 'customize_register', __NAMESPACE__ . '\\position_woocommerce_below_pages', 9998 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\reorder_core_sections_above_additional_css', 9999 );
 	add_action( 'customize_controls_enqueue_scripts', __NAMESPACE__ . '\\enqueue_customizer_ui_assets' );
 }
@@ -254,17 +254,18 @@ function flatten_woocommerce_panel_to_root( $wp_customize ) {
  * @param \WP_Customize_Manager $wp_customize Customizer manager.
  * @return void
  */
-function position_woocommerce_below_blog_posts( $wp_customize ) {
+function position_woocommerce_below_pages( $wp_customize ) {
 	if ( ! $wp_customize instanceof \WP_Customize_Manager ) {
 		return;
 	}
 
-	$blog = $wp_customize->get_section( 'trove_section_blog' );
-	if ( ! $blog ) {
+	// Config key `homepage` → `trove_section_homepage` (see Options_Registry).
+	$homepage = $wp_customize->get_section( 'trove_section_homepage' );
+	if ( ! $homepage ) {
 		return;
 	}
 
-	$base = (int) $blog->priority + 1;
+	$base = (int) $homepage->priority + 1;
 
 	/*
 	 * Without this, $base stays at blog+1 (e.g. 136) and collides with Pages sections
@@ -707,6 +708,23 @@ function enqueue_customizer_ui_assets() {
 		array( 'customize-controls', 'wp-color-picker', 'trove-customizer-color-pair' ),
 		$ver,
 		true
+	);
+
+	wp_enqueue_script(
+		'trove-customizer-color-clear',
+		$dir . '/inc/customizer/js/customizer-color-clear.js',
+		array( 'jquery', 'customize-controls', 'wp-color-picker', 'trove-customizer-color-pair', 'trove-customizer-swatch-empty' ),
+		$ver,
+		true
+	);
+
+	wp_localize_script(
+		'trove-customizer-color-clear',
+		'troveCzColorClear',
+		array(
+			'clearSingle' => __( 'Remove color', 'trove' ),
+			'clearPair'   => __( 'Remove both colors', 'trove' ),
+		)
 	);
 
 	wp_enqueue_script(

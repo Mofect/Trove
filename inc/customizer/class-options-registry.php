@@ -1131,32 +1131,7 @@ final class Options_Registry {
 	 * @return string
 	 */
 	public function sanitize_color_value( $value ) {
-		$raw = is_string( $value ) ? trim( $value ) : trim( (string) $value );
-		if ( '' === $raw ) {
-			return '';
-		}
-
-		$hex = sanitize_hex_color( $raw );
-		if ( $hex ) {
-			return $hex;
-		}
-
-		if ( preg_match( '/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(0|0?\.\d+|1(?:\.0+)?)\s*)?\)$/i', $raw, $m ) ) {
-			$r = min( 255, max( 0, (int) $m[1] ) );
-			$g = min( 255, max( 0, (int) $m[2] ) );
-			$b = min( 255, max( 0, (int) $m[3] ) );
-			if ( isset( $m[4] ) && '' !== $m[4] ) {
-				$a = min( 1, max( 0, (float) $m[4] ) );
-				$alpha = rtrim( rtrim( sprintf( '%.3F', $a ), '0' ), '.' );
-				if ( '' === $alpha ) {
-					$alpha = '0';
-				}
-				return sprintf( 'rgba(%d,%d,%d,%s)', $r, $g, $b, $alpha );
-			}
-			return sprintf( 'rgb(%d,%d,%d)', $r, $g, $b );
-		}
-
-		return '';
+		return trove_sanitize_css_color( $value );
 	}
 
 	/**

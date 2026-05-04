@@ -72,9 +72,6 @@ final class Dual_Color_Control extends WP_Customize_Control {
 				$sid = $sw['setting'];
 				$s   = $this->manager->get_setting( $sid );
 				$val = $s ? (string) $s->value() : '';
-				if ( '' === $val ) {
-					$val = isset( $sw['default'] ) ? (string) $sw['default'] : '';
-				}
 				$def = isset( $sw['default'] ) ? (string) $sw['default'] : '';
 				?>
 				<span class="trove-dual-color__pill">

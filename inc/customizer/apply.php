@@ -502,27 +502,104 @@ function trove_sanitize_css_color( $value ) {
 		return '';
 	}
 
+	if ( 'transparent' === strtolower( $raw ) ) {
+		return 'transparent';
+	}
+
+	/* #rrggbbaa (hex + alpha). Alpha 00 → transparent; else rgba(). */
+	if ( preg_match( '/^#([0-9a-f]{8})$/i', $raw, $m ) ) {
+		$h = strtolower( $m[1] );
+		$r  = hexdec( substr( $h, 0, 2 ) );
+		$g  = hexdec( substr( $h, 2, 2 ) );
+		$b  = hexdec( substr( $h, 4, 2 ) );
+		$ai = hexdec( substr( $h, 6, 2 ) );
+		if ( $ai <= 0 ) {
+			return 'transparent';
+		}
+		$a = min( 1, max( 0, $ai / 255 ) );
+		$alpha = rtrim( rtrim( sprintf( '%.3F', $a ), '0' ), '.' );
+		if ( '' === $alpha ) {
+			$alpha = '0';
+		}
+		return sprintf( 'rgba(%d,%d,%d,%s)', $r, $g, $b, $alpha );
+	}
+
+	/* #rgba CSS4 shorthand (each digit doubled). Last digit is the alpha nibble (0 → fully transparent). */
+	if ( preg_match( '/^#([0-9a-f]{4})$/i', $raw, $m ) ) {
+		$d = strtolower( $m[1] );
+		$r = hexdec( $d[0] . $d[0] );
+		$g = hexdec( $d[1] . $d[1] );
+		$b = hexdec( $d[2] . $d[2] );
+		$ai = hexdec( $d[3] . $d[3] );
+		if ( $ai <= 0 ) {
+			return 'transparent';
+		}
+		$a = min( 1, max( 0, $ai / 255 ) );
+		$alpha = rtrim( rtrim( sprintf( '%.3F', $a ), '0' ), '.' );
+		if ( '' === $alpha ) {
+			$alpha = '0';
+		}
+		return sprintf( 'rgba(%d,%d,%d,%s)', $r, $g, $b, $alpha );
+	}
+
 	$hex = sanitize_hex_color( $raw );
 	if ( $hex ) {
 		return $hex;
 	}
 
-	if ( preg_match( '/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(0|0?\.\d+|1(?:\.0+)?)\s*)?\)$/i', $raw, $m ) ) {
+	if ( preg_match( '/^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([0-9.]+)\s*\)\s*$/i', $raw, $m ) ) {
 		$r = min( 255, max( 0, (int) $m[1] ) );
 		$g = min( 255, max( 0, (int) $m[2] ) );
 		$b = min( 255, max( 0, (int) $m[3] ) );
-		if ( isset( $m[4] ) && '' !== $m[4] ) {
-			$a = min( 1, max( 0, (float) $m[4] ) );
-			$alpha = rtrim( rtrim( sprintf( '%.3F', $a ), '0' ), '.' );
-			if ( '' === $alpha ) {
-				$alpha = '0';
-			}
-			return sprintf( 'rgba(%d,%d,%d,%s)', $r, $g, $b, $alpha );
+		$a = min( 1, max( 0, (float) $m[4] ) );
+		if ( $a <= 0.0 ) {
+			return 'transparent';
 		}
+		$alpha = rtrim( rtrim( sprintf( '%.3F', $a ), '0' ), '.' );
+		if ( '' === $alpha ) {
+			$alpha = '0';
+		}
+		return sprintf( 'rgba(%d,%d,%d,%s)', $r, $g, $b, $alpha );
+	}
+
+	if ( preg_match( '/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)\s*$/i', $raw, $m ) ) {
+		$r = min( 255, max( 0, (int) $m[1] ) );
+		$g = min( 255, max( 0, (int) $m[2] ) );
+		$b = min( 255, max( 0, (int) $m[3] ) );
 		return sprintf( 'rgb(%d,%d,%d)', $r, $g, $b );
 	}
 
 	return '';
+}
+
+/**
+ * Whether a CSS color should show the transparency checkerboard in the Customizer.
+ *
+ * @param mixed $value Raw color.
+ * @return bool
+ */
+function trove_color_is_transparent_swatch( $value ) {
+	$raw = is_string( $value ) ? trim( $value ) : trim( (string) $value );
+	if ( '' === $raw ) {
+		return true;
+	}
+	if ( 'transparent' === strtolower( $raw ) ) {
+		return true;
+	}
+	/* hsla(…, 0) before sanitize (trove_sanitize_css_color may not accept hsla). */
+	if ( preg_match( '/^hsla\(/i', $raw ) && preg_match( '/,\s*([0-9.]+)\s*\)\s*$/', $raw, $hm ) ) {
+		if ( (float) $hm[1] <= 0.0 ) {
+			return true;
+		}
+	}
+	$san = trove_sanitize_css_color( $value );
+	if ( '' === $san ) {
+		return true;
+	}
+	if ( 'transparent' === strtolower( $san ) ) {
+		return true;
+	}
+	return false;
 }
 
 /**
