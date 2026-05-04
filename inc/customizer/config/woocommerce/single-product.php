@@ -49,7 +49,7 @@ function is_single_product_gallery_slider( $control ) {
 
 return array(
     'trove_woo_single_product_layout_heading' => array(
-        'label' => __( 'Layout', 'trove' ),
+        'label' => __( 'Gallery', 'trove' ),
         'type' => 'heading',
         'section' => 'trove_section_woocommerce_single_product',
         'priority' => 10,
@@ -93,6 +93,12 @@ return array(
 			'bottom' => __( 'Bottom', 'trove' ),
 		),
 	),
+    'trove_woo_single_product_tab_heading' => array(
+        'label' => __( 'Tabs', 'trove' ),
+        'type' => 'heading',
+        'section' => 'trove_section_woocommerce_single_product',
+        'priority' => 10,
+    ),
 	'trove_woo_single_product_tabs_layout' => array(
 		'label'             => __( 'Product tabs layout', 'trove' ),
 		'type'              => 'select',
@@ -102,6 +108,48 @@ return array(
 			'horizontal'   => __( 'Horizontal', 'trove' ),
 			'vertical'     => __( 'Vertical', 'trove' ),
 			'collapsible'  => __( 'Collapsible', 'trove' ),
+		),
+	),
+	'trove_woo_single_product_extra_tabs' => array(
+		'label'       => __( 'Global extra tabs', 'trove' ),
+		'description' => __( 'Add custom tabs displayed after Additional Information.', 'trove' ),
+		'type'        => 'repeater_key_value',
+		'default'     => wp_json_encode(
+			array(
+				array(
+					'title'   => __( 'Shipping', 'trove' ),
+					'content' => __( 'Shipping cost is based on weight. Just add products to your cart and use the Shipping Calculator to see the shipping price.', 'trove' ),
+				),
+			)
+		),
+		'transport'   => 'refresh',
+		'key_label'   => __( 'Tab title', 'trove' ),
+		'value_label' => __( 'Tab content', 'trove' ),
+		'max_items'   => 10,
+	),
+	'trove_woo_single_product_related_heading' => array(
+        'label' => __( 'Related products', 'trove' ),
+        'type' => 'heading',
+        'section' => 'trove_section_woocommerce_single_product',
+        'priority' => 10,
+    ),
+	'trove_woo_single_product_enable_related_products' => array(
+		'label'             => __( 'Enable related products', 'trove' ),
+		'type'              => 'switch',
+		'default'           => trove_customizer_default( 'trove_woo_single_product_enable_related_products', true ),
+		'transport'         => 'refresh',
+	),
+	'trove_woo_single_product_related_products_count' => array(
+		'label'             => __( 'Number of related products', 'trove' ),
+		'type'              => 'select',
+		'default'           => trove_customizer_default( 'trove_woo_single_product_related_products_count', '4' ),
+		'transport'         => 'refresh',
+		'choices'           => array(
+			'4'  => __( '4 products', 'trove' ),
+			'8'  => __( '8 products', 'trove' ),
+			'12' => __( '12 products', 'trove' ),
+			'16' => __( '16 products', 'trove' ),
+			'20' => __( '20 products', 'trove' ),
 		),
 	),
 );

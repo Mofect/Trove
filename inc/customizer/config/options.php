@@ -284,8 +284,8 @@ function get_options() {
 			'title'    => __( 'Pages', 'trove' ),
 			'priority' => 130,
 		),
-		'blog' => array(
-			'title'     => __( 'Blog Posts', 'trove' ),
+		'homepage' => array(
+			'title'     => __( 'Default Homepage', 'trove' ),
 			'container' => array( 'priority' => 135 ),
 			'tabs'        => array(
 				'layout' => array(
@@ -341,25 +341,40 @@ function get_options() {
 				'title'    => __( 'WooCommerce', 'trove' ),
 				'priority' => 139,
 			),
+			'woocommerce_general' => array(
+				'title'     => __( 'General', 'trove' ),
+				'container' => array(
+					'priority'              => 140,
+					'color_swatches_layout' => true,
+				),
+				'options'   => require __DIR__ . '/woocommerce/general.php',
+			),
 			'woocommerce_message_bar' => array(
 				'title'     => __( 'Message bar', 'trove' ),
 				'container' => array(
-					'priority'              => 140,
+					'priority'              => 141,
 					'color_swatches_layout' => true,
 				),
 				'options'   => require __DIR__ . '/woocommerce/message-bar.php',
 			),
 			'woocommerce_product_catalog' => array(
+				'title'     => __( 'Product images', 'trove' ),
+				'container' => array(
+					'priority'              => 142
+				),
+				'options'   => require __DIR__ . '/woocommerce/product-images.php',
+			),
+			'woocommerce_product_catalog' => array(
 				'title'     => __( 'Product catalog', 'trove' ),
 				'container' => array(
-					'priority'              => 141
+					'priority'              => 143
 				),
 				'options'   => require __DIR__ . '/woocommerce/product-catalog.php',
 			),
 			'woocommerce_single_product' => array(
 				'title'     => __( 'Single Product', 'trove' ),
 				'container' => array(
-					'priority'              => 142
+					'priority'              => 144
 				),
 				'options'   => require __DIR__ . '/woocommerce/single-product.php',
 			)

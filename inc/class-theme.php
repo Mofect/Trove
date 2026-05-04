@@ -189,6 +189,40 @@ class TroveTheme {
 	}
 
 	/**
+	 * Whether minified assets should be loaded.
+	 *
+	 * @return bool
+	 */
+	public static function should_load_minified_assets() {
+		return wp_validate_boolean(
+			get_theme_mod(
+				'trove_perf_minify_assets',
+				(bool) \Trove\Customizer\trove_customizer_default( 'trove_perf_minify_assets', true )
+			)
+		);
+	}
+
+	/**
+	 * Returns the asset URL, using .min version when minification is enabled.
+	 *
+	 * @param string $relative_path Relative path under theme root (e.g. 'assets/css/base.css').
+	 * @return string
+	 */
+	public static function asset_url( $relative_path ) {
+		$relative_path = ltrim( $relative_path, '/' );
+		if ( ! self::should_load_minified_assets() ) {
+			return get_template_directory_uri() . '/' . $relative_path;
+		}
+		$ext = pathinfo( $relative_path, PATHINFO_EXTENSION );
+		$min_path = preg_replace( '/\.(' . preg_quote( $ext, '/' ) . ')$/', '.min.' . $ext, $relative_path );
+		$min_file = get_template_directory() . '/' . $min_path;
+		if ( file_exists( $min_file ) ) {
+			return get_template_directory_uri() . '/' . $min_path;
+		}
+		return get_template_directory_uri() . '/' . $relative_path;
+	}
+
+	/**
 	 * Enqueues theme styles/scripts.
 	 *
 	 * @return void
@@ -206,14 +240,14 @@ class TroveTheme {
 		}
 		wp_enqueue_style(
 			'trove-style',
-			get_template_directory_uri() . '/assets/css/base.css',
+			self::asset_url( 'assets/css/base.css' ),
 			$deps,
 			TROVE_THEME_VERSION
 		);
 		if ( class_exists( 'WooCommerce' ) ) {
 			wp_enqueue_style(
 				'trove-woocommerce',
-				get_template_directory_uri() . '/assets/css/shop.css',
+				self::asset_url( 'assets/css/shop.css' ),
 				array( 'trove-style' ),
 				TROVE_THEME_VERSION
 			);
@@ -221,7 +255,7 @@ class TroveTheme {
 
 		wp_enqueue_script(
 			'trove-header-sticky',
-			get_template_directory_uri() . '/assets/js/header-sticky.js',
+			self::asset_url( 'assets/js/header-sticky.js' ),
 			array(),
 			TROVE_THEME_VERSION,
 			true
@@ -229,7 +263,7 @@ class TroveTheme {
 
 		wp_enqueue_script(
 			'trove-header-search-toggle',
-			get_template_directory_uri() . '/assets/js/header-search-toggle.js',
+			self::asset_url( 'assets/js/header-search-toggle.js' ),
 			array(),
 			TROVE_THEME_VERSION,
 			true
@@ -237,7 +271,7 @@ class TroveTheme {
 
 		wp_enqueue_script(
 			'trove-header-menu-toggle',
-			get_template_directory_uri() . '/assets/js/header-menu-toggle.js',
+			self::asset_url( 'assets/js/header-menu-toggle.js' ),
 			array(),
 			TROVE_THEME_VERSION,
 			true
@@ -245,7 +279,7 @@ class TroveTheme {
 
 		wp_enqueue_script(
 			'trove-footer-menu-toggle',
-			get_template_directory_uri() . '/assets/js/footer-menu-toggle.js',
+			self::asset_url( 'assets/js/footer-menu-toggle.js' ),
 			array(),
 			TROVE_THEME_VERSION,
 			true
@@ -282,14 +316,14 @@ class TroveTheme {
 
 			wp_enqueue_script(
 				'trove-product-ajax-cart',
-				get_template_directory_uri() . '/assets/js/shop.js',
+				self::asset_url( 'assets/js/shop.js' ),
 				array_values( array_unique( $ajax_cart_deps ) ),
 				TROVE_THEME_VERSION,
 				true
 			);
 			wp_enqueue_script(
 				'trove-product-review-dialog',
-				get_template_directory_uri() . '/assets/js/product-review-dialog.js',
+				self::asset_url( 'assets/js/product-review-dialog.js' ),
 				array(),
 				TROVE_THEME_VERSION,
 				true
@@ -316,7 +350,7 @@ class TroveTheme {
 		if ( $blog_infinite ) {
 			wp_enqueue_script(
 				'trove-blog-infinite',
-				get_template_directory_uri() . '/assets/js/blog-infinite-scroll.js',
+				self::asset_url( 'assets/js/blog-infinite-scroll.js' ),
 				array(),
 				TROVE_THEME_VERSION,
 				true

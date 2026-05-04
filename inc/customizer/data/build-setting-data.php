@@ -7,7 +7,7 @@
  */
 
 $defaults = array(
-	'trove_color_page_background'           => '#ffffff',
+	'trove_color_page_background'           => '#fdfdfd',
 	'trove_color_base_text'                 => '#111111',
 	'trove_color_headings'                  => '#000000',
 	'trove_color_link'                      => '#333333',
@@ -41,12 +41,16 @@ $defaults = array(
 	'trove_woo_success_message_background'  => '#e9f8ec',
 	'trove_woo_success_message_text'        => '#216e39',
 	'trove_woo_enable_filter'               => true,
+	'trove_woo_show_second_photo_on_hover'  => true,
 	'trove_woo_single_product_gallery_type'   => 'stacked',
 	'trove_woo_single_product_gallery_stacked_columns' => '4',
 	'trove_woo_single_product_gallery_slider_position' => 'bottom',
 	'trove_woo_single_product_tabs_layout'  => 'horizontal',
+	'trove_woo_single_product_extra_tabs'   => json_encode( array( array( 'title' => 'Shipping', 'content' => 'Shipping cost is based on weight. Just add products to your cart and use the Shipping Calculator to see the shipping price.' ) ) ),
+	'trove_woo_single_product_enable_related_products' => true,
+	'trove_woo_single_product_related_products_count' => '4',
 	'trove_content_width'                   => 800,
-	'trove_content_wide_width'              => 1200,
+	'trove_content_wide_width'              => 1345,
 	'trove_content_vertical_spacing'        => 48,
 	'trove_content_horizontal_spacing'      => 20,
 	'trove_button_background'               => '#111111',
@@ -166,7 +170,8 @@ $defaults = array(
 	'trove_social_reddit_url'               => '',
 	'trove_social_vk_url'                   => '',
 	'trove_social_xing_url'                 => '',
-	'trove_perf_placeholder'                => '',
+	'trove_perf_minify_assets'              => true,
+	'trove_perf_lazy_load_images'           => true,
 );
 
 $typography_scopes = array(
@@ -250,7 +255,7 @@ $defaults['trove_h6_font_letter_spacing_tablet'] = -0.01;
 $defaults['trove_h6_font_letter_spacing_phone'] = -0.01;
 
 $light_colors = array(
-	'trove_color_page_background'           => '#ffffff',
+	'trove_color_page_background'           => '#fdfdfd',
 	'trove_color_base_text'                 => '#111111',
 	'trove_color_headings'                  => '#000000',
 	'trove_color_link'                      => '#333333',

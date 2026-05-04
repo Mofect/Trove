@@ -26,7 +26,7 @@ function enqueue_review_media_scripts() {
 	}
 	wp_enqueue_script(
 		'trove-review-media',
-		get_template_directory_uri() . '/assets/js/review-media.js',
+		\Trove\TroveTheme::asset_url( 'assets/js/review-media.js' ),
 		array(),
 		TROVE_THEME_VERSION,
 		true

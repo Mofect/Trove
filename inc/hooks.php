@@ -109,7 +109,7 @@ function enqueue_announcement_carousel_script() {
 	if ( is_customize_preview() ) {
 		wp_enqueue_script(
 			'trove-announcement-carousel',
-			get_template_directory_uri() . '/assets/js/announcement-carousel.js',
+			\Trove\TroveTheme::asset_url( 'assets/js/announcement-carousel.js' ),
 			array(),
 			defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0',
 			true
@@ -121,7 +121,7 @@ function enqueue_announcement_carousel_script() {
 	}
 	wp_enqueue_script(
 		'trove-announcement-carousel',
-		get_template_directory_uri() . '/assets/js/announcement-carousel.js',
+		\Trove\TroveTheme::asset_url( 'assets/js/announcement-carousel.js' ),
 		array(),
 		defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0',
 		true
@@ -455,3 +455,137 @@ function suppress_false_variation_choose_options_error_notice( $message ) {
 	return $message;
 }
 add_filter( 'woocommerce_add_error', __NAMESPACE__ . '\\suppress_false_variation_choose_options_error_notice', 10, 1 );
+
+/**
+ * Replace default product thumbnail with hover image swap markup.
+ *
+ * @param string     $html  Original thumbnail HTML.
+ * @param int        $post_id Product ID.
+ * @return string
+ */
+function trove_product_loop_thumbnail_with_hover( $html, $post_id ) {
+	$enabled = wp_validate_boolean(
+		get_theme_mod(
+			'trove_woo_show_second_photo_on_hover',
+			(bool) \Trove\Customizer\trove_customizer_default( 'trove_woo_show_second_photo_on_hover', true )
+		)
+	);
+	if ( ! $enabled ) {
+		return $html;
+	}
+
+	$product = wc_get_product( $post_id );
+	if ( ! $product ) {
+		return $html;
+	}
+
+	$image_id  = $product->get_image_id();
+	$gallery   = $product->get_gallery_image_ids();
+	$hover_id  = ! empty( $gallery ) ? $gallery[0] : 0;
+
+	if ( ! $hover_id ) {
+		return $html;
+	}
+
+	$size      = 'woocommerce_thumbnail';
+	$main_img  = wp_get_attachment_image( $image_id, $size, false, array( 'class' => 'trove-product-img trove-product-img--main', 'loading' => 'lazy' ) );
+	$hover_img = wp_get_attachment_image( $hover_id, $size, false, array( 'class' => 'trove-product-img trove-product-img--hover', 'loading' => 'lazy' ) );
+
+	if ( ! $main_img || ! $hover_img ) {
+		return $html;
+	}
+
+	return '<span class="trove-product-thumbnail">' . $main_img . $hover_img . '</span>';
+}
+add_filter( 'woocommerce_product_get_image', __NAMESPACE__ . '\\trove_product_loop_thumbnail_with_hover', 20, 2 );
+
+/**
+ * Add custom extra tabs to single product tabs.
+ *
+ * @param array<string, array<string, mixed>> $tabs Product tabs.
+ * @return array<string, array<string, mixed>>
+ */
+function trove_add_single_product_extra_tabs( $tabs ) {
+	$raw = get_theme_mod(
+		'trove_woo_single_product_extra_tabs',
+		(string) \Trove\Customizer\trove_customizer_default( 'trove_woo_single_product_extra_tabs', '[]' )
+	);
+	$rows = json_decode( $raw, true );
+	if ( ! is_array( $rows ) || empty( $rows ) ) {
+		return $tabs;
+	}
+
+	$priority = 25;
+	foreach ( $rows as $row ) {
+		if ( ! is_array( $row ) || empty( $row['title'] ) ) {
+			continue;
+		}
+		$slug = 'trove_extra_' . sanitize_title( $row['title'] );
+		$tabs[ $slug ] = array(
+			'title'    => sanitize_text_field( $row['title'] ),
+			'priority' => $priority,
+			'callback' => function () use ( $row ) {
+				echo wp_kses_post( $row['content'] );
+			},
+		);
+		$priority += 5;
+	}
+
+	return $tabs;
+}
+add_filter( 'woocommerce_product_tabs', __NAMESPACE__ . '\\trove_add_single_product_extra_tabs', 98 );
+
+/**
+ * Control display of related products on single product page.
+ *
+ * @return void
+ */
+function trove_control_related_products() {
+	$enabled = wp_validate_boolean(
+		get_theme_mod(
+			'trove_woo_single_product_enable_related_products',
+			(bool) \Trove\Customizer\trove_customizer_default( 'trove_woo_single_product_enable_related_products', true )
+		)
+	);
+	if ( ! $enabled ) {
+		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+	}
+}
+add_action( 'wp', __NAMESPACE__ . '\\trove_control_related_products' );
+
+/**
+ * Check whether lazy loading for images is enabled.
+ *
+ * @return bool
+ */
+function is_lazy_load_images_enabled() {
+	return wp_validate_boolean(
+		get_theme_mod(
+			'trove_perf_lazy_load_images',
+			(bool) \Trove\Customizer\trove_customizer_default( 'trove_perf_lazy_load_images', true )
+		)
+	);
+}
+
+/**
+ * Force lazy loading on all images by injecting loading="lazy" into <img> tags.
+ *
+ * @param string $html Image HTML.
+ * @return string
+ */
+function filter_force_lazy_loading_on_images( $html ) {
+	if ( ! is_lazy_load_images_enabled() ) {
+		return $html;
+	}
+	if ( ! is_string( $html ) || false === strpos( $html, '<img' ) ) {
+		return $html;
+	}
+	// Add or replace loading attribute with "lazy" on all img tags.
+	$html = preg_replace( '/<img([^>]*?)\s+loading=["\'][^"\']*["\']([^>]*?)>/i', '<img\1 loading="lazy"\2>', $html );
+	$html = preg_replace( '/<img((?![^>]*\sloading=)[^>]*)>/i', '<img\1 loading="lazy">', $html );
+	return $html;
+}
+add_filter( 'wp_get_attachment_image', __NAMESPACE__ . '\\filter_force_lazy_loading_on_images', 999 );
+add_filter( 'the_content', __NAMESPACE__ . '\\filter_force_lazy_loading_on_images', 999 );
+add_filter( 'post_thumbnail_html', __NAMESPACE__ . '\\filter_force_lazy_loading_on_images', 999 );
+add_filter( 'woocommerce_product_get_image', __NAMESPACE__ . '\\filter_force_lazy_loading_on_images', 999 );

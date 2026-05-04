@@ -53,6 +53,14 @@ function filter_product_tabs_for_collapsible_layout( $tabs ) {
 		}
 	}
 
+	// Move extra tabs (e.g. trove_extra_*) to accordion as well.
+	foreach ( $tabs as $key => $product_tab ) {
+		if ( 0 === strpos( $key, 'trove_extra_' ) ) {
+			$GLOBALS['trove_woo_collapsible_accordion_tabs'][ $key ] = $product_tab;
+			unset( $tabs[ $key ] );
+		}
+	}
+
 	return $tabs;
 }
 
@@ -122,4 +130,4 @@ function output_collapsible_product_accordion() {
 add_filter( 'woocommerce_product_tabs', __NAMESPACE__ . '\\filter_product_tabs_for_collapsible_layout', 100 );
 add_filter( 'woocommerce_product_description_heading', __NAMESPACE__ . '\\filter_suppress_wc_tab_h2_in_collapsible_accordion', 10, 1 );
 add_filter( 'woocommerce_product_additional_information_heading', __NAMESPACE__ . '\\filter_suppress_wc_tab_h2_in_collapsible_accordion', 10, 1 );
-add_action( 'woocommerce_after_add_to_cart_form', __NAMESPACE__ . '\\output_collapsible_product_accordion', 20 );
+add_action( 'woocommerce_single_product_summary', __NAMESPACE__ . '\\output_collapsible_product_accordion', 35 );

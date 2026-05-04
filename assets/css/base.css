@@ -35,7 +35,7 @@ a {
 a:hover,
 a:focus {
 	color: var(--trove-link-hover);
-	text-decoration: underline;
+	text-decoration: none;
 }
 
 ::selection {
@@ -1221,7 +1221,7 @@ body.has-custom-logo .site-header__tagline {
 }
 
 .site-footer__description {
-	margin: 0.35rem 0 0;
+	margin: 1rem 0 0;
 	color: inherit;
 	opacity: 0.85;
 	font-size: 1.4rem;
@@ -1896,7 +1896,7 @@ body.trove-blog-boxed .trove-blog-loop--masonry .entry-card__body {
 
 .trove-blog-loop--grid .entry-card__body .entry-title,
 .trove-blog-loop--masonry .entry-card__body .entry-title {
-	font-size: clamp(1.5rem, 2.5vw, 2rem);
+	font-size: clamp(2rem, 2.6vw, 2rem);
 }
 
 .trove-blog-loop--grid .entry-summary {

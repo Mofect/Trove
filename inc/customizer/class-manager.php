@@ -53,6 +53,7 @@ final class Manager {
 		require_once __DIR__ . '/controls/class-range-number-control.php';
 		require_once __DIR__ . '/controls/class-alignment-control.php';
 		require_once __DIR__ . '/controls/class-repeater-text-control.php';
+	require_once __DIR__ . '/controls/class-repeater-key-value-control.php';
 
 		// Do not call register_control_type( Responsive_Tabs_Control ): that prints an empty JS
 		// tmpl and customize-controls.js replaces server-rendered HTML with it, hiding the UI.

@@ -829,6 +829,45 @@ final class Options_Registry {
 			return;
 		}
 
+		if ( 'repeater_key_value' === $type ) {
+			$max_items = isset( $field['max_items'] ) ? absint( $field['max_items'] ) : 10;
+			$max_items = min( 20, max( 1, $max_items ) );
+			$def       = isset( $field['default'] ) ? $field['default'] : '[]';
+			if ( ! is_string( $def ) ) {
+				$def = wp_json_encode( array() );
+			}
+			$transport = isset( $field['transport'] ) ? $field['transport'] : 'refresh';
+
+			$wp_customize->add_setting(
+				$setting_id,
+				array(
+					'default'           => $def,
+					'transport'         => $transport,
+					'sanitize_callback' => __NAMESPACE__ . '\\sanitize_repeater_kv_json',
+				)
+			);
+
+			$wp_customize->add_control(
+				new Repeater_Key_Value_Control(
+					$wp_customize,
+					$setting_id,
+					array(
+						'label'       => isset( $field['label'] ) ? $field['label'] : '',
+						'description' => isset( $field['description'] ) ? $field['description'] : '',
+						'section'     => $section_id,
+						'priority'    => $control_priority,
+						'max_items'   => $max_items,
+						'key_label'   => isset( $field['key_label'] ) ? $field['key_label'] : '',
+						'value_label' => isset( $field['value_label'] ) ? $field['value_label'] : '',
+					)
+				)
+			);
+			if ( null !== $tab_slug && '' !== $tab_slug ) {
+				$this->remember_control_tab( $section_id, $setting_id, $tab_slug );
+			}
+			return;
+		}
+
 		if ( 'range_number' === $type ) {
 			$transport = isset( $field['transport'] ) ? $field['transport'] : 'refresh';
 			$sanitize  = isset( $field['sanitize_callback'] ) ? $field['sanitize_callback'] : array( $this, 'sanitize_by_type' );
