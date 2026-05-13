@@ -55,8 +55,8 @@
 }
 
 /* Clear (×): column 3 */
-#customize-theme-controls .trove-cz-swatches li.customize-control-color > .trove-cz-color-clear,
-#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color > .trove-cz-color-clear {
+#customize-theme-controls .trove-cz-swatches li.customize-control-color .trove-cz-color-clear,
+#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color .trove-cz-color-clear {
 	grid-column: 3;
 	grid-row: 1;
 	justify-self: center;
@@ -81,16 +81,16 @@
 	transition: color 0.12s ease, background-color 0.12s ease;
 }
 
-#customize-theme-controls .trove-cz-swatches li.customize-control-color > .trove-cz-color-clear:hover,
-#customize-theme-controls .trove-cz-swatches li.customize-control-color > .trove-cz-color-clear:focus-visible,
-#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color > .trove-cz-color-clear:hover,
-#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color > .trove-cz-color-clear:focus-visible {
+#customize-theme-controls .trove-cz-swatches li.customize-control-color .trove-cz-color-clear:hover,
+#customize-theme-controls .trove-cz-swatches li.customize-control-color .trove-cz-color-clear:focus-visible,
+#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color .trove-cz-color-clear:hover,
+#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color .trove-cz-color-clear:focus-visible {
 	color: #1d2327;
 	background: transparent;
 }
 
-#customize-theme-controls .trove-cz-swatches li.customize-control-color > .trove-cz-color-clear:focus-visible,
-#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color > .trove-cz-color-clear:focus-visible {
+#customize-theme-controls .trove-cz-swatches li.customize-control-color .trove-cz-color-clear:focus-visible,
+#customize-theme-controls .trove-cz-swatches li.customize-control-trove_dual_color .trove-cz-color-clear:focus-visible {
 	outline: 1px solid #2271b1;
 	outline-offset: 1px;
 }

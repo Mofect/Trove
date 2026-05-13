@@ -27,6 +27,7 @@ $show_social        = \Trove\should_render_footer_social_links();
 		</div>
 	</div>
 
+	<?php if ( ! empty( $trove_footer_menus ) || \Trove\should_render_footer_newsletter() ) : ?>
 	<div class="site-footer__content">
 	    <?php if ( ! empty( $trove_footer_menus ) ) : ?>
 			<div class="site-footer__menus">
@@ -66,8 +67,9 @@ $show_social        = \Trove\should_render_footer_social_links();
 			<?php \Trove\render_footer_subscribe_form(); ?>
 		</div>
 	</div>
+	<?php endif; ?>
 
-	<div class="site-footer__bottom">
+	<div class="site-footer__bottom<?php echo ( empty( $trove_footer_menus ) && ! \Trove\should_render_footer_newsletter() ) ? ' site-footer__bottom--no-content' : ''; ?>">
 		<div class="site-footer__bottom-left">
 			<p class="site-footer__copy">
 				<?php \Trove\render_footer_copyright(); ?>

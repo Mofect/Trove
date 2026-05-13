@@ -49,6 +49,21 @@
 		} );
 	}
 
+	function getColorControlSettingId( $li ) {
+		var $input = $li.find( 'input[data-customize-setting-link], input.wp-color-picker, input.color-picker-hex' ).first();
+		if ( $input.length ) {
+			var sid = $input.attr( 'data-customize-setting-link' );
+			if ( sid ) {
+				return sid;
+			}
+		}
+		var containerId = $li.attr( 'id' ) || '';
+		if ( containerId.indexOf( 'customize-control-' ) === 0 ) {
+			return containerId.replace( /^customize-control-/, '' );
+		}
+		return '';
+	}
+
 	function ensureClearButtons() {
 		var $root = $( '#customize-theme-controls' );
 		if ( ! $root.length ) {
@@ -60,8 +75,7 @@
 			if ( $li.find( '> .trove-cz-color-clear' ).length ) {
 				return;
 			}
-			var $input = $li.find( 'input[data-customize-setting-link]' ).first();
-			var sid = $input.attr( 'data-customize-setting-link' );
+			var sid = getColorControlSettingId( $li );
 			if ( ! sid ) {
 				return;
 			}
@@ -70,12 +84,7 @@
 			$btn.attr( 'aria-label', i18n.clearSingle || 'Clear' );
 			$btn.attr( 'title', i18n.clearSingle || 'Clear' );
 			$btn.html( '<span aria-hidden="true">&times;</span>' );
-			var $content = $li.children( '.customize-control-content' ).first();
-			if ( $content.length ) {
-				$content.after( $btn );
-			} else {
-				$li.append( $btn );
-			}
+			$li.append( $btn );
 		} );
 
 		$root.find( '.trove-cz-swatches li.customize-control-trove_dual_color' ).each( function () {

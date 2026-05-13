@@ -264,6 +264,16 @@ $colors = array(
 			),
 		),
 	),
+
+	'trove_footer_border_color' => array(
+		'label'             => __( 'Footer border', 'trove' ),
+		'type'              => 'color',
+		'default'           => trove_customizer_default( 'trove_footer_border_color', '#dddddd' ),
+		'priority'          => 19,
+		'transport'         => 'postMessage',
+		'sanitize_callback' => 'sanitize_hex_color',
+		'swatch_hint'       => __( 'Footer top border', 'trove' ),
+	),
 );
 
 if ( class_exists( 'WooCommerce' ) ) {

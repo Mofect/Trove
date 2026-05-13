@@ -81,6 +81,7 @@ class TroveTheme {
 
 	/**
 	 * Adds `trove-blog-layout--{list|grid|masonry}` on blog index and post archives.
+	 * Adds `trove-blog-layout--list__top-image` when layout is list and featured image position is Top.
 	 *
 	 * @param string[] $classes Body classes.
 	 * @return string[]
@@ -92,7 +93,11 @@ class TroveTheme {
 		if ( ! \Trove\is_blog_listing_view() ) {
 			return $classes;
 		}
-		$classes[] = 'trove-blog-layout--' . \Trove\get_blog_layout();
+		$layout = \Trove\get_blog_layout();
+		$classes[] = 'trove-blog-layout--' . $layout;
+		if ( 'list' === $layout && 'top' === \Trove\get_blog_list_featured_image_position() ) {
+			$classes[] = 'trove-blog-layout--list__top-image';
+		}
 		return $classes;
 	}
 

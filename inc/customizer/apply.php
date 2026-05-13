@@ -41,6 +41,7 @@ function trove_color_theme_mod_definitions() {
 		'trove_footer_text_color'             => '--trove-footer-text',
 		'trove_footer_link_color'             => '--trove-footer-link',
 		'trove_footer_link_hover_color'       => '--trove-footer-link-hover',
+		'trove_footer_border_color'           => '--trove-footer-border',
 		'trove_header_cart_badge_color'       => '--trove-header-cart-badge-bg',
 		'trove_header_cart_count_color'       => '--trove-header-cart-count',
 		'trove_store_notice_background'       => '--trove-store-notice-background',
@@ -1254,7 +1255,6 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 		$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{' . implode( ';', $typography_phone_parts ) . '}}';
 	}
 
-	$css .= '.site-main{max-width:var(--trove-content-width);}';
 	$css .= '.site-footer__extra-responsive .trove-fe--tablet,.site-footer__extra-responsive .trove-fe--phone{display:none;}';
 	$css .= '.site-footer__extra-responsive .trove-fe--pc{display:block;}';
 	if ( $include_responsive_content ) {

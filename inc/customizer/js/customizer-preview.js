@@ -1845,8 +1845,8 @@
 			if ( ! top ) {
 				return;
 			}
-			var showBrand = troveCustomizeBool( getCustomizeSettingValue( 'trove_footer_show_brand_info', true ) );
-			var showSocial = troveCustomizeBool( getCustomizeSettingValue( 'trove_footer_show_social_links', true ) );
+			var showBrand = troveCustomizeBool( getCustomizeSettingValue( 'trove_footer_show_brand_info', false ) );
+			var showSocial = troveCustomizeBool( getCustomizeSettingValue( 'trove_footer_show_social_links', false ) );
 			top.hidden = ! showBrand && ! showSocial;
 		}
 

@@ -179,7 +179,7 @@ function get_footer_brand_description() {
  * @return bool
  */
 function should_render_footer_brand_info() {
-	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_brand_info', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_show_brand_info', true ) ) );
+	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_brand_info', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_show_brand_info', false ) ) );
 }
 
 /**
@@ -249,7 +249,7 @@ function sanitize_header_logo_width( $value ) {
  * @return bool
  */
 function should_render_footer_social_links() {
-	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_social_links', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_show_social_links', true ) ) );
+	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_social_links', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_show_social_links', false ) ) );
 }
 
 /**
@@ -258,7 +258,7 @@ function should_render_footer_social_links() {
  * @return bool
  */
 function should_render_footer_newsletter() {
-	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_newsletter', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_show_newsletter', true ) ) );
+	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_newsletter', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_show_newsletter', false ) ) );
 }
 
 /**
