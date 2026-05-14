@@ -6,6 +6,8 @@
  */
 
 get_header();
+
+$banner_covers_title = \Trove\Metabox\page_banner_shows_entry_title( (int) get_queried_object_id() );
 ?>
 <main id="primary" class="site-main">
 	<?php
@@ -13,9 +15,11 @@ get_header();
 		the_post();
 		?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class( 'entry entry--page' ); ?>>
+			<?php if ( \Trove\Metabox\should_show_page_title() && ! $banner_covers_title ) : ?>
 			<header class="entry-header">
 				<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 			</header>
+			<?php endif; ?>
 			<?php if ( has_post_thumbnail() ) : ?>
 				<div class="entry-featured">
 					<?php the_post_thumbnail( 'large' ); ?>

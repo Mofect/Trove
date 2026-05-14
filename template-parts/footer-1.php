@@ -23,7 +23,7 @@ $show_social        = \Trove\should_render_footer_social_links();
 		</div>
 
 		<div class="site-footer__socials"<?php echo $show_social ? '' : ' hidden'; ?>>
-			<?php \Trove\render_footer_social_links(); ?>
+			<?php \Trove\trove_social_links(); ?>
 		</div>
 	</div>
 
@@ -72,7 +72,16 @@ $show_social        = \Trove\should_render_footer_social_links();
 	<div class="site-footer__bottom<?php echo ( empty( $trove_footer_menus ) && ! \Trove\should_render_footer_newsletter() ) ? ' site-footer__bottom--no-content' : ''; ?>">
 		<div class="site-footer__bottom-left">
 			<p class="site-footer__copy">
-				<?php \Trove\render_footer_copyright(); ?>
+				<span class="site-footer__copy-inner">
+				<?php
+					$copy = get_theme_mod( 'trove_footer_copy_text', (string) \Trove\Customizer\trove_customizer_default( 'trove_footer_copy_text', '' ) );
+					if ( ! empty( $copy ) ) {
+						echo wp_kses_post( $copy );
+					} else {
+						echo wp_kses_post( '&copy; ' . esc_html( gmdate( 'Y' ) ) . ' ' . esc_html( get_bloginfo( 'name' ) ) . ' ' . esc_html__( 'All rights reserved.', 'trove' ) );
+					}
+				?>
+				</span>
 			</p>
 		</div>
 	</div>

@@ -19,7 +19,9 @@ get_header();
 				</div>
 			<?php endif; ?>
 			<header class="entry-header">
-				<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+				<?php if ( \Trove\Metabox\should_show_page_title() ) : ?>
+					<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+				<?php endif; ?>
 				<div class="entry-meta">
 					<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>"><?php echo esc_html( get_the_date() ); ?></time>
 					<span class="entry-meta__sep" aria-hidden="true">·</span>

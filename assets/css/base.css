@@ -277,6 +277,134 @@ main {
 	padding: var(--trove-content-vertical-spacing) var(--trove-content-horizontal-spacing);
 }
 
+/* Page banner (Page settings): between header and main. */
+.trove-page-banner {
+	--trove-page-banner-title-color: var(--trove-text, #1a1a1a);
+	width: 100%;
+	position: relative;
+	z-index: 1;
+}
+
+.trove-page-banner__overlay {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.trove-page-banner__breadcrumb {
+	position: absolute;
+	top: 1.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	width: var(--trove-content-wide-width);
+	max-width: 100%;
+	padding: 0 var(--trove-content-horizontal-spacing);
+	box-sizing: border-box;
+	z-index: 2;
+	font-size: 1.4rem;
+	line-height: 1.35;
+	color: var(--trove-page-banner-title-color);
+}
+
+.trove-page-banner__breadcrumb-inner {
+	max-width: 100%;
+}
+
+.trove-page-banner__breadcrumb-inner > *:first-child {
+	margin-top: 0;
+}
+
+.trove-page-banner__breadcrumb-inner > *:last-child {
+	margin-bottom: 0;
+}
+
+.trove-page-banner__breadcrumb a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
+}
+
+.trove-page-banner__breadcrumb a:hover,
+.trove-page-banner__breadcrumb a:focus {
+	opacity: 0.92;
+}
+
+.trove-page-banner__breadcrumb-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.trove-page-banner__breadcrumb-list li {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.trove-page-banner__breadcrumb-list li:not(:last-child)::after {
+	content: '/';
+	opacity: 0.55;
+	font-weight: 400;
+}
+
+.trove-page-banner__breadcrumb-list a {
+	text-decoration: none;
+}
+
+.trove-page-banner__breadcrumb-list a:hover,
+.trove-page-banner__breadcrumb-list a:focus {
+	text-decoration: underline;
+}
+
+.trove-page-banner__inner {
+	position: relative;
+	z-index: 1;
+	width: var(--trove-content-wide-width);
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 2rem var(--trove-content-horizontal-spacing);
+	box-sizing: border-box;
+}
+
+.trove-page-banner--align-left .trove-page-banner__inner {
+	text-align: left;
+}
+
+.trove-page-banner--align-center .trove-page-banner__inner {
+	text-align: center;
+}
+
+.trove-page-banner--align-right .trove-page-banner__inner {
+	text-align: right;
+}
+
+.trove-page-banner__title.entry-title {
+	margin: 0;
+	line-height: 1.15;
+	text-wrap: balance;
+	color: var(--trove-page-banner-title-color);
+	/* Default when no --size-* class (older markup). Size classes use higher specificity below. */
+	font-size: clamp(3.1rem, 6.75vw, 4.75rem);
+}
+
+.trove-page-banner__title.entry-title.trove-page-banner__title--size-small {
+	font-size: clamp(2.4rem, 5vw, 3.35rem);
+}
+
+.trove-page-banner__title.entry-title.trove-page-banner__title--size-medium {
+	font-size: clamp(3.1rem, 6.75vw, 4.75rem);
+}
+
+.trove-page-banner__title.entry-title.trove-page-banner__title--size-large {
+	font-size: clamp(3.65rem, 8.25vw, 5.75rem);
+}
+
 .trove-blog-layout--list__top-image .site-main {
 	max-width: var(--trove-content-width);
 }
@@ -295,7 +423,7 @@ main {
 	padding: 0.5em 0.25rem;
 	background-color: var(--trove-announcement-background, var(--trove-accent, #000));
 	color: var(--trove-announcement-text, var(--trove-header-text, rgba(255, 255, 255, 0.92)));
-	border-bottom: 1px solid var(--trove-border, rgba(255, 255, 255, 0.12));
+	border-bottom: 1px solid var(--trove-header-border, var(--trove-border, rgba(255, 255, 255, 0.12)));
 	position: relative;
 	z-index: 800;
 	outline: none;
@@ -423,9 +551,17 @@ main {
 }
 
 .site-header {
-	height: 85px;
+	--trove-header-height: 85px;
+	height: var(--trove-header-height);
 	background-color: var(--trove-header-background, #111827);
 	color: var(--trove-header-text, rgba(255, 255, 255, 0.92));
+}
+
+.site-header.trove-header--transparent {
+	background-color: transparent;
+	background-image: none;
+	margin-bottom: -85px;
+	margin-bottom: calc(-1 * var(--trove-header-height, 85px));
 }
 
 .site-header.trove-header-sticky-always,
@@ -433,7 +569,18 @@ main {
 	position: sticky;
 	top: 0;
 	z-index: 501;
+}
+
+/* Solid bar only when not using transparent header (transparent rule above would otherwise lose to source order). */
+.site-header.trove-header-sticky-always:not(.trove-header--transparent),
+.site-header.trove-header-sticky-on_scroll_up:not(.trove-header--transparent) {
 	background-color: var(--trove-header-background, #111827);
+}
+
+/* Transparent + scroll-up bar: restore background once the bar is revealed over content. */
+.site-header.trove-header--transparent.trove-header-sticky-on_scroll_up.is-sticky-visible {
+	background-color: var(--trove-header-background, #111827);
+	margin-bottom: 0;
 }
 
 /* Avoid overlapping WordPress admin bar when logged in. */
@@ -1060,9 +1207,9 @@ body.has-custom-logo .site-header__tagline {
 	color: var(--trove-header-link-hover, #000);
 }
 
-/* Customizer: header bottom border (Trove Options → Header). */
+/* Customizer + Page settings: header bottom border (--trove-header-border from Trove Options → General → Colors). */
 .site-header.trove-header-has-border {
-	border-bottom: 1px solid var(--trove-border, rgb(0 0 0 / 5%));
+	border-bottom: 1px solid var(--trove-header-border, var(--trove-border, rgb(0 0 0 / 5%)));
 }
 
 /* Header layout: menu left, logo centered in the bar, utilities right. */
@@ -1128,7 +1275,7 @@ body.has-custom-logo .site-header__tagline {
 }
 
 .site-header[class*="trove-header__vertical-"].trove-header-has-border .site-header__nav {
-	border-top: 1px solid var(--trove-border);
+	border-top: 1px solid var(--trove-header-border, var(--trove-border));
 }
 
 .site-header.trove-header__vertical-centered-logo .site-header__buttons {
@@ -1749,6 +1896,27 @@ input[type="email"].site-footer__subscribe-input {
 
 .entry-content > *:first-child {
 	margin-top: 0;
+}
+
+/* Gutenberg: wide / full width blocks (add_theme_support align-wide) */
+.entry-content > .alignwide,
+.entry-content > .wp-block.alignwide,
+.block-editor-block-list__layout.is-root-container > .alignwide {
+	max-width: min(100%, var(--trove-content-wide-width));
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.entry-content > .alignfull,
+.entry-content > .wp-block.alignfull,
+.block-editor-block-list__layout.is-root-container > .alignfull {
+	max-width: none;
+	width: 100vw;
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+	margin-left: 0;
+	margin-right: 0;
 }
 
 .entry-featured {

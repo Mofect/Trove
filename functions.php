@@ -7,14 +7,9 @@
 
 namespace Trove;
 
-define( 'TROVE_THEME_VERSION', '1.0.0' );
+! defined( 'TROVE_THEME_VERSION' ) && define( 'TROVE_THEME_VERSION', '1.0.0' );
+! defined( 'TROVE_DIR' ) && define( 'TROVE_DIR', get_template_directory() );
 
-require_once get_template_directory() . '/inc/customizer/customizer.php';
-require_once get_template_directory() . '/inc/class-theme.php';
-require_once get_template_directory() . '/inc/template-functions.php';
-require_once get_template_directory() . '/inc/woocommerce-product-gallery.php';
-require_once get_template_directory() . '/inc/woocommerce-product-tabs-collapsible.php';
-require_once get_template_directory() . '/inc/woocommerce-review-media.php';
-require_once get_template_directory() . '/inc/hooks.php';
+require_once \TROVE_DIR . '/inc/class-theme.php';
 
 TroveTheme::init();

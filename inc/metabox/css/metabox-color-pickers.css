@@ -1,0 +1,257 @@
+/* Page settings: label left, Trove Customizer–style swatches + clear on the right. */
+
+.trove-mb-cz-layout .trove-metabox-field--color .trove-mb-cz-field-row,
+.trove-mb-cz-layout .trove-metabox-field--color_pair .trove-mb-cz-field-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	column-gap: 16px;
+	row-gap: 8px;
+	margin: 4px 0 2px;
+}
+
+.trove-mb-cz-layout .trove-metabox-field--color .trove-mb-cz-field-row > .trove-metabox-field__label,
+.trove-mb-cz-layout .trove-metabox-field--color_pair .trove-mb-cz-field-row > .trove-metabox-field__label {
+	flex: 0 0 auto;
+	width: 200px;
+	max-width: 50%;
+	margin: 0;
+	padding: 0;
+	font-weight: 600;
+	line-height: 1.4;
+	box-sizing: border-box;
+}
+
+.trove-mb-cz-layout .trove-mb-cz-field-row__controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	flex: 1 1 auto;
+	min-width: 0;
+	justify-content: flex-end;
+}
+
+.trove-mb-cz-layout .trove-mb-cz-color-single__row,
+.trove-mb-cz-layout .trove-mb-cz-color-pair-wrap {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+}
+
+.trove-mb-cz-layout .trove-dual-color__swatches {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.trove-mb-cz-layout .trove-dual-color__pill {
+	display: block;
+	line-height: 0;
+}
+
+.trove-mb-cz-layout .trove-dual-color__pill .wp-picker-container {
+	margin: 0;
+	width: auto !important;
+	max-width: 36px;
+}
+
+.trove-mb-cz-layout .trove-dual-color__pill .wp-color-result {
+	width: 28px;
+	height: 28px;
+	min-height: 28px;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.trove-mb-cz-layout .trove-dual-color__pill .wp-color-result-text {
+	display: none;
+}
+
+.trove-mb-cz-layout .trove-dual-color__pill .wp-color-result::after {
+	display: none;
+}
+
+.trove-mb-cz-layout .wp-color-result.trove-cz-swatch-empty {
+	position: relative;
+	overflow: hidden;
+	border-radius: 50%;
+	background: repeating-conic-gradient(#d4d4d4 0% 25%, #ffffff 0% 50%) 50% / 10px 10px !important;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.trove-mb-cz-layout .trove-mb-cz-color-clear {
+	box-sizing: border-box;
+	width: 0;
+	height: 0;
+	margin: -5px 0 0;
+	padding: 0;
+	border: none;
+	border-radius: 11px;
+	background: transparent;
+	color: #d63638;
+	font-size: 18px;
+	line-height: 1;
+	overflow: visible;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+}
+
+.trove-mb-cz-layout .trove-mb-cz-color-clear:hover,
+.trove-mb-cz-layout .trove-mb-cz-color-clear:focus {
+	color: #1d2327;
+	background: transparent;
+	box-shadow: none;
+	outline: 1px solid #2271b1;
+	outline-offset: 1px;
+}
+
+.trove-mb-cz-layout .trove-mb-cz-color-clear__x {
+	display: block;
+	margin-top: -2px;
+}
+
+/* Floating popover + Gutenberg ColorPicker (aligned with customizer-color-swatches.css + popover JS). */
+
+.trove-mb-cz-layout .wp-picker-container:not(.wp-picker-active):not(.wp-picker-open) .wp-picker-holder {
+	display: none !important;
+}
+
+.trove-mb-cz-layout .wp-picker-container:not(.wp-picker-active):not(.wp-picker-open) .wp-picker-holder .iris-picker {
+	display: none !important;
+}
+
+.trove-mb-cz-layout .wp-picker-holder {
+	position: relative;
+	float: none;
+	width: auto;
+	min-width: 260px;
+	margin: 0;
+	z-index: 100001;
+}
+
+.trove-mb-cz-layout .wp-picker-holder.trove-cz-float-holder {
+	z-index: 1001000 !important;
+	padding: 12px;
+	margin: 0 !important;
+	background: #fff;
+	border: none;
+	border-radius: 8px;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.12),
+		0 0 0 1px rgba(0, 0, 0, 0.06);
+	overflow: visible;
+}
+
+/* Active picker: avoid creating a clipping stack under fixed holder */
+.trove-mb-cz-layout .wp-picker-container.wp-picker-active,
+.trove-mb-cz-layout .wp-picker-container.wp-picker-open {
+	overflow: visible !important;
+}
+
+/* Ancestors that often clip fixed popovers (classic + block editor metabox areas) */
+#wpbody-content:has(.trove-mb-cz-layout),
+#poststuff:has(.trove-mb-cz-layout),
+#post-body:has(.trove-mb-cz-layout),
+#postbox-container-1:has(.trove-mb-cz-layout),
+#postbox-container-2:has(.trove-mb-cz-layout),
+.meta-box-sortables:has(.trove-mb-cz-layout),
+.postbox:has(.trove-mb-cz-layout),
+.postbox:has(.trove-mb-cz-layout) .inside,
+.edit-post-meta-boxes-area:has(.trove-mb-cz-layout),
+.edit-post-layout__metaboxes:has(.trove-mb-cz-layout) {
+	overflow: visible !important;
+}
+
+.trove-mb-cz-layout .wp-picker-holder.trove-cz-float-holder::before {
+	content: "";
+	position: absolute;
+	left: var(--trove-cz-arrow-x, 50%);
+	top: 0;
+	z-index: 3;
+	width: 0;
+	height: 0;
+	margin: 0;
+	transform: translate(-50%, -100%);
+	border-style: solid;
+	border-width: 0 9px 9px 9px;
+	border-color: transparent transparent #fff transparent;
+	filter: drop-shadow(0 -2px 3px rgba(0, 0, 0, 0.12));
+	pointer-events: none;
+}
+
+.trove-mb-cz-layout .wp-picker-holder.trove-cz-float-holder--above::before {
+	top: auto;
+	bottom: 0;
+	transform: translate(-50%, 100%);
+	border-width: 9px 9px 0 9px;
+	border-color: #fff transparent transparent transparent;
+	filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.12));
+}
+
+.trove-mb-cz-layout .wp-picker-holder .iris-picker,
+.trove-mb-cz-layout .wp-picker-holder .iris-picker * {
+	box-sizing: content-box;
+}
+
+.trove-mb-cz-layout .wp-picker-holder.trove-cz-float-holder .iris-picker .iris-picker-inner {
+	border-radius: 4px;
+}
+
+.trove-mb-cz-layout .wp-picker-holder.trove-cz-gb-mounted .iris-picker {
+	display: none !important;
+}
+
+.trove-mb-cz-layout .wp-picker-holder .trove-cz-gb-picker {
+	width: 100%;
+}
+
+.trove-mb-cz-layout .wp-picker-holder.trove-cz-gb-mounted {
+	min-width: 0;
+}
+
+.trove-mb-cz-layout .wp-picker-holder .trove-cz-gb-picker .components-color-picker,
+.trove-mb-cz-layout .wp-picker-holder .trove-cz-gb-picker .components-color-picker__body,
+.trove-mb-cz-layout .wp-picker-holder .trove-cz-gb-picker .components-color-picker__inputs-wrapper {
+	width: 100% !important;
+	max-width: none !important;
+	box-sizing: border-box;
+}
+
+.trove-mb-cz-layout .wp-picker-container.trove-cz-input-in-holder .wp-picker-holder:not(.trove-cz-float-holder) {
+	width: 215px;
+	min-width: 215px;
+	box-sizing: border-box;
+	padding: 12px;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.12),
+		0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.trove-mb-cz-layout .wp-picker-container.trove-cz-input-in-holder .wp-picker-holder:not(.trove-cz-float-holder) .iris-picker {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	border: none !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+
+.trove-mb-cz-layout .wp-picker-holder .iris-palette-container,
+.trove-mb-cz-layout .wp-picker-container.trove-cz-input-in-holder .wp-picker-holder .wp-picker-input-wrap {
+	display: none !important;
+}
+
+.trove-metabox-fields.trove-mb-cz-layout {
+	overflow: visible !important;
+}

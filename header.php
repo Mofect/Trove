@@ -23,3 +23,4 @@
 <?php wp_body_open(); ?>
 <?php do_action( 'trove_announcement_bar' ); ?>
 <?php do_action( 'trove_header' ); ?>
+<?php do_action( 'trove_after_header' ); ?>

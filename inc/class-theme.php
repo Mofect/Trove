@@ -15,20 +15,38 @@ defined( 'ABSPATH' ) || exit;
 class TroveTheme {
 
 	/**
+	 * Loads theme PHP partials (Customizer, components, WooCommerce, performance).
+	 *
+	 * @return void
+	 */
+	private static function load_dependencies() {
+		require_once \TROVE_DIR . '/inc/customizer/customizer.php';
+		require_once \TROVE_DIR . '/inc/metabox/metabox.php';
+		require_once \TROVE_DIR . '/inc/template-functions.php';
+		require_once \TROVE_DIR . '/inc/woocommerce.php';
+		require_once \TROVE_DIR . '/inc/performance.php';
+		require_once \TROVE_DIR . '/inc/components/social-links.php';
+		require_once \TROVE_DIR . '/inc/components/newsletter.php';
+		require_once \TROVE_DIR . '/inc/components/Announcement-bar.php';
+		require_once \TROVE_DIR . '/inc/components/blog.php';
+		require_once \TROVE_DIR . '/inc/components/woocommerce/product-gallery.php';
+		require_once \TROVE_DIR . '/inc/components/woocommerce/product-tabs-collapsible.php';
+		require_once \TROVE_DIR . '/inc/components/woocommerce/review-media.php';
+		require_once \TROVE_DIR . '/inc/components/woocommerce/orders.php';
+	}
+
+	/**
 	 * Registers all theme hooks.
 	 *
 	 * @return void
 	 */
 	public static function init() {
+		self::load_dependencies();
+		add_action( 'init', array( __CLASS__, 'load_theme_translations' ), 0 );
+		add_action( 'init', array( __CLASS__, 'register_theme_nav_menus' ), 5 );
 		add_action( 'after_setup_theme', array( __CLASS__, 'setup' ) );
-		add_filter( 'body_class', array( __CLASS__, 'filter_body_class_header_logo' ) );
-		add_filter( 'body_class', array( __CLASS__, 'filter_body_class_blog_layout' ) );
-		add_filter( 'body_class', array( __CLASS__, 'filter_body_class_blog_boxed' ) );
-		add_filter( 'body_class', array( __CLASS__, 'filter_body_class_blog_pagination' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_styles' ) );
 		add_action( 'init', array( __CLASS__, 'register_block_styles' ) );
-		add_filter( 'render_block_woocommerce/customer-account', array( __CLASS__, 'replace_account_icon' ), 20 );
-		add_filter( 'render_block_woocommerce/mini-cart', array( __CLASS__, 'replace_mini_cart_icon' ), 20 );
 	}
 
 	/**
@@ -61,80 +79,25 @@ class TroveTheme {
 	}
 
 	/**
-	 * Adds `has-custom-logo` when the Header → Layout logo is set (without Site Identity logo).
+	 * Loads theme translations (must run on init or later — WordPress 6.7+).
 	 *
-	 * @param string[] $classes Body classes.
-	 * @return string[]
+	 * @return void
 	 */
-	public static function filter_body_class_header_logo( $classes ) {
-		if ( ! is_array( $classes ) ) {
-			$classes = array();
-		}
-		if (
-			'' !== \Trove\get_header_logo_url() &&
-			! in_array( 'has-custom-logo', $classes, true )
-		) {
-			$classes[] = 'has-custom-logo';
-		}
-		return $classes;
+	public static function load_theme_translations() {
+		load_theme_textdomain( 'trove', \TROVE_DIR . '/languages' );
 	}
 
 	/**
-	 * Adds `trove-blog-layout--{list|grid|masonry}` on blog index and post archives.
-	 * Adds `trove-blog-layout--list__top-image` when layout is list and featured image position is Top.
+	 * Registers navigation menus (runs on init so translated labels load after textdomain — WP 6.7+).
 	 *
-	 * @param string[] $classes Body classes.
-	 * @return string[]
+	 * @return void
 	 */
-	public static function filter_body_class_blog_layout( $classes ) {
-		if ( ! is_array( $classes ) ) {
-			$classes = array();
-		}
-		if ( ! \Trove\is_blog_listing_view() ) {
-			return $classes;
-		}
-		$layout = \Trove\get_blog_layout();
-		$classes[] = 'trove-blog-layout--' . $layout;
-		if ( 'list' === $layout && 'top' === \Trove\get_blog_list_featured_image_position() ) {
-			$classes[] = 'trove-blog-layout--list__top-image';
-		}
-		return $classes;
-	}
-
-	/**
-	 * Adds `trove-blog-boxed` when Boxed style is enabled (blog index/archives only).
-	 *
-	 * @param string[] $classes Body classes.
-	 * @return string[]
-	 */
-	public static function filter_body_class_blog_boxed( $classes ) {
-		if ( ! is_array( $classes ) ) {
-			$classes = array();
-		}
-		if ( ! \Trove\is_blog_listing_view() || ! \Trove\is_blog_boxed_style() ) {
-			return $classes;
-		}
-		$classes[] = 'trove-blog-boxed';
-		return $classes;
-	}
-
-	/**
-	 * Adds `trove-blog-pagination--paged` or `trove-blog-pagination--infinite` on blog listings.
-	 *
-	 * @param string[] $classes Body classes.
-	 * @return string[]
-	 */
-	public static function filter_body_class_blog_pagination( $classes ) {
-		if ( ! is_array( $classes ) ) {
-			$classes = array();
-		}
-		if ( ! \Trove\is_blog_listing_view() ) {
-			return $classes;
-		}
-		$classes[] = 'infinite_scroll' === \Trove\get_blog_pagination_type()
-			? 'trove-blog-pagination--infinite'
-			: 'trove-blog-pagination--paged';
-		return $classes;
+	public static function register_theme_nav_menus() {
+		register_nav_menus(
+			array(
+				'primary' => esc_html__( 'Primary menu', 'trove' ),
+			)
+		);
 	}
 
 	/**
@@ -143,11 +106,10 @@ class TroveTheme {
 	 * @return void
 	 */
 	public static function setup() {
-		load_theme_textdomain( 'trove', get_template_directory() . '/languages' );
-
 		add_theme_support( 'automatic-feed-links' );
 		add_theme_support( 'title-tag' );
 		add_theme_support( 'post-thumbnails' );
+		add_theme_support( 'align-wide' );
 		add_theme_support(
 			'html5',
 			array(
@@ -167,12 +129,6 @@ class TroveTheme {
 				'width'       => 240,
 				'flex-height' => true,
 				'flex-width'  => true,
-			)
-		);
-
-		register_nav_menus(
-			array(
-				'primary' => esc_html__( 'Primary menu', 'trove' ),
 			)
 		);
 
@@ -220,7 +176,7 @@ class TroveTheme {
 		}
 		$ext = pathinfo( $relative_path, PATHINFO_EXTENSION );
 		$min_path = preg_replace( '/\.(' . preg_quote( $ext, '/' ) . ')$/', '.min.' . $ext, $relative_path );
-		$min_file = get_template_directory() . '/' . $min_path;
+		$min_file = \TROVE_DIR . '/' . $min_path;
 		if ( file_exists( $min_file ) ) {
 			return get_template_directory_uri() . '/' . $min_path;
 		}
@@ -392,43 +348,5 @@ class TroveTheme {
 				'label' => esc_html__( 'Outline', 'trove' ),
 			)
 		);
-	}
-
-	/**
-	 * Replaces the default WooCommerce customer account icon with a custom SVG.
-	 *
-	 * @param string $block_content The block content.
-	 * @return string
-	 */
-	public static function replace_account_icon( $block_content ) {
-		$custom_icon = '<svg width="23" height="23" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-		$block_content = preg_replace(
-			'/<svg[^>]*>.*?<\/svg>/s',
-			$custom_icon,
-			$block_content,
-			1
-		);
-
-		return $block_content;
-	}
-
-	/**
-	 * Replaces the default WooCommerce mini-cart icon with a custom SVG.
-	 *
-	 * @param string $block_content The block content.
-	 * @return string
-	 */
-	public static function replace_mini_cart_icon( $block_content ) {
-		$custom_icon = '<svg class="wc-block-mini-cart__icon" width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 11.01V11M16 11.01V11M8 8V7C8 5.93913 8.42143 4.92172 9.17157 4.17157C9.92172 3.42143 10.9391 3 12 3C13.0609 3 14.0783 3.42143 14.8284 4.17157C15.5786 4.92172 16 5.93913 16 7V8M8 8H6.84027C5.80009 8 4.93356 8.79732 4.84718 9.83391L4.18051 17.8339C4.08334 18.9999 5.00352 20 6.1736 20H17.8264C18.9965 20 19.9167 18.9999 19.8195 17.8339L19.1528 9.83391C19.0664 8.79732 18.1999 8 17.1597 8H16M8 8H16" transform="translate(0 1)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-		$block_content = preg_replace(
-			'/<svg[^>]*class="[^"]*wc-block-mini-cart__icon[^"]*"[^>]*>.*?<\/svg>/s',
-			$custom_icon,
-			$block_content,
-			1
-		);
-
-		return $block_content;
 	}
 }
