@@ -7,7 +7,7 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ return array(
 		'description'       => __( 'Show or hide the bar for each breakpoint.', 'trove' ),
 		'type'              => 'switch',
 		'responsive'        => true,
-		'default'           => trove_customizer_default(
+		'default'           => customizer_default(
 			'trove_announcement_enabled',
 			array(
 				'pc'     => true,
@@ -34,7 +34,7 @@ return array(
 		'description'       => __( 'Minimum height of the announcement bar per device. Unit applies to all breakpoints.', 'trove' ),
 		'type'              => 'number',
 		'responsive'        => true,
-		'default'           => trove_customizer_default(
+		'default'           => customizer_default(
 			'trove_announcement_height',
 			array(
 				'pc'     => 48,
@@ -43,7 +43,7 @@ return array(
 			)
 		),
 		'unit_setting'      => 'trove_announcement_height_unit',
-		'unit_default'      => (string) trove_customizer_default( 'trove_announcement_height_unit', 'px' ),
+		'unit_default'      => (string) customizer_default( 'trove_announcement_height_unit', 'px' ),
 		'unit_choices'      => array(
 			'px'  => 'px',
 			'rem' => 'rem',
@@ -69,7 +69,7 @@ return array(
 		'description'       => __( 'Font size in the announcement bar for each breakpoint.', 'trove' ),
 		'type'              => 'select',
 		'responsive'        => true,
-		'default'           => trove_customizer_default(
+		'default'           => customizer_default(
 			'trove_announcement_text_size',
 			array(
 				'pc'     => 'medium',
@@ -98,7 +98,7 @@ return array(
 	'trove_announcement_autoplay' => array(
 		'label'             => __( 'Auto play', 'trove' ),
 		'type'              => 'switch',
-		'default'           => (bool) trove_customizer_default( 'trove_announcement_autoplay', false ),
+		'default'           => (bool) customizer_default( 'trove_announcement_autoplay', false ),
 		'transport'         => 'postMessage',
 		'priority'          => 30,
 		'sanitize_callback' => 'wp_validate_boolean',
@@ -107,7 +107,7 @@ return array(
 		'label'             => __( 'Autoplay interval', 'trove' ),
 		'description'       => __( 'Seconds between slides when auto play is on.', 'trove' ),
 		'type'              => 'number',
-		'default'           => (int) trove_customizer_default( 'trove_announcement_autoplay_interval', 5 ),
+		'default'           => (int) customizer_default( 'trove_announcement_autoplay_interval', 5 ),
 		'transport'         => 'postMessage',
 		'priority'          => 40,
 		'input_attrs'       => array(
@@ -123,7 +123,7 @@ return array(
 	'trove_announcement_animation' => array(
 		'label'             => __( 'Animation', 'trove' ),
 		'type'              => 'select',
-		'default'           => (string) trove_customizer_default( 'trove_announcement_animation', 'slide' ),
+		'default'           => (string) customizer_default( 'trove_announcement_animation', 'slide' ),
 		'transport'         => 'postMessage',
 		'priority'          => 20,
 		'choices'           => array(

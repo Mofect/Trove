@@ -1,11 +1,13 @@
 <?php
 /**
- * WooCommerce single-product gallery: Customizer “Gallery type” (stacked vs slider).
+ * WooCommerce single-product gallery: per-product “Gallery type” (stacked vs slider).
  *
  * @package Trove
  */
 
 namespace Trove;
+
+use function Trove\Metabox\get_product_setting;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -18,8 +20,7 @@ function get_woo_single_product_gallery_type() {
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		return 'stacked';
 	}
-	$def = (string) \Trove\Customizer\trove_customizer_default( 'trove_woo_single_product_gallery_type', 'stacked' );
-	$v   = sanitize_key( (string) get_theme_mod( 'trove_woo_single_product_gallery_type', $def ) );
+	$v = sanitize_key( (string) get_product_setting( 'gallery_type', 0, 'stacked' ) );
 
 	return 'slider' === $v ? 'slider' : 'stacked';
 }
@@ -33,8 +34,7 @@ function get_woo_single_product_gallery_stacked_columns() {
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		return 4;
 	}
-	$def = (string) \Trove\Customizer\trove_customizer_default( 'trove_woo_single_product_gallery_stacked_columns', '4' );
-	$n   = (int) get_theme_mod( 'trove_woo_single_product_gallery_stacked_columns', $def );
+	$n = (int) get_product_setting( 'gallery_stacked_columns', 0, '4' );
 	if ( $n < 1 ) {
 		$n = 1;
 	}
@@ -53,8 +53,7 @@ function get_woo_single_product_gallery_slider_position() {
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		return 'bottom';
 	}
-	$def = (string) \Trove\Customizer\trove_customizer_default( 'trove_woo_single_product_gallery_slider_position', 'bottom' );
-	$v   = sanitize_key( (string) get_theme_mod( 'trove_woo_single_product_gallery_slider_position', $def ) );
+	$v = sanitize_key( (string) get_product_setting( 'gallery_slider_position', 0, 'bottom' ) );
 	if ( 'left' !== $v && 'right' !== $v && 'bottom' !== $v ) {
 		$v = 'bottom';
 	}
@@ -64,12 +63,12 @@ function get_woo_single_product_gallery_slider_position() {
 /**
  * Declares Flexslider support only when “Slider” is selected (enqueues wc-flexslider + enables carousel).
  *
- * Runs on `wp_loaded` (after Customizer preview filters) but before `wp` / enqueue, so WooCommerce reads correct support.
+ * Runs on `wp` (main query available) but before enqueue, so WooCommerce reads correct support.
  *
  * @return void
  */
 function register_woocommerce_single_product_gallery_theme_support() {
-	if ( ! class_exists( 'WooCommerce' ) ) {
+	if ( ! class_exists( 'WooCommerce' ) || ! is_product() ) {
 		return;
 	}
 	if ( 'slider' === get_woo_single_product_gallery_type() ) {
@@ -106,6 +105,6 @@ function filter_woocommerce_single_product_image_gallery_classes_stacked( $class
 	return $classes;
 }
 
-add_action( 'wp_loaded', __NAMESPACE__ . '\\register_woocommerce_single_product_gallery_theme_support', 20 );
+add_action( 'wp', __NAMESPACE__ . '\\register_woocommerce_single_product_gallery_theme_support', 5 );
 add_filter( 'woocommerce_gallery_image_size', __NAMESPACE__ . '\\filter_woocommerce_gallery_image_size_stacked' );
 add_filter( 'woocommerce_single_product_image_gallery_classes', __NAMESPACE__ . '\\filter_woocommerce_single_product_image_gallery_classes_stacked' );

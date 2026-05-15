@@ -12,7 +12,7 @@
 	}
 
 	/**
-	 * Match PHP trove_normalize_color_for_scheme_dedupe() so preset + live swatches dedupe the same way.
+	 * Match PHP normalize_color_for_scheme_dedupe() so preset + live swatches dedupe the same way.
 	 *
 	 * @param {string} raw Trimmed color string.
 	 * @return {string} Non-empty key, or '' if invalid / empty.

@@ -18,7 +18,7 @@ function is_lazy_load_images_enabled() {
 	return wp_validate_boolean(
 		get_theme_mod(
 			'trove_perf_lazy_load_images',
-			(bool) \Trove\Customizer\trove_customizer_default( 'trove_perf_lazy_load_images', true )
+			(bool) \Trove\Customizer\customizer_default( 'trove_perf_lazy_load_images', true )
 		)
 	);
 }

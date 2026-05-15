@@ -33,7 +33,9 @@ final class Fields {
 			'color_pair',
 			'hidden',
 			'image_attachment',
+			'product_video',
 			'alignment',
+			'heading',
 		);
 	}
 
@@ -76,6 +78,8 @@ final class Fields {
 				'left'  => isset( $hints['left'] ) ? (string) $hints['left'] : '',
 				'right' => isset( $hints['right'] ) ? (string) $hints['right'] : '',
 			);
+		} elseif ( 'heading' === $type ) {
+			// Display-only section label.
 		} elseif ( ! in_array( $type, self::allowed_types(), true ) ) {
 			$type = 'text';
 		}
@@ -97,10 +101,16 @@ final class Fields {
 		$field['description'] = isset( $field['description'] ) ? (string) $field['description'] : '';
 		$field['default']   = array_key_exists( 'default', $field ) ? $field['default'] : null;
 		$field['options']   = isset( $field['options'] ) && is_array( $field['options'] ) ? $field['options'] : array();
-		$field['unless_switch']     = isset( $field['unless_switch'] ) ? sanitize_key( (string) $field['unless_switch'] ) : '';
-		$field['only_when_switch'] = isset( $field['only_when_switch'] ) ? sanitize_key( (string) $field['only_when_switch'] ) : '';
+		$field['unless_switch']      = isset( $field['unless_switch'] ) ? sanitize_key( (string) $field['unless_switch'] ) : '';
+		$field['only_when_switch']   = isset( $field['only_when_switch'] ) ? sanitize_key( (string) $field['only_when_switch'] ) : '';
+		$only_when_select            = isset( $field['only_when_select'] ) && is_array( $field['only_when_select'] ) ? $field['only_when_select'] : array();
+		$field['only_when_select']   = array(
+			'field'   => isset( $only_when_select['field'] ) ? sanitize_key( (string) $only_when_select['field'] ) : '',
+			'value'   => isset( $only_when_select['value'] ) ? (string) $only_when_select['value'] : '',
+			'default' => isset( $only_when_select['default'] ) ? (string) $only_when_select['default'] : '',
+		);
 		$tab_raw                   = isset( $field['tab'] ) ? sanitize_key( (string) $field['tab'] ) : '';
-		$field['tab']              = in_array( $tab_raw, array( 'content', 'header', 'footer', 'page_banner' ), true ) ? $tab_raw : '';
+		$field['tab']              = in_array( $tab_raw, array( 'content', 'header', 'footer', 'page_banner', 'gallery' ), true ) ? $tab_raw : '';
 
 		return $field;
 	}
@@ -192,13 +202,39 @@ final class Fields {
 				$initial_hide = true;
 			}
 		}
+		$only_when_select = isset( $field['only_when_select'] ) && is_array( $field['only_when_select'] ) ? $field['only_when_select'] : array();
+		$peer_select      = isset( $only_when_select['field'] ) ? sanitize_key( (string) $only_when_select['field'] ) : '';
+		$peer_want        = isset( $only_when_select['value'] ) ? (string) $only_when_select['value'] : '';
+		if ( '' !== $peer_select && '' !== $peer_want ) {
+			$peer_select_id = 'trove-mb-' . sanitize_key( $metabox_id ) . '-' . $peer_select;
+			$div_attrs     .= ' data-trove-mb-hide-when-select-not="' . esc_attr( $peer_select_id . '|' . $peer_want ) . '"';
+			$peer_stored    = '';
+			if ( $post_id > 0 ) {
+				$peer_meta = get_post_meta( $post_id, self::meta_key( $metabox_id, $peer_select ), true );
+				if ( '' !== $peer_meta && false !== $peer_meta ) {
+					$peer_stored = (string) $peer_meta;
+				}
+			}
+			$peer_current = ( PRODUCT_SETTINGS_METABOX_ID === $metabox_id && function_exists( __NAMESPACE__ . '\\resolve_product_setting_value' ) )
+				? (string) resolve_product_setting_value( $peer_select, $peer_stored )
+				: ( '' !== $peer_stored ? $peer_stored : ( isset( $only_when_select['default'] ) ? (string) $only_when_select['default'] : '' ) );
+			if ( (string) $peer_current !== (string) $peer_want ) {
+				$initial_hide = true;
+			}
+		}
 		if ( $initial_hide ) {
 			$div_attrs .= ' style="display:none"';
 		}
 
 		echo '<div class="trove-metabox-field trove-metabox-field--' . esc_attr( $field['type'] ) . '"' . $div_attrs . '>';
 
-		if ( 'checkbox' !== $field['type'] && 'switch' !== $field['type'] && 'range' !== $field['type'] && 'hidden' !== $field['type'] && 'color' !== $field['type'] && 'color_pair' !== $field['type'] && 'image_attachment' !== $field['type'] && 'alignment' !== $field['type'] ) {
+		if ( 'heading' === $field['type'] ) {
+			echo '<p class="trove-metabox-field__heading"><strong>' . esc_html( $field['name'] ) . '</strong></p>';
+			echo '</div>';
+			return;
+		}
+
+		if ( 'checkbox' !== $field['type'] && 'switch' !== $field['type'] && 'range' !== $field['type'] && 'hidden' !== $field['type'] && 'color' !== $field['type'] && 'color_pair' !== $field['type'] && 'image_attachment' !== $field['type'] && 'product_video' !== $field['type'] && 'alignment' !== $field['type'] ) {
 			echo '<p class="trove-metabox-field__label"><label for="' . esc_attr( $id_attr ) . '">';
 			echo esc_html( $field['name'] );
 			echo '</label></p>';
@@ -255,7 +291,14 @@ final class Fields {
 				break;
 
 			case 'select':
-				printf( '<select class="widefat" id="%1$s" name="%2$s">', esc_attr( $id_attr ), esc_attr( $name ) );
+				$select_attrs = '';
+				if ( PRODUCT_SETTINGS_METABOX_ID === $metabox_id ) {
+					$theme_defs = product_settings_defaults();
+					if ( isset( $theme_defs[ $field['id'] ] ) ) {
+						$select_attrs = ' data-trove-mb-theme-default="' . esc_attr( (string) $theme_defs[ $field['id'] ] ) . '"';
+					}
+				}
+				printf( '<select class="widefat" id="%1$s" name="%2$s"%3$s>', esc_attr( $id_attr ), esc_attr( $name ), $select_attrs );
 				foreach ( $field['options'] as $opt_val => $opt_label ) {
 					printf(
 						'<option value="%1$s" %2$s>%3$s</option>',
@@ -486,6 +529,31 @@ final class Fields {
 				);
 				break;
 
+			case 'product_video':
+				$url_val = is_string( $value ) ? $value : '';
+				echo '<p class="trove-metabox-field__label"><label for="' . esc_attr( $id_attr ) . '">';
+				echo esc_html( $field['name'] );
+				echo '</label></p>';
+				echo '<div class="trove-metabox-field__product-video" data-trove-mb-product-video>';
+				printf(
+					'<input class="widefat trove-metabox-field__product-video-url" type="url" id="%1$s" name="%2$s" value="%3$s" placeholder="%4$s" autocomplete="off" />',
+					esc_attr( $id_attr ),
+					esc_attr( $name ),
+					esc_attr( $url_val ),
+					esc_attr__( 'https://', 'trove' )
+				);
+				echo '<span class="trove-metabox-field__product-video-actions">';
+				printf(
+					'<button type="button" class="button trove-mb-video-select">%s</button>',
+					esc_html__( 'Upload video', 'trove' )
+				);
+				printf(
+					'<button type="button" class="button-link trove-mb-video-clear">%s</button>',
+					esc_html__( 'Remove', 'trove' )
+				);
+				echo '</span></div>';
+				break;
+
 			case 'image_attachment':
 				echo '<p class="trove-metabox-field__label"><label for="' . esc_attr( $id_attr ) . '">';
 				echo esc_html( $field['name'] );
@@ -582,10 +650,11 @@ final class Fields {
 				return sanitize_email( wp_unslash( (string) $raw ) );
 
 			case 'url':
+			case 'product_video':
 				return esc_url_raw( wp_unslash( (string) $raw ) );
 
 			case 'color':
-				return \Trove\Customizer\trove_sanitize_css_color( isset( $raw ) ? wp_unslash( $raw ) : '' );
+				return \Trove\Customizer\sanitize_css_color( isset( $raw ) ? wp_unslash( $raw ) : '' );
 
 			case 'image_attachment':
 				$id = isset( $raw ) ? absint( wp_unslash( $raw ) ) : 0;

@@ -1,13 +1,26 @@
 /**
- * Show / hide metabox fields based on peer switches:
+ * Show / hide metabox fields based on peer switches or selects:
  * - data-trove-mb-hide-when-checked: hidden when peer checkbox is checked.
  * - data-trove-mb-hide-when-unchecked: hidden when peer checkbox is not checked.
+ * - data-trove-mb-hide-when-select-not: hidden when peer select value !== expected (id|value).
  *
  * Uses delegated events and delayed resync so meta boxes that mount after DOM ready
  * (e.g. block editor) still bind and update correctly.
  */
 ( function ( $ ) {
 	'use strict';
+
+	function selectEffectiveValue( $select ) {
+		if ( ! $select.length ) {
+			return '';
+		}
+		var val = String( $select.val() );
+		if ( val !== '' ) {
+			return val;
+		}
+		var themeDefault = $select.attr( 'data-trove-mb-theme-default' );
+		return themeDefault !== undefined && themeDefault !== '' ? String( themeDefault ) : val;
+	}
 
 	function syncRow( $row ) {
 		var hide = false;
@@ -25,11 +38,21 @@
 				hide = true;
 			}
 		}
+		var selectSpec = $row.attr( 'data-trove-mb-hide-when-select-not' );
+		if ( selectSpec ) {
+			var parts = selectSpec.split( '|' );
+			var peerId = parts[ 0 ];
+			var wantVal = parts.slice( 1 ).join( '|' );
+			var $select = $( document.getElementById( peerId ) );
+			if ( ! $select.length || selectEffectiveValue( $select ) !== String( wantVal ) ) {
+				hide = true;
+			}
+		}
 		$row.css( 'display', hide ? 'none' : '' );
 	}
 
 	function syncAllConditionalRows() {
-		$( '[data-trove-mb-hide-when-checked], [data-trove-mb-hide-when-unchecked]' ).each( function () {
+		$( '[data-trove-mb-hide-when-checked], [data-trove-mb-hide-when-unchecked], [data-trove-mb-hide-when-select-not]' ).each( function () {
 			syncRow( $( this ) );
 		} );
 	}
@@ -49,6 +72,18 @@
 				} );
 		}
 	);
+
+	$( document ).on( 'change', '.trove-metabox-fields select', function () {
+		var id = this.id;
+		if ( ! id || id.indexOf( 'trove-mb-' ) !== 0 ) {
+			return;
+		}
+		$( document )
+			.find( '[data-trove-mb-hide-when-select-not^="' + id + '|"]' )
+			.each( function () {
+				syncRow( $( this ) );
+			} );
+	} );
 
 	$( function () {
 		syncAllConditionalRows();

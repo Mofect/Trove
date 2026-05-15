@@ -7,7 +7,7 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -18,7 +18,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_content_wide_width', 1200 ),
+		'default'           => (int) customizer_default( 'trove_content_wide_width', 1200 ),
 		'input_attrs'       => array(
 			'min'  => 800,
 			'max'  => 1900,
@@ -32,7 +32,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_content_width', 800 ),
+		'default'           => (int) customizer_default( 'trove_content_width', 800 ),
 		'input_attrs'       => array(
 			'min'  => 600,
 			'max'  => 1000,
@@ -46,7 +46,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_content_vertical_spacing', 48 ),
+		'default'           => (int) customizer_default( 'trove_content_vertical_spacing', 48 ),
 		'input_attrs'       => array(
 			'min'  => 0,
 			'max'  => 200,
@@ -60,7 +60,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_content_horizontal_spacing', 20 ),
+		'default'           => (int) customizer_default( 'trove_content_horizontal_spacing', 20 ),
 		'input_attrs'       => array(
 			'min'  => 0,
 			'max'  => 100,

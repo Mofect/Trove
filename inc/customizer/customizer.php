@@ -22,7 +22,7 @@ require_once __DIR__ . '/class-manager.php';
 function bootstrap_customizer() {
 	$manager = new Manager();
 	add_action( 'customize_register', array( $manager, 'register' ), 10 );
-	add_action( 'customize_register', __NAMESPACE__ . '\\trove_migrate_woocommerce_product_catalog_controls', 20 );
+	add_action( 'customize_register', __NAMESPACE__ . '\\migrate_woocommerce_product_catalog_controls', 20 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\remove_woocommerce_checkout_section', 30 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\flatten_woocommerce_panel_to_root', 9997 );
 	add_action( 'customize_register', __NAMESPACE__ . '\\position_woocommerce_below_pages', 9998 );
@@ -38,7 +38,7 @@ bootstrap_customizer();
  * @param \WP_Customize_Manager $wp_customize Customizer manager.
  * @return void
  */
-function trove_migrate_woocommerce_product_catalog_controls( $wp_customize ) {
+function migrate_woocommerce_product_catalog_controls( $wp_customize ) {
 	if ( ! $wp_customize instanceof \WP_Customize_Manager ) {
 		return;
 	}
@@ -115,6 +115,45 @@ function sanitize_repeater_text_json( $value ) {
 	}
 
 	$out = array_slice( $out, 0, 10 );
+
+	return wp_json_encode( array_values( $out ) );
+}
+
+/**
+ * Sanitize repeater rows stored as JSON array of { title, content } objects.
+ *
+ * @param mixed $value Raw value.
+ * @return string JSON string.
+ */
+function sanitize_repeater_kv_json( $value ) {
+	if ( is_array( $value ) ) {
+		$decoded = $value;
+	} elseif ( is_string( $value ) ) {
+		$decoded = json_decode( $value, true );
+	} else {
+		$decoded = array();
+	}
+
+	if ( ! is_array( $decoded ) ) {
+		return wp_json_encode( array() );
+	}
+
+	$out = array();
+	foreach ( $decoded as $row ) {
+		if ( ! is_array( $row ) ) {
+			continue;
+		}
+		$title   = isset( $row['title'] ) ? sanitize_text_field( (string) $row['title'] ) : '';
+		$content = isset( $row['content'] ) ? wp_kses_post( (string) $row['content'] ) : '';
+		if ( '' !== $title || '' !== $content ) {
+			$out[] = array(
+				'title'   => $title,
+				'content' => $content,
+			);
+		}
+	}
+
+	$out = array_slice( $out, 0, 20 );
 
 	return wp_json_encode( array_values( $out ) );
 }
@@ -313,7 +352,7 @@ function position_woocommerce_below_pages( $wp_customize ) {
  * @param array<string, mixed> $config Section options array.
  * @return array<string, string|array{left:string, right:string}>
  */
-function trove_swatch_hints_from_flat_options_config( array $config ) {
+function swatch_hints_from_flat_options_config( array $config ) {
 	$out = array();
 	foreach ( $config as $control_id => $field ) {
 		if ( ! is_array( $field ) || empty( $field['type'] ) ) {
@@ -349,7 +388,7 @@ function get_color_swatch_hints_export() {
 		if ( ! is_array( $config ) ) {
 			continue;
 		}
-		$merged = array_merge( $merged, trove_swatch_hints_from_flat_options_config( $config ) );
+		$merged = array_merge( $merged, swatch_hints_from_flat_options_config( $config ) );
 	}
 	return $merged;
 }
@@ -405,7 +444,7 @@ function get_color_scheme_swatch_titles() {
  */
 function enqueue_customizer_ui_assets() {
 	$ver = defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0';
-	$dir = get_template_directory_uri();
+	$dir = \TROVE_URI;
 
 	wp_enqueue_style(
 		'trove-customizer-responsive-tabs',
@@ -604,7 +643,7 @@ function enqueue_customizer_ui_assets() {
 		true
 	);
 
-	$woo_single_preview_url = '';
+	$woo_single_preview_url  = '';
 	$woo_catalog_preview_url = '';
 	if ( class_exists( 'WooCommerce' ) && function_exists( 'wc_get_products' ) ) {
 		$catalog_products = wc_get_products(
@@ -668,13 +707,36 @@ function enqueue_customizer_ui_assets() {
 		)
 	);
 
+	wp_enqueue_style(
+		'trove-customizer-repeater-kv',
+		$dir . '/inc/customizer/css/customizer-repeater-kv.css',
+		array( 'customize-controls' ),
+		$ver
+	);
+
+	wp_enqueue_script(
+		'trove-customizer-repeater-kv',
+		$dir . '/inc/customizer/js/customizer-repeater-kv.js',
+		array( 'jquery', 'customize-controls' ),
+		$ver,
+		true
+	);
+
+	wp_localize_script(
+		'trove-customizer-repeater-kv',
+		'troveRepeaterKvI18n',
+		array(
+			'untitled' => __( 'Untitled', 'trove' ),
+		)
+	);
+
 	wp_localize_script(
 		'trove-customizer-font-weight',
 		'troveFontWeightMap',
 		array(
 			'map'    => \Trove\Customizer\get_font_weight_map_for_customizer(),
-			'labels' => \Trove\Customizer\trove_font_weight_choice_labels(),
-			'pairs'  => trove_font_weight_setting_pairs(),
+			'labels' => \Trove\Customizer\font_weight_choice_labels(),
+			'pairs'  => font_weight_setting_pairs(),
 		)
 	);
 
@@ -682,7 +744,7 @@ function enqueue_customizer_ui_assets() {
 		'trove-customizer-color-schemes-menu',
 		'troveCzColorSchemes',
 		array(
-			'keys'         => trove_global_color_scheme_setting_keys(),
+			'keys'         => global_color_scheme_setting_keys(),
 			'swatchTitles' => get_color_scheme_swatch_titles(),
 			'storageKey'   => 'trove_wp_custom_color_schemes_u' . get_current_user_id(),
 			'i18n'         => array(

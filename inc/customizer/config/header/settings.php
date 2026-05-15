@@ -7,7 +7,7 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,7 +16,7 @@ return array(
 		'label'             => __( 'Logo', 'trove' ),
 		'description'       => __( 'Optional. When set, this image is used in the header instead of the logo from Site Identity.', 'trove' ),
 		'type'              => 'image',
-		'default'           => (string) trove_customizer_default( 'trove_header_logo', '' ),
+		'default'           => (string) customizer_default( 'trove_header_logo', '' ),
 		'transport'         => 'refresh',
 		'sanitize_callback' => 'esc_url_raw',
 	),
@@ -24,7 +24,7 @@ return array(
 		'label'             => __( 'Logo width', 'trove' ),
 		'description'       => __( 'Maximum width for the header logo.', 'trove' ),
 		'type'              => 'range',
-		'default'           => (int) trove_customizer_default( 'trove_header_logo_width', 200 ),
+		'default'           => (int) customizer_default( 'trove_header_logo_width', 200 ),
 		'input_attrs'       => array(
 			'min'  => 40,
 			'max'  => 400,
@@ -36,7 +36,7 @@ return array(
 	'trove_header_sticky' => array(
 		'label'             => __( 'Sticky header', 'trove' ),
 		'type'              => 'select',
-		'default'           => (string) trove_customizer_default( 'trove_header_sticky', 'none' ),
+		'default'           => (string) customizer_default( 'trove_header_sticky', 'none' ),
 		'transport'         => 'postMessage',
 		'choices'           => array(
 			'none'         => __( 'None', 'trove' ),
@@ -52,7 +52,7 @@ return array(
 	'trove_header_bottom_border' => array(
 		'label'             => __( 'Show bottom border', 'trove' ),
 		'type'              => 'switch',
-		'default'           => (bool) trove_customizer_default( 'trove_header_bottom_border', false ),
+		'default'           => (bool) customizer_default( 'trove_header_bottom_border', false ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'wp_validate_boolean',
 	),

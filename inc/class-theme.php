@@ -30,7 +30,9 @@ class TroveTheme {
 		require_once \TROVE_DIR . '/inc/components/Announcement-bar.php';
 		require_once \TROVE_DIR . '/inc/components/blog.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/product-gallery.php';
+		require_once \TROVE_DIR . '/inc/components/woocommerce/product-video.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/product-tabs-collapsible.php';
+		require_once \TROVE_DIR . '/inc/components/woocommerce/grouped-product.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/review-media.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/orders.php';
 	}
@@ -45,6 +47,7 @@ class TroveTheme {
 		add_action( 'init', array( __CLASS__, 'load_theme_translations' ), 0 );
 		add_action( 'init', array( __CLASS__, 'register_theme_nav_menus' ), 5 );
 		add_action( 'after_setup_theme', array( __CLASS__, 'setup' ) );
+		add_action( 'widgets_init', array( __CLASS__, 'register_theme_sidebars' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_styles' ) );
 		add_action( 'init', array( __CLASS__, 'register_block_styles' ) );
 	}
@@ -59,7 +62,7 @@ class TroveTheme {
 			'trove_google_font_family',
 			'trove_menu_google_font_family',
 		);
-		foreach ( array_keys( \Trove\Customizer\trove_typography_font_scope_meta() ) as $scope ) {
+		foreach ( array_keys( \Trove\Customizer\typography_font_scope_meta() ) as $scope ) {
 			$ids[] = 'trove_' . $scope . '_google_font_family';
 		}
 		$families = array();
@@ -67,7 +70,7 @@ class TroveTheme {
 			$family = \Trove\Customizer\sanitize_google_font_family(
 				get_theme_mod(
 					$setting_id,
-					(string) \Trove\Customizer\trove_customizer_default( $setting_id, 'system' )
+					(string) \Trove\Customizer\customizer_default( $setting_id, 'system' )
 				)
 			);
 			if ( 'system' === $family ) {
@@ -96,6 +99,37 @@ class TroveTheme {
 		register_nav_menus(
 			array(
 				'primary' => esc_html__( 'Primary menu', 'trove' ),
+			)
+		);
+	}
+
+	/**
+	 * Registers widget areas (sidebars).
+	 *
+	 * @return void
+	 */
+	public static function register_theme_sidebars() {
+		register_sidebar(
+			array(
+				'name'          => esc_html__( 'Blog Sidebar', 'trove' ),
+				'id'            => 'blog-sidebar',
+				'description'   => esc_html__( 'Appears beside blog listings and post archives when your layout includes a sidebar.', 'trove' ),
+				'before_widget' => '<section id="%1$s" class="widget %2$s">',
+				'after_widget'  => '</section>',
+				'before_title'  => '<h2 class="widget-title">',
+				'after_title'   => '</h2>',
+			)
+		);
+
+		register_sidebar(
+			array(
+				'name'          => esc_html__( 'WooCommerce Sidebar', 'trove' ),
+				'id'            => 'woocommerce-sidebar',
+				'description'   => esc_html__( 'Appears on shop and product archive layouts when your layout includes a sidebar.', 'trove' ),
+				'before_widget' => '<section id="%1$s" class="widget %2$s">',
+				'after_widget'  => '</section>',
+				'before_title'  => '<h2 class="widget-title">',
+				'after_title'   => '</h2>',
 			)
 		);
 	}
@@ -143,9 +177,23 @@ class TroveTheme {
 				add_editor_style( $gf );
 			}
 		}
-		add_editor_style( 'assets/css/base.css' );
+		$editor_base = 'assets/css/base.css';
+		if ( self::should_load_minified_assets() ) {
+			$min_base = 'assets/css/base.min.css';
+			if ( is_file( \TROVE_DIR . '/' . $min_base ) ) {
+				$editor_base = $min_base;
+			}
+		}
+		add_editor_style( $editor_base );
 		if ( class_exists( 'WooCommerce' ) ) {
-			add_editor_style( 'assets/css/shop.css' );
+			$editor_shop = 'assets/css/shop.css';
+			if ( self::should_load_minified_assets() ) {
+				$min_shop = 'assets/css/shop.min.css';
+				if ( is_file( \TROVE_DIR . '/' . $min_shop ) ) {
+					$editor_shop = $min_shop;
+				}
+			}
+			add_editor_style( $editor_shop );
 		}
 	}
 
@@ -158,7 +206,7 @@ class TroveTheme {
 		return wp_validate_boolean(
 			get_theme_mod(
 				'trove_perf_minify_assets',
-				(bool) \Trove\Customizer\trove_customizer_default( 'trove_perf_minify_assets', true )
+				(bool) \Trove\Customizer\customizer_default( 'trove_perf_minify_assets', true )
 			)
 		);
 	}
@@ -172,15 +220,15 @@ class TroveTheme {
 	public static function asset_url( $relative_path ) {
 		$relative_path = ltrim( $relative_path, '/' );
 		if ( ! self::should_load_minified_assets() ) {
-			return get_template_directory_uri() . '/' . $relative_path;
+			return \TROVE_URI . '/' . $relative_path;
 		}
 		$ext = pathinfo( $relative_path, PATHINFO_EXTENSION );
 		$min_path = preg_replace( '/\.(' . preg_quote( $ext, '/' ) . ')$/', '.min.' . $ext, $relative_path );
 		$min_file = \TROVE_DIR . '/' . $min_path;
 		if ( file_exists( $min_file ) ) {
-			return get_template_directory_uri() . '/' . $min_path;
+			return \TROVE_URI . '/' . $min_path;
 		}
-		return get_template_directory_uri() . '/' . $relative_path;
+		return \TROVE_URI . '/' . $relative_path;
 	}
 
 	/**
@@ -246,58 +294,73 @@ class TroveTheme {
 			true
 		);
 
-		if ( class_exists( 'WooCommerce' ) && function_exists( 'is_product' ) && is_product() ) {
-			$ajax_cart_deps = array( 'jquery' );
-			wp_enqueue_script(
-				'sticksy',
-				get_template_directory_uri() . '/assets/js/sticksy.min.js',
-				array(),
-				TROVE_THEME_VERSION,
-				true
-			);
-			$ajax_cart_deps[] = 'sticksy';
-			// Let Woo add localized params; ensures fragment + legacy events behave like core.
-			if ( wp_script_is( 'wc-add-to-cart', 'registered' ) ) {
-				wp_enqueue_script( 'wc-add-to-cart' );
-				$ajax_cart_deps[] = 'wc-add-to-cart';
-			}
-			if ( wp_script_is( 'wc-cart-fragments', 'registered' ) ) {
-				wp_enqueue_script( 'wc-cart-fragments' );
-				$ajax_cart_deps[] = 'wc-cart-fragments';
-			}
-			if ( wp_script_is( 'wp-data', 'registered' ) ) {
-				wp_enqueue_script( 'wp-data' );
-				$ajax_cart_deps[] = 'wp-data';
-			}
-			// After Woo (loads wp-data + block cart store when mini-cart is present).
-			if ( wp_script_is( 'wc-block-mini-cart', 'registered' ) ) {
-				wp_enqueue_script( 'wc-block-mini-cart' );
-				$ajax_cart_deps[] = 'wc-block-mini-cart';
+		if ( class_exists( 'WooCommerce' ) && function_exists( 'is_product' ) ) {
+			$woo_shop_sidebar = \Trove\is_woo_shop_filter_sidebar_enabled();
+
+			if ( is_product() || $woo_shop_sidebar ) {
+				wp_enqueue_script(
+					'sticksy',
+					\TROVE_URI . '/assets/js/sticksy.min.js',
+					array(),
+					TROVE_THEME_VERSION,
+					true
+				);
 			}
 
-			wp_enqueue_script(
-				'trove-product-ajax-cart',
-				self::asset_url( 'assets/js/shop.js' ),
-				array_values( array_unique( $ajax_cart_deps ) ),
-				TROVE_THEME_VERSION,
-				true
-			);
-			wp_enqueue_script(
-				'trove-product-review-dialog',
-				self::asset_url( 'assets/js/product-review-dialog.js' ),
-				array(),
-				TROVE_THEME_VERSION,
-				true
-			);
-			wp_localize_script(
-				'trove-product-ajax-cart',
-				'troveProductAjaxCart',
-				array(
-					'ajaxUrl'         => \WC_AJAX::get_endpoint( 'add_to_cart' ),
-					'storeCartUrl'    => rest_url( 'wc/store/v1/cart' ),
-					'storeApiNonce'   => wp_create_nonce( 'wc_store_api' ),
-				)
-			);
+			if ( is_product() ) {
+				$ajax_cart_deps = array( 'jquery' );
+				$ajax_cart_deps[] = 'sticksy';
+				// Let Woo add localized params; ensures fragment + legacy events behave like core.
+				if ( wp_script_is( 'wc-add-to-cart', 'registered' ) ) {
+					wp_enqueue_script( 'wc-add-to-cart' );
+					$ajax_cart_deps[] = 'wc-add-to-cart';
+				}
+				if ( wp_script_is( 'wc-cart-fragments', 'registered' ) ) {
+					wp_enqueue_script( 'wc-cart-fragments' );
+					$ajax_cart_deps[] = 'wc-cart-fragments';
+				}
+				if ( wp_script_is( 'wp-data', 'registered' ) ) {
+					wp_enqueue_script( 'wp-data' );
+					$ajax_cart_deps[] = 'wp-data';
+				}
+				// After Woo (loads wp-data + block cart store when mini-cart is present).
+				if ( wp_script_is( 'wc-block-mini-cart', 'registered' ) ) {
+					wp_enqueue_script( 'wc-block-mini-cart' );
+					$ajax_cart_deps[] = 'wc-block-mini-cart';
+				}
+
+				wp_enqueue_script(
+					'trove-product-ajax-cart',
+					self::asset_url( 'assets/js/shop.js' ),
+					array_values( array_unique( $ajax_cart_deps ) ),
+					TROVE_THEME_VERSION,
+					true
+				);
+				wp_enqueue_script(
+					'trove-product-review-dialog',
+					self::asset_url( 'assets/js/product-review-dialog.js' ),
+					array(),
+					TROVE_THEME_VERSION,
+					true
+				);
+				wp_localize_script(
+					'trove-product-ajax-cart',
+					'troveProductAjaxCart',
+					array(
+						'ajaxUrl'       => \WC_AJAX::get_endpoint( 'add_to_cart' ),
+						'storeCartUrl'  => rest_url( 'wc/store/v1/cart' ),
+						'storeApiNonce' => wp_create_nonce( 'wc_store_api' ),
+					)
+				);
+			} elseif ( $woo_shop_sidebar ) {
+				wp_enqueue_script(
+					'trove-product-ajax-cart',
+					self::asset_url( 'assets/js/shop.js' ),
+					array( 'jquery', 'sticksy' ),
+					TROVE_THEME_VERSION,
+					true
+				);
+			}
 		}
 
 		global $wp_query;

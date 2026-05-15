@@ -326,7 +326,7 @@ function build_page_banner_css( $post_id ) {
 		: '';
 
 	$color = is_string( $color_raw ) && '' !== trim( $color_raw )
-		? \Trove\Customizer\trove_sanitize_css_color( $color_raw )
+		? \Trove\Customizer\sanitize_css_color( $color_raw )
 		: '';
 
 	$bid = 'trove-page-banner-' . $post_id;
@@ -399,7 +399,7 @@ function render_page_banner_after_header() {
 
 	$overlay_raw = get_post_field_value( $post_id, 'page_settings', 'page_banner_overlay_color', null );
 	$overlay     = is_string( $overlay_raw ) && '' !== trim( $overlay_raw )
-		? \Trove\Customizer\trove_sanitize_css_color( $overlay_raw )
+		? \Trove\Customizer\sanitize_css_color( $overlay_raw )
 		: '';
 	if ( 'transparent' === strtolower( (string) $overlay ) ) {
 		$overlay = '';
@@ -407,7 +407,7 @@ function render_page_banner_after_header() {
 
 	$title_color_raw = get_post_field_value( $post_id, 'page_settings', 'page_title_color', null );
 	$title_color     = is_string( $title_color_raw ) && '' !== trim( $title_color_raw )
-		? \Trove\Customizer\trove_sanitize_css_color( $title_color_raw )
+		? \Trove\Customizer\sanitize_css_color( $title_color_raw )
 		: '';
 	if ( 'transparent' === strtolower( (string) $title_color ) ) {
 		$title_color = '';

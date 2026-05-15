@@ -23,20 +23,20 @@ defined( 'ABSPATH' ) || exit;
 function register_page_settings_metabox() {
 	$post_types = apply_filters( 'trove_page_settings_metabox_post_types', array( 'page' ) );
 
-	$vert_placeholder  = (string) \Trove\Customizer\trove_get_content_vertical_spacing_px();
-	$horiz_placeholder = (string) \Trove\Customizer\trove_get_content_horizontal_spacing_px();
+	$vert_placeholder  = (string) \Trove\Customizer\get_content_vertical_spacing_px();
+	$horiz_placeholder = (string) \Trove\Customizer\get_content_horizontal_spacing_px();
 
-	$color_defs          = \Trove\Customizer\trove_color_theme_mod_definitions();
+	$color_defs          = \Trove\Customizer\color_theme_mod_definitions();
 	$header_text_d       = isset( $color_defs['trove_header_text_color'] ) ? (string) $color_defs['trove_header_text_color']['default'] : '#111111';
 	$header_link_d       = isset( $color_defs['trove_header_link_color'] ) ? (string) $color_defs['trove_header_link_color']['default'] : '#000000';
 	$header_link_hover_d = isset( $color_defs['trove_header_link_hover_color'] ) ? (string) $color_defs['trove_header_link_hover_color']['default'] : '#666666';
-	$header_text_sample        = \Trove\Customizer\trove_color_theme_mod( 'trove_header_text_color', $header_text_d );
-	$header_link_sample        = \Trove\Customizer\trove_color_theme_mod( 'trove_header_link_color', $header_link_d );
-	$header_link_hover_sample  = \Trove\Customizer\trove_color_theme_mod( 'trove_header_link_hover_color', $header_link_hover_d );
-	$header_border_sample      = trove_metabox_header_border_theme_mod_resolved();
+	$header_text_sample        = \Trove\Customizer\color_theme_mod( 'trove_header_text_color', $header_text_d );
+	$header_link_sample        = \Trove\Customizer\color_theme_mod( 'trove_header_link_color', $header_link_d );
+	$header_link_hover_sample  = \Trove\Customizer\color_theme_mod( 'trove_header_link_hover_color', $header_link_hover_d );
+	$header_border_sample      = metabox_header_border_theme_mod_resolved();
 	$header_border_default_hex = '' !== $header_border_sample ? $header_border_sample : '';
 	$header_bg_d               = isset( $color_defs['trove_header_background'] ) ? (string) $color_defs['trove_header_background']['default'] : '#ffffff';
-	$header_bg_sample          = \Trove\Customizer\trove_color_theme_mod( 'trove_header_background', $header_bg_d );
+	$header_bg_sample          = \Trove\Customizer\color_theme_mod( 'trove_header_background', $header_bg_d );
 
 	$banner_bg_sample = $header_bg_sample;
 
@@ -325,7 +325,7 @@ function sanitize_page_settings_page_title_size( $raw, $field ) {
  * @return string|null
  */
 function sanitize_page_settings_page_title_color( $raw, $field ) {
-	$out = \Trove\Customizer\trove_sanitize_css_color( isset( $raw ) ? wp_unslash( $raw ) : '' );
+	$out = \Trove\Customizer\sanitize_css_color( isset( $raw ) ? wp_unslash( $raw ) : '' );
 	return '' === $out ? null : $out;
 }
 
@@ -337,7 +337,7 @@ function sanitize_page_settings_page_title_color( $raw, $field ) {
  * @return string|null
  */
 function sanitize_page_settings_page_banner_background_color( $raw, $field ) {
-	$out = \Trove\Customizer\trove_sanitize_css_color( isset( $raw ) ? wp_unslash( $raw ) : '' );
+	$out = \Trove\Customizer\sanitize_css_color( isset( $raw ) ? wp_unslash( $raw ) : '' );
 	return '' === $out ? null : $out;
 }
 
@@ -349,7 +349,7 @@ function sanitize_page_settings_page_banner_background_color( $raw, $field ) {
  * @return string|null
  */
 function sanitize_page_settings_page_banner_overlay_color( $raw, $field ) {
-	$out = \Trove\Customizer\trove_sanitize_css_color( isset( $raw ) ? wp_unslash( $raw ) : '' );
+	$out = \Trove\Customizer\sanitize_css_color( isset( $raw ) ? wp_unslash( $raw ) : '' );
 	return '' === $out ? null : $out;
 }
 

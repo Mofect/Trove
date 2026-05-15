@@ -24,9 +24,17 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-start;
 	gap: 10px;
 	margin: 4px 0 2px;
+}
+
+/* Narrow sidebar metaboxes: label and control on opposite ends. */
+#side-sortables .trove-metabox-switch,
+#postbox-container-1 .trove-metabox-switch,
+.metabox-location-side .trove-metabox-switch,
+.interface-complementary-area .trove-metabox-switch {
+	justify-content: space-between;
 }
 
 .trove-metabox-switch__text {
@@ -200,6 +208,18 @@
 	padding: 0 12px 24px;
 }
 
+/* Page settings (sidebar): narrower selects, space before description. */
+#side-sortables #trove_mb_page_settings .trove-metabox-field--select select.widefat,
+#postbox-container-1 #trove_mb_page_settings .trove-metabox-field--select select.widefat,
+.metabox-location-side #trove_mb_page_settings .trove-metabox-field--select select.widefat,
+.interface-complementary-area #trove_mb_page_settings .trove-metabox-field--select select.widefat {
+	display: block;
+	width: 100%;
+	max-width: 200px;
+	margin-bottom: 0.2rem;
+	box-sizing: border-box;
+}
+
 /* Page settings tabs */
 .trove-mb-tabs {
 	margin: -4px 0 0;
@@ -209,7 +229,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 3px;
-	margin: 0 0 20px;
+	margin: 20px 0;
 	padding: 0;
 	border-bottom: 1px solid #c3c4c7;
 }
@@ -267,4 +287,131 @@
 
 .trove-metabox-field__media-actions {
 	margin: 0;
+}
+
+/* Non-sidebar metaboxes: label column (200px) + control on one row. */
+#normal-sortables .trove-metabox-field--select,
+#advanced-sortables .trove-metabox-field--select,
+.metabox-location-normal .trove-metabox-field--select,
+#normal-sortables .trove-metabox-field--switch,
+#advanced-sortables .trove-metabox-field--switch,
+.metabox-location-normal .trove-metabox-field--switch {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	column-gap: 16px;
+	row-gap: 6px;
+}
+
+#normal-sortables .trove-metabox-field--select > .trove-metabox-field__label,
+#advanced-sortables .trove-metabox-field--select > .trove-metabox-field__label,
+.metabox-location-normal .trove-metabox-field--select > .trove-metabox-field__label,
+#normal-sortables .trove-metabox-field--switch .trove-metabox-switch__text,
+#advanced-sortables .trove-metabox-field--switch .trove-metabox-switch__text,
+.metabox-location-normal .trove-metabox-field--switch .trove-metabox-switch__text {
+	margin: 0;
+	flex: 0 0 200px;
+	max-width: min(200px, 40%);
+}
+
+#normal-sortables .trove-metabox-field--select > select.widefat,
+#advanced-sortables .trove-metabox-field--select > select.widefat,
+.metabox-location-normal .trove-metabox-field--select > select.widefat {
+	flex: 0 1 200px;
+	max-width: 200px;
+	width: auto;
+	min-width: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+#normal-sortables .trove-metabox-field--switch > .trove-metabox-switch,
+#advanced-sortables .trove-metabox-field--switch > .trove-metabox-switch,
+.metabox-location-normal .trove-metabox-field--switch > .trove-metabox-switch {
+	display: contents;
+	margin: 0;
+}
+
+#normal-sortables .trove-metabox-field--switch .trove-metabox-switch__control,
+#advanced-sortables .trove-metabox-field--switch .trove-metabox-switch__control,
+.metabox-location-normal .trove-metabox-field--switch .trove-metabox-switch__control {
+	flex: 0 0 auto;
+}
+
+#normal-sortables .trove-metabox-field--select > .description,
+#advanced-sortables .trove-metabox-field--select > .description,
+.metabox-location-normal .trove-metabox-field--select > .description {
+	flex: 1 1 100%;
+	margin: 0;
+}
+
+/* Non-sidebar: product video — label | URL + upload/remove on one row. */
+#normal-sortables .trove-metabox-field--product_video,
+#advanced-sortables .trove-metabox-field--product_video,
+.metabox-location-normal .trove-metabox-field--product_video {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	column-gap: 16px;
+	row-gap: 6px;
+}
+
+#normal-sortables .trove-metabox-field--product_video > .trove-metabox-field__label,
+#advanced-sortables .trove-metabox-field--product_video > .trove-metabox-field__label,
+.metabox-location-normal .trove-metabox-field--product_video > .trove-metabox-field__label {
+	margin: 0;
+	flex: 0 0 200px;
+	max-width: min(200px, 40%);
+}
+
+#normal-sortables .trove-metabox-field--product_video .trove-metabox-field__product-video,
+#advanced-sortables .trove-metabox-field--product_video .trove-metabox-field__product-video,
+.metabox-location-normal .trove-metabox-field--product_video .trove-metabox-field__product-video {
+	display: flex;
+	flex: 1 1 auto;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	max-width: none;
+}
+
+#normal-sortables .trove-metabox-field--product_video .trove-metabox-field__product-video-url,
+#advanced-sortables .trove-metabox-field--product_video .trove-metabox-field__product-video-url,
+.metabox-location-normal .trove-metabox-field--product_video .trove-metabox-field__product-video-url {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 120px;
+	max-width: 200px;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+#normal-sortables .trove-metabox-field--product_video .trove-metabox-field__product-video-actions,
+#advanced-sortables .trove-metabox-field--product_video .trove-metabox-field__product-video-actions,
+.metabox-location-normal .trove-metabox-field--product_video .trove-metabox-field__product-video-actions {
+	display: flex;
+	flex: 0 0 auto;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	white-space: nowrap;
+}
+
+#normal-sortables .trove-metabox-field--product_video > .description,
+#advanced-sortables .trove-metabox-field--product_video > .description,
+.metabox-location-normal .trove-metabox-field--product_video > .description {
+	flex: 1 1 100%;
+	margin: 0;
+}
+
+/* Product settings: limit control width (textarea, text inputs). */
+#trove_mb_product_settings textarea.widefat,
+#trove_mb_product_settings input.widefat[type="text"],
+#trove_mb_product_settings input.widefat[type="number"],
+#trove_mb_product_settings input.widefat[type="email"] {
+	max-width: 400px;
+	width: 100%;
+	box-sizing: border-box;
 }

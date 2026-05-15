@@ -7,7 +7,7 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -36,11 +36,11 @@ return array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_button_background',
-				'default' => (string) trove_customizer_default( 'trove_button_background', '#111111' ),
+				'default' => (string) customizer_default( 'trove_button_background', '#111111' ),
 			),
 			'right' => array(
 				'setting' => 'trove_button_background_hover',
-				'default' => (string) trove_customizer_default( 'trove_button_background_hover', '#064FFF' ),
+				'default' => (string) customizer_default( 'trove_button_background_hover', '#064FFF' ),
 			),
 		),
 	),
@@ -57,11 +57,11 @@ return array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_button_text_color',
-				'default' => (string) trove_customizer_default( 'trove_button_text_color', '#ffffff' ),
+				'default' => (string) customizer_default( 'trove_button_text_color', '#ffffff' ),
 			),
 			'right' => array(
 				'setting' => 'trove_button_text_color_hover',
-				'default' => (string) trove_customizer_default( 'trove_button_text_color_hover', '#ffffff' ),
+				'default' => (string) customizer_default( 'trove_button_text_color_hover', '#ffffff' ),
 			),
 		),
 	),
@@ -78,11 +78,11 @@ return array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_button_border_color',
-				'default' => (string) trove_customizer_default( 'trove_button_border_color', '#111111' ),
+				'default' => (string) customizer_default( 'trove_button_border_color', '#111111' ),
 			),
 			'right' => array(
 				'setting' => 'trove_button_border_color_hover',
-				'default' => (string) trove_customizer_default( 'trove_button_border_color_hover', '#333333' ),
+				'default' => (string) customizer_default( 'trove_button_border_color_hover', '#333333' ),
 			),
 		),
 	),
@@ -93,7 +93,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_button_text_font_size', 16 ),
+		'default'           => (int) customizer_default( 'trove_button_text_font_size', 16 ),
 		'input_attrs'       => array(
 			'min'  => 10,
 			'max'  => 24,
@@ -109,7 +109,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_button_border_radius', 6 ),
+		'default'           => (int) customizer_default( 'trove_button_border_radius', 6 ),
 		'input_attrs'       => array(
 			'min'  => 0,
 			'max'  => 32,
@@ -125,7 +125,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_button_border_width', 1 ),
+		'default'           => (int) customizer_default( 'trove_button_border_width', 1 ),
 		'input_attrs'       => array(
 			'min'  => 0,
 			'max'  => 8,
@@ -176,11 +176,11 @@ return array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_button_secondary_background',
-				'default' => (string) trove_customizer_default( 'trove_button_secondary_background', 'transparent' ),
+				'default' => (string) customizer_default( 'trove_button_secondary_background', 'transparent' ),
 			),
 			'right' => array(
 				'setting' => 'trove_button_secondary_background_hover',
-				'default' => (string) trove_customizer_default( 'trove_button_secondary_background_hover', '#111111' ),
+				'default' => (string) customizer_default( 'trove_button_secondary_background_hover', '#111111' ),
 			),
 		),
 	),
@@ -197,11 +197,11 @@ return array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_button_secondary_text_color',
-				'default' => (string) trove_customizer_default( 'trove_button_secondary_text_color', '#111111' ),
+				'default' => (string) customizer_default( 'trove_button_secondary_text_color', '#111111' ),
 			),
 			'right' => array(
 				'setting' => 'trove_button_secondary_text_color_hover',
-				'default' => (string) trove_customizer_default( 'trove_button_secondary_text_color_hover', '#ffffff' ),
+				'default' => (string) customizer_default( 'trove_button_secondary_text_color_hover', '#ffffff' ),
 			),
 		),
 	),
@@ -218,11 +218,11 @@ return array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_button_secondary_border_color',
-				'default' => (string) trove_customizer_default( 'trove_button_secondary_border_color', '#111111' ),
+				'default' => (string) customizer_default( 'trove_button_secondary_border_color', '#111111' ),
 			),
 			'right' => array(
 				'setting' => 'trove_button_secondary_border_color_hover',
-				'default' => (string) trove_customizer_default( 'trove_button_secondary_border_color_hover', '#111111' ),
+				'default' => (string) customizer_default( 'trove_button_secondary_border_color_hover', '#111111' ),
 			),
 		),
 	),
@@ -233,7 +233,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_button_secondary_text_font_size', 14 ),
+		'default'           => (int) customizer_default( 'trove_button_secondary_text_font_size', 14 ),
 		'input_attrs'       => array(
 			'min'  => 10,
 			'max'  => 24,
@@ -249,7 +249,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_button_secondary_border_radius', 6 ),
+		'default'           => (int) customizer_default( 'trove_button_secondary_border_radius', 6 ),
 		'input_attrs'       => array(
 			'min'  => 0,
 			'max'  => 32,
@@ -265,7 +265,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_button_secondary_border_width', 1 ),
+		'default'           => (int) customizer_default( 'trove_button_secondary_border_width', 1 ),
 		'input_attrs'       => array(
 			'min'  => 0,
 			'max'  => 8,

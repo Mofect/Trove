@@ -15,9 +15,9 @@ defined( 'ABSPATH' ) || exit;
  * @param string $theme_mod_key e.g. trove_social_facebook_url.
  * @return string Trimmed URL or ''.
  */
-function trove_get_social_profile_url( $theme_mod_key ) {
+function get_social_profile_url( $theme_mod_key ) {
 	$key = (string) $theme_mod_key;
-	$raw = get_theme_mod( $key, (string) \Trove\Customizer\trove_customizer_default( $key, '' ) );
+	$raw = get_theme_mod( $key, (string) \Trove\Customizer\customizer_default( $key, '' ) );
 	if ( ! is_string( $raw ) || '' === trim( $raw ) ) {
 		return '';
 	}
@@ -30,7 +30,7 @@ function trove_get_social_profile_url( $theme_mod_key ) {
  * @return bool
  */
 function should_render_footer_social_links() {
-	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_social_links', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_show_social_links', false ) ) );
+	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_social_links', (bool) \Trove\Customizer\customizer_default( 'trove_footer_show_social_links', false ) ) );
 }
 
 /**
@@ -38,8 +38,8 @@ function should_render_footer_social_links() {
  *
  * @return void
  */
-function trove_social_links() {
-	$u = trove_get_social_profile_url( 'trove_social_facebook_url' );
+function social_links() {
+	$u = get_social_profile_url( 'trove_social_facebook_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -48,7 +48,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_twitter_x_url' );
+	$u = get_social_profile_url( 'trove_social_twitter_x_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -57,7 +57,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_instagram_url' );
+	$u = get_social_profile_url( 'trove_social_instagram_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -66,7 +66,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_youtube_url' );
+	$u = get_social_profile_url( 'trove_social_youtube_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -75,7 +75,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_vimeo_url' );
+	$u = get_social_profile_url( 'trove_social_vimeo_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -86,7 +86,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_pinterest_url' );
+	$u = get_social_profile_url( 'trove_social_pinterest_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -97,7 +97,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_tiktok_url' );
+	$u = get_social_profile_url( 'trove_social_tiktok_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -108,7 +108,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_linkedin_url' );
+	$u = get_social_profile_url( 'trove_social_linkedin_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -119,7 +119,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_threads_url' );
+	$u = get_social_profile_url( 'trove_social_threads_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -130,7 +130,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_github_url' );
+	$u = get_social_profile_url( 'trove_social_github_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -141,7 +141,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_reddit_url' );
+	$u = get_social_profile_url( 'trove_social_reddit_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -155,7 +155,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_xing_url' );
+	$u = get_social_profile_url( 'trove_social_xing_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">
@@ -176,7 +176,7 @@ function trove_social_links() {
 	</a>
 		<?php endif; ?>
 	<?php
-	$u = trove_get_social_profile_url( 'trove_social_vk_url' );
+	$u = get_social_profile_url( 'trove_social_vk_url' );
 	if ( '' !== $u ) :
 		?>
 	<a href="<?php echo esc_url( $u ); ?>" class="site-footer__social-link" rel="noopener noreferrer" target="_blank">

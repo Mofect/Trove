@@ -7,8 +7,8 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_color_scheme_presets_raw;
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_color_scheme_presets_raw;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ $scheme_labels = array(
 	__( 'Preset: Dark', 'trove' ),
 );
 $color_schemes = array();
-foreach ( trove_customizer_color_scheme_presets_raw() as $i => $preset_row ) {
+foreach ( customizer_color_scheme_presets_raw() as $i => $preset_row ) {
 	$color_schemes[] = array(
 		'label'  => isset( $scheme_labels[ $i ] ) ? $scheme_labels[ $i ] : '',
 		'colors' => $preset_row['colors'],
@@ -35,7 +35,7 @@ $colors = array(
 	'trove_color_page_background' => array(
 		'label'             => __( 'Page background', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_color_page_background', '#ffffff' ),
+		'default'           => customizer_default( 'trove_color_page_background', '#ffffff' ),
 		'priority'          => 1,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -45,7 +45,7 @@ $colors = array(
 	'trove_color_base_text' => array(
 		'label'             => __( 'Base Text', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_color_base_text', '#111111' ),
+		'default'           => customizer_default( 'trove_color_base_text', '#111111' ),
 		'priority'          => 2,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -55,7 +55,7 @@ $colors = array(
 	'trove_color_headings' => array(
 		'label'             => __( 'Headings', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_color_headings', '#000000' ),
+		'default'           => customizer_default( 'trove_color_headings', '#000000' ),
 		'priority'          => 2,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -74,11 +74,11 @@ $colors = array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_color_link',
-				'default' => trove_customizer_default( 'trove_color_link', '#333333' ),
+				'default' => customizer_default( 'trove_color_link', '#333333' ),
 			),
 			'right' => array(
 				'setting' => 'trove_color_link_hover',
-				'default' => trove_customizer_default( 'trove_color_link_hover', '#064FFF' ),
+				'default' => customizer_default( 'trove_color_link_hover', '#064FFF' ),
 			),
 		),
 	),
@@ -95,11 +95,11 @@ $colors = array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_color_selection_text',
-				'default' => trove_customizer_default( 'trove_color_selection_text', '#ffffff' ),
+				'default' => customizer_default( 'trove_color_selection_text', '#ffffff' ),
 			),
 			'right' => array(
 				'setting' => 'trove_color_selection_bg',
-				'default' => trove_customizer_default( 'trove_color_selection_bg', '#38BDF8' ),
+				'default' => customizer_default( 'trove_color_selection_bg', '#38BDF8' ),
 			),
 		),
 	),
@@ -107,7 +107,7 @@ $colors = array(
 	'trove_color_border'  => array(
 		'label'             => __( 'Borders', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_color_border', '#eeeeee' ),
+		'default'           => customizer_default( 'trove_color_border', '#eeeeee' ),
 		'priority'          => 5,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -117,7 +117,7 @@ $colors = array(
 	'trove_color_accent'  => array(
 		'label'             => __( 'Accent', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_color_accent', '#064FFF' ),
+		'default'           => customizer_default( 'trove_color_accent', '#064FFF' ),
 		'priority'          => 6,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -133,7 +133,7 @@ $colors = array(
 	'trove_announcement_background' => array(
 		'label'             => __( 'Background', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_announcement_background', '#064fff' ),
+		'default'           => customizer_default( 'trove_announcement_background', '#064fff' ),
 		'priority'          => 8,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -143,7 +143,7 @@ $colors = array(
 	'trove_announcement_text_color' => array(
 		'label'             => __( 'Text', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_announcement_text_color', 'rgba(255, 255, 255, 0.8)' ),
+		'default'           => customizer_default( 'trove_announcement_text_color', 'rgba(255, 255, 255, 0.8)' ),
 		'priority'          => 9,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -162,11 +162,11 @@ $colors = array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_announcement_link_color',
-				'default' => trove_customizer_default( 'trove_announcement_link_color', 'rgba(255, 255, 255, 1)' ),
+				'default' => customizer_default( 'trove_announcement_link_color', 'rgba(255, 255, 255, 1)' ),
 			),
 			'right' => array(
 				'setting' => 'trove_announcement_link_hover_color',
-				'default' => trove_customizer_default( 'trove_announcement_link_hover_color', 'rgba(255, 255, 255, 0.8)' ),
+				'default' => customizer_default( 'trove_announcement_link_hover_color', 'rgba(255, 255, 255, 0.8)' ),
 			),
 		),
 	),
@@ -180,7 +180,7 @@ $colors = array(
 	'trove_header_background' => array(
 		'label'             => __( 'Header background', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_header_background', '#ffffff' ),
+		'default'           => customizer_default( 'trove_header_background', '#ffffff' ),
 		'priority'          => 12,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -190,7 +190,7 @@ $colors = array(
 	'trove_header_text_color' => array(
 		'label'             => __( 'Header text', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_header_text_color', '#111111' ),
+		'default'           => customizer_default( 'trove_header_text_color', '#111111' ),
 		'priority'          => 13,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -209,11 +209,11 @@ $colors = array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_header_link_color',
-				'default' => trove_customizer_default( 'trove_header_link_color', '#000000' ),
+				'default' => customizer_default( 'trove_header_link_color', '#000000' ),
 			),
 			'right' => array(
 				'setting' => 'trove_header_link_hover_color',
-				'default' => trove_customizer_default( 'trove_header_link_hover_color', '#666666' ),
+				'default' => customizer_default( 'trove_header_link_hover_color', '#666666' ),
 			),
 		),
 	),
@@ -227,7 +227,7 @@ $colors = array(
 	'trove_footer_background' => array(
 		'label'             => __( 'Footer background', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_footer_background', '#eeeeee' ),
+		'default'           => customizer_default( 'trove_footer_background', '#eeeeee' ),
 		'priority'          => 16,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -237,7 +237,7 @@ $colors = array(
 	'trove_footer_text_color' => array(
 		'label'             => __( 'Footer text', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_footer_text_color', '#111111' ),
+		'default'           => customizer_default( 'trove_footer_text_color', '#111111' ),
 		'priority'          => 17,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -256,11 +256,11 @@ $colors = array(
 		'pair'         => array(
 			'left'  => array(
 				'setting' => 'trove_footer_link_color',
-				'default' => trove_customizer_default( 'trove_footer_link_color', '#000000' ),
+				'default' => customizer_default( 'trove_footer_link_color', '#000000' ),
 			),
 			'right' => array(
 				'setting' => 'trove_footer_link_hover_color',
-				'default' => trove_customizer_default( 'trove_footer_link_hover_color', '#666666' ),
+				'default' => customizer_default( 'trove_footer_link_hover_color', '#666666' ),
 			),
 		),
 	),
@@ -268,7 +268,7 @@ $colors = array(
 	'trove_footer_border_color' => array(
 		'label'             => __( 'Footer border', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_footer_border_color', '#dddddd' ),
+		'default'           => customizer_default( 'trove_footer_border_color', '#dddddd' ),
 		'priority'          => 19,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -289,7 +289,7 @@ if ( class_exists( 'WooCommerce' ) ) {
 				'label'             => __( 'Cart badge', 'trove' ),
 				'description'       => __( 'Background color of the cart item count badge next to the mini cart icon.', 'trove' ),
 				'type'              => 'color',
-				'default'           => trove_customizer_default( 'trove_header_cart_badge_color', '#ff0000' ),
+				'default'           => customizer_default( 'trove_header_cart_badge_color', '#ff0000' ),
 				'priority'          => 20,
 				'transport'         => 'postMessage',
 				'sanitize_callback' => 'sanitize_hex_color',
@@ -299,7 +299,7 @@ if ( class_exists( 'WooCommerce' ) ) {
 				'label'             => __( 'Cart count', 'trove' ),
 				'description'       => __( 'Text color for the number inside the cart badge.', 'trove' ),
 				'type'              => 'color',
-				'default'           => trove_customizer_default( 'trove_header_cart_count_color', '#ffffff' ),
+				'default'           => customizer_default( 'trove_header_cart_count_color', '#ffffff' ),
 				'priority'          => 21,
 				'transport'         => 'postMessage',
 				'sanitize_callback' => 'sanitize_hex_color',
@@ -314,7 +314,7 @@ if ( class_exists( 'WooCommerce' ) ) {
 				'label'             => __( 'Notice bar background', 'trove' ),
 				'description'       => __( 'Background for the WooCommerce store notice bar.', 'trove' ),
 				'type'              => 'color',
-				'default'           => trove_customizer_default( 'trove_store_notice_background', '#720eec' ),
+				'default'           => customizer_default( 'trove_store_notice_background', '#720eec' ),
 				'priority'          => 23,
 				'transport'         => 'postMessage',
 				'sanitize_callback' => 'sanitize_hex_color',
@@ -324,7 +324,7 @@ if ( class_exists( 'WooCommerce' ) ) {
 				'label'             => __( 'Notice bar text', 'trove' ),
 				'description'       => __( 'Text color for the store notice message.', 'trove' ),
 				'type'              => 'color',
-				'default'           => trove_customizer_default( 'trove_store_notice_text_color', '#ffffff' ),
+				'default'           => customizer_default( 'trove_store_notice_text_color', '#ffffff' ),
 				'priority'          => 24,
 				'transport'         => 'postMessage',
 				'sanitize_callback' => 'sanitize_hex_color',
@@ -343,11 +343,11 @@ if ( class_exists( 'WooCommerce' ) ) {
 				'pair'         => array(
 					'left'  => array(
 						'setting' => 'trove_store_notice_link_color',
-						'default' => trove_customizer_default( 'trove_store_notice_link_color', '#ffffff' ),
+						'default' => customizer_default( 'trove_store_notice_link_color', '#ffffff' ),
 					),
 					'right' => array(
 						'setting' => 'trove_store_notice_link_hover_color',
-						'default' => trove_customizer_default( 'trove_store_notice_link_hover_color', '#e8defc' ),
+						'default' => customizer_default( 'trove_store_notice_link_hover_color', '#e8defc' ),
 					),
 				),
 			),

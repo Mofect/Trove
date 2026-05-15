@@ -46,7 +46,7 @@ final class Heading_Control extends WP_Customize_Control {
 		if ( empty( $this->trove_color_schemes ) || ! is_array( $this->trove_color_schemes ) ) {
 			return array();
 		}
-		$allowed = array_flip( trove_global_color_scheme_setting_keys() );
+		$allowed = array_flip( global_color_scheme_setting_keys() );
 		$out     = array();
 		foreach ( $this->trove_color_schemes as $scheme ) {
 			if ( ! is_array( $scheme ) || empty( $scheme['label'] ) || empty( $scheme['colors'] ) || ! is_array( $scheme['colors'] ) ) {
@@ -58,7 +58,7 @@ final class Heading_Control extends WP_Customize_Control {
 				if ( ! isset( $allowed[ $key ] ) ) {
 					continue;
 				}
-				$san = trove_sanitize_css_color( $val );
+				$san = sanitize_css_color( $val );
 				if ( '' !== $san ) {
 					$colors[ $key ] = $san;
 				}
@@ -120,14 +120,14 @@ final class Heading_Control extends WP_Customize_Control {
 						<?php
 						$swatch_titles = get_color_scheme_swatch_titles();
 						foreach ( $schemes as $index => $scheme ) {
-							$keys_order    = trove_global_color_scheme_setting_keys();
+							$keys_order    = global_color_scheme_setting_keys();
 							$grouped       = array();
 							$emitted_norms = array();
 							foreach ( $keys_order as $sk ) {
 								if ( ! isset( $scheme['colors'][ $sk ] ) ) {
 									continue;
 								}
-								$norm = trove_normalize_color_for_scheme_dedupe( $scheme['colors'][ $sk ] );
+								$norm = normalize_color_for_scheme_dedupe( $scheme['colors'][ $sk ] );
 								if ( '' === $norm ) {
 									continue;
 								}
@@ -152,7 +152,7 @@ final class Heading_Control extends WP_Customize_Control {
 											if ( ! isset( $scheme['colors'][ $sk ] ) ) {
 												continue;
 											}
-											$norm = trove_normalize_color_for_scheme_dedupe( $scheme['colors'][ $sk ] );
+											$norm = normalize_color_for_scheme_dedupe( $scheme['colors'][ $sk ] );
 											if ( '' === $norm || isset( $emitted_norms[ $norm ] ) ) {
 												continue;
 											}
@@ -166,7 +166,7 @@ final class Heading_Control extends WP_Customize_Control {
 												}
 											}
 											$title            = implode( ' · ', $title_parts );
-											$swatch_transparent = trove_color_is_transparent_swatch( $hex );
+											$swatch_transparent = color_is_transparent_swatch( $hex );
 											?>
 											<span
 												class="trove-cz-scheme-swatch<?php echo $swatch_transparent ? ' trove-cz-swatch-transparent' : ''; ?>"

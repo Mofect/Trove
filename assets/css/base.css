@@ -277,6 +277,165 @@ main {
 	padding: var(--trove-content-vertical-spacing) var(--trove-content-horizontal-spacing);
 }
 
+/* Blog / archive listing: two columns, content + right sidebar (~30rem). */
+.trove-listing-with-sidebar {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+	gap: clamp(2.75rem, 6vw, 5.5rem);
+	align-items: start;
+	width: 100%;
+}
+
+.trove-listing-with-sidebar__content {
+	min-width: 0;
+}
+
+/* Space between stacked widgets in any sidebar. */
+.widget-area,
+/* Block widget editor / widget-area block: same vertical rhythm as front-end .widget-area. */
+.wp-block-widget-area .block-editor-block-list__layout {
+	display: flex;
+	flex-direction: column;
+	gap: clamp(3.5rem, 6vw, 5.5rem);
+}
+
+.trove-listing-with-sidebar .widget-area {
+	width: 100%;
+	max-width: 30rem;
+	justify-self: end;
+}
+
+@media (max-width: 900px) {
+	.trove-listing-with-sidebar {
+		grid-template-columns: 1fr;
+	}
+
+	.trove-listing-with-sidebar .widget-area {
+		max-width: none;
+		justify-self: stretch;
+	}
+}
+
+.widget-title,
+.widget h2.wp-block-heading,
+/* Block widgets in the editor (and block markup) often omit the outer .widget wrapper. */
+.widget_block h2.wp-block-heading,
+.wp-block-widget-area h2.wp-block-heading {
+	font-size: 1.8rem;
+	line-height: 1.3;
+	margin: 0 0 1.5rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid var(--trove-border);
+}
+
+/* Block Heading level 3: slightly smaller than widget h2 titles (1.8rem). */
+h3.wp-block-heading {
+	font-size: 1.6rem;
+	line-height: 1.3;
+}
+
+ol.wp-block-latest-comments,
+ul.wp-block-archives-list,
+ul.wp-block-categories-list {
+	margin-left: 0;
+	padding-left: 0;
+}
+
+:where(.wp-block-latest-comments:not([style*="line-height"]) .wp-block-latest-comments__comment-excerpt p) {
+	line-height: 1.5;
+}
+
+/* Latest Comments block: custom chat-bubble icon as list marker (fill path from theme SVG). */
+ol.wp-block-latest-comments {
+	list-style: none;
+	--trove-latest-comments-bullet-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%20-0.5%2025%2025%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M9.0001%208.517C8.58589%208.517%208.2501%208.85279%208.2501%209.267C8.2501%209.68121%208.58589%2010.017%209.0001%2010.017V8.517ZM16.0001%2010.017C16.4143%2010.017%2016.7501%209.68121%2016.7501%209.267C16.7501%208.85279%2016.4143%208.517%2016.0001%208.517V10.017ZM9.8751%2011.076C9.46089%2011.076%209.1251%2011.4118%209.1251%2011.826C9.1251%2012.2402%209.46089%2012.576%209.8751%2012.576V11.076ZM15.1251%2012.576C15.5393%2012.576%2015.8751%2012.2402%2015.8751%2011.826C15.8751%2011.4118%2015.5393%2011.076%2015.1251%2011.076V12.576ZM9.1631%205V4.24998L9.15763%204.25002L9.1631%205ZM15.8381%205L15.8438%204.25H15.8381V5ZM19.5001%208.717L18.7501%208.71149V8.717H19.5001ZM19.5001%2013.23H18.7501L18.7501%2013.2355L19.5001%2013.23ZM18.4384%2015.8472L17.9042%2015.3207L17.9042%2015.3207L18.4384%2015.8472ZM15.8371%2016.947V17.697L15.8426%2017.697L15.8371%2016.947ZM9.1631%2016.947V16.197C9.03469%2016.197%208.90843%2016.23%208.79641%2016.2928L9.1631%2016.947ZM5.5001%2019H4.7501C4.7501%2019.2662%204.89125%2019.5125%205.12097%2019.6471C5.35068%2019.7817%205.63454%2019.7844%205.86679%2019.6542L5.5001%2019ZM5.5001%208.717H6.25012L6.25008%208.71149L5.5001%208.717ZM6.56175%206.09984L6.02756%205.5734H6.02756L6.56175%206.09984ZM9.0001%2010.017H16.0001V8.517H9.0001V10.017ZM9.8751%2012.576H15.1251V11.076H9.8751V12.576ZM9.1631%205.75H15.8381V4.25H9.1631V5.75ZM15.8324%205.74998C17.4559%205.76225%2018.762%207.08806%2018.7501%208.71149L20.2501%208.72251C20.2681%206.2708%2018.2955%204.26856%2015.8438%204.25002L15.8324%205.74998ZM18.7501%208.717V13.23H20.2501V8.717H18.7501ZM18.7501%2013.2355C18.7558%2014.0153%2018.4516%2014.7653%2017.9042%2015.3207L18.9726%2016.3736C19.7992%2015.5348%2020.2587%2014.4021%2020.2501%2013.2245L18.7501%2013.2355ZM17.9042%2015.3207C17.3569%2015.8761%2016.6114%2016.1913%2015.8316%2016.197L15.8426%2017.697C17.0201%2017.6884%2018.1461%2017.2124%2018.9726%2016.3736L17.9042%2015.3207ZM15.8371%2016.197H9.1631V17.697H15.8371V16.197ZM8.79641%2016.2928L5.13341%2018.3458L5.86679%2019.6542L9.52979%2017.6012L8.79641%2016.2928ZM6.2501%2019V8.717H4.7501V19H6.2501ZM6.25008%208.71149C6.24435%207.93175%206.54862%207.18167%207.09595%206.62627L6.02756%205.5734C5.20098%206.41216%204.74147%207.54494%204.75012%208.72251L6.25008%208.71149ZM7.09595%206.62627C7.64328%206.07088%208.38882%205.75566%209.16857%205.74998L9.15763%204.25002C7.98006%204.2586%206.85413%204.73464%206.02756%205.5734L7.09595%206.62627Z%22%20fill%3D%22currentColor%22%2F%3E%3C%2Fsvg%3E");
+}
+
+ol.wp-block-latest-comments li {
+	list-style: none;
+	position: relative;
+	padding-inline-start: 2.6rem;
+	color: var(--trove-text, #111111);
+	line-height: 1.5;
+}
+
+ol.wp-block-latest-comments li::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0.1rem;
+	width: 2rem;
+	height: 2rem;
+	background-image: var(--trove-latest-comments-bullet-icon);
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+}
+
+/* Archives block: custom folder icon as list marker (stroke paths from theme SVG). */
+ul.wp-block-archives-list {
+	list-style: none;
+	--trove-archives-bullet-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M4%209V6.47214C4%206.16165%204.07229%205.85542%204.21115%205.57771L5%204H10L11%206H21C21.5523%206%2022%206.44772%2022%207V9V18C22%2019.1046%2021.1046%2020%2020%2020H18%22%20stroke%3D%22currentColor%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M17.2362%209H2.30925C1.64988%209%201.17099%209.62698%201.34449%2010.2631L3.59806%2018.5262C3.83537%2019.3964%204.62569%2020%205.52759%2020H19.6908C20.3501%2020%2020.829%2019.373%2020.6555%2018.7369L18.201%209.73688C18.0823%209.30182%2017.6872%209%2017.2362%209Z%22%20stroke%3D%22currentColor%22%20stroke-width%3D%221.5%22%2F%3E%3C%2Fsvg%3E");
+}
+
+ul.wp-block-archives-list li {
+	list-style: none;
+	position: relative;
+	padding-inline-start: 2.2rem;
+	color: var(--trove-text, #111111);
+}
+
+ul.wp-block-archives-list li::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0.35em;
+	width: 1.35rem;
+	height: 1.35rem;
+	background-image: var(--trove-archives-bullet-icon);
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+}
+
+/* Categories block: custom document icon as list marker (Outlined icon, fill paths). */
+ul.wp-block-categories-list {
+	list-style: none;
+	--trove-categories-bullet-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20fill%3D%22none%22%3E%3Cg%20fill%3D%22currentColor%22%3E%3Cpolygon%20points%3D%2212%2015%2011%2015%2011%2017%2012%2017%2020%2017%2021%2017%2021%2015%2020%2015%2012%2015%22%2F%3E%3Cpolygon%20points%3D%2212%2019%2011%2019%2011%2021%2012%2021%2015%2021%2016%2021%2016%2019%2015%2019%2012%2019%22%2F%3E%3Cpath%20d%3D%22M20.41%2C3H5V26a3%2C3%2C0%2C0%2C0%2C3%2C3H24a3%2C3%2C0%2C0%2C0%2C3-3V9.59ZM20%2C5.41%2C24.59%2C10H21a1%2C1%2C0%2C0%2C1-1-1ZM24%2C27H8a1%2C1%2C0%2C0%2C1-1-1V5H18V9a3%2C3%2C0%2C0%2C0%2C3%2C3h4V26A1%2C1%2C0%2C0%2C1%2C24%2C27Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+ul.wp-block-categories-list li {
+	list-style: none;
+	position: relative;
+	padding-inline-start: 2.2rem;
+	color: var(--trove-text, #111111);
+}
+
+ul.wp-block-categories-list li::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0.25em;
+	width: 1.5rem;
+	height: 1.5rem;
+	background-image: var(--trove-categories-bullet-icon);
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+}
+
+/* Latest Posts block (list layout): default disc markers and spacing. */
+.wp-block-latest-posts.wp-block-latest-posts__list {
+	margin-left: 1.5rem;
+	list-style-position: outside;
+}
+
+.wp-block-latest-posts.wp-block-latest-posts__list li {
+	margin-bottom: 1rem;
+	list-style: disc;
+	list-style-position: outside;
+}
+
 /* Page banner (Page settings): between header and main. */
 .trove-page-banner {
 	--trove-page-banner-title-color: var(--trove-text, #1a1a1a);
@@ -407,6 +566,13 @@ main {
 
 .trove-blog-layout--list__top-image .site-main {
 	max-width: var(--trove-content-width);
+}
+
+/* Listing sidebar: main spans full wide width (overrides list top-image narrow main). */
+.site-main:has(.trove-listing-with-sidebar) {
+	max-width: var(--trove-content-wide-width);
+	width: min(100%, var(--trove-content-wide-width));
+	box-sizing: border-box;
 }
 
 /* Header

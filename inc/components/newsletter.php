@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * @return bool
  */
 function should_render_footer_newsletter() {
-	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_newsletter', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_show_newsletter', false ) ) );
+	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_newsletter', (bool) \Trove\Customizer\customizer_default( 'trove_footer_show_newsletter', false ) ) );
 }
 
 /**
@@ -24,7 +24,7 @@ function should_render_footer_newsletter() {
  * @return string
  */
 function get_footer_newsletter_title() {
-	$fallback = __( (string) \Trove\Customizer\trove_customizer_default( 'trove_footer_newsletter_title', 'Subscribe to our emails' ), 'trove' );
+	$fallback = __( (string) \Trove\Customizer\customizer_default( 'trove_footer_newsletter_title', 'Subscribe to our emails' ), 'trove' );
 	$title    = get_theme_mod( 'trove_footer_newsletter_title', $fallback );
 	return '' !== trim( (string) $title ) ? $title : $fallback;
 }
@@ -35,7 +35,7 @@ function get_footer_newsletter_title() {
  * @return string
  */
 function get_footer_newsletter_description() {
-	$fallback = __( (string) \Trove\Customizer\trove_customizer_default( 'trove_footer_newsletter_description', 'Subscribe to our newsletter to get the latest news and updates.' ), 'trove' );
+	$fallback = __( (string) \Trove\Customizer\customizer_default( 'trove_footer_newsletter_description', 'Subscribe to our newsletter to get the latest news and updates.' ), 'trove' );
 	$description = get_theme_mod( 'trove_footer_newsletter_description', $fallback );
 	if ( '' !== trim( wp_strip_all_tags( (string) $description ) ) ) {
 		return $description;

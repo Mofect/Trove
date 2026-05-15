@@ -7,7 +7,7 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -57,7 +57,7 @@ return array(
 	'trove_woo_single_product_gallery_type' => array(
 		'label'             => __( 'Product gallery type', 'trove' ),
 		'type'              => 'select',
-		'default'           => trove_customizer_default( 'trove_woo_single_product_gallery_type', 'stacked' ),
+		'default'           => customizer_default( 'trove_woo_single_product_gallery_type', 'stacked' ),
 		'transport'         => 'refresh',
 		'choices'           => array(
 			'stacked' => __( 'Stacked', 'trove' ),
@@ -68,7 +68,7 @@ return array(
 		'label'             => __( 'Stacked gallery columns (from 2nd image)', 'trove' ),
 		'description'       => __( 'Only applies when Product gallery type is Stacked. The first image stays full width; additional images use this column count.', 'trove' ),
 		'type'              => 'select',
-		'default'           => trove_customizer_default( 'trove_woo_single_product_gallery_stacked_columns', '4' ),
+		'default'           => customizer_default( 'trove_woo_single_product_gallery_stacked_columns', '4' ),
 		'transport'         => 'postMessage',
 		'active_callback'   => __NAMESPACE__ . '\\is_single_product_gallery_stacked',
 		'choices'           => array(
@@ -84,7 +84,7 @@ return array(
 		'label'             => __( 'Image carousel position', 'trove' ),
 		'description'       => __( 'Only applies when Product gallery type is Slider.', 'trove' ),
 		'type'              => 'select',
-		'default'           => trove_customizer_default( 'trove_woo_single_product_gallery_slider_position', 'bottom' ),
+		'default'           => customizer_default( 'trove_woo_single_product_gallery_slider_position', 'bottom' ),
 		'transport'         => 'postMessage',
 		'active_callback'   => __NAMESPACE__ . '\\is_single_product_gallery_slider',
 		'choices'           => array(
@@ -102,7 +102,7 @@ return array(
 	'trove_woo_single_product_tabs_layout' => array(
 		'label'             => __( 'Product tabs layout', 'trove' ),
 		'type'              => 'select',
-		'default'           => trove_customizer_default( 'trove_woo_single_product_tabs_layout', 'horizontal' ),
+		'default'           => customizer_default( 'trove_woo_single_product_tabs_layout', 'horizontal' ),
 		'transport'         => 'refresh',
 		'choices'           => array(
 			'horizontal'   => __( 'Horizontal', 'trove' ),
@@ -136,13 +136,13 @@ return array(
 	'trove_woo_single_product_enable_related_products' => array(
 		'label'             => __( 'Enable related products', 'trove' ),
 		'type'              => 'switch',
-		'default'           => trove_customizer_default( 'trove_woo_single_product_enable_related_products', true ),
+		'default'           => customizer_default( 'trove_woo_single_product_enable_related_products', true ),
 		'transport'         => 'refresh',
 	),
 	'trove_woo_single_product_related_products_count' => array(
 		'label'             => __( 'Number of related products', 'trove' ),
 		'type'              => 'select',
-		'default'           => trove_customizer_default( 'trove_woo_single_product_related_products_count', '4' ),
+		'default'           => customizer_default( 'trove_woo_single_product_related_products_count', '4' ),
 		'transport'         => 'refresh',
 		'choices'           => array(
 			'4'  => __( '4 products', 'trove' ),

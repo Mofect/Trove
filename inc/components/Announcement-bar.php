@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * @return string
  */
 function get_default_announcement_lines_json() {
-	$lines = \Trove\Customizer\trove_customizer_default( 'trove_announcement_lines_default', array( 'Announcement 1', 'Announcement 2' ) );
+	$lines = \Trove\Customizer\customizer_default( 'trove_announcement_lines_default', array( 'Announcement 1', 'Announcement 2' ) );
 	if ( ! is_array( $lines ) ) {
 		$lines = array( 'Announcement 1', 'Announcement 2' );
 	}
@@ -61,7 +61,7 @@ function is_announcement_bar_enabled() {
 		'tablet' => true,
 		'phone'  => true,
 	);
-	$defaults = \Trove\Customizer\trove_customizer_default( 'trove_announcement_enabled', $fallback );
+	$defaults = \Trove\Customizer\customizer_default( 'trove_announcement_enabled', $fallback );
 	if ( ! is_array( $defaults ) ) {
 		$defaults = $fallback;
 	}
@@ -77,7 +77,7 @@ function is_announcement_bar_enabled() {
  * @return string 'slide'|'fade'
  */
 function get_announcement_bar_animation() {
-	$v = get_theme_mod( 'trove_announcement_animation', (string) \Trove\Customizer\trove_customizer_default( 'trove_announcement_animation', 'slide' ) );
+	$v = get_theme_mod( 'trove_announcement_animation', (string) \Trove\Customizer\customizer_default( 'trove_announcement_animation', 'slide' ) );
 	$v = is_string( $v ) ? sanitize_key( $v ) : 'slide';
 	return in_array( $v, array( 'slide', 'fade' ), true ) ? $v : 'slide';
 }
@@ -88,7 +88,7 @@ function get_announcement_bar_animation() {
  * @return bool
  */
 function get_announcement_bar_autoplay() {
-	return wp_validate_boolean( get_theme_mod( 'trove_announcement_autoplay', (bool) \Trove\Customizer\trove_customizer_default( 'trove_announcement_autoplay', false ) ) );
+	return wp_validate_boolean( get_theme_mod( 'trove_announcement_autoplay', (bool) \Trove\Customizer\customizer_default( 'trove_announcement_autoplay', false ) ) );
 }
 
 /**
@@ -97,7 +97,7 @@ function get_announcement_bar_autoplay() {
  * @return int
  */
 function get_announcement_bar_autoplay_interval_seconds() {
-	$s = absint( get_theme_mod( 'trove_announcement_autoplay_interval', (int) \Trove\Customizer\trove_customizer_default( 'trove_announcement_autoplay_interval', 5 ) ) );
+	$s = absint( get_theme_mod( 'trove_announcement_autoplay_interval', (int) \Trove\Customizer\customizer_default( 'trove_announcement_autoplay_interval', 5 ) ) );
 	return max( 2, min( 60, $s ) );
 }
 
@@ -107,7 +107,7 @@ function get_announcement_bar_autoplay_interval_seconds() {
  * @param string $slug small|medium|big|large.
  * @return string Pixel value with `px` suffix.
  */
-function trove_announcement_text_size_slug_to_css( $slug ) {
+function announcement_text_size_slug_to_css( $slug ) {
 	$slug = sanitize_key( (string) $slug );
 	if ( ! in_array( $slug, array( 'small', 'medium', 'big', 'large' ), true ) ) {
 		$slug = 'medium';

@@ -249,7 +249,7 @@ function get_font_family_setting() {
 	return sanitize_google_font_family(
 		get_theme_mod(
 			'trove_google_font_family',
-			(string) \Trove\Customizer\trove_customizer_default( 'trove_google_font_family', 'Instrument Sans' )
+			(string) \Trove\Customizer\customizer_default( 'trove_google_font_family', 'Instrument Sans' )
 		)
 	);
 }
@@ -260,7 +260,7 @@ function get_font_family_setting() {
  *
  * @return string
  */
-function trove_effective_google_font_family_during_save() {
+function effective_google_font_family_during_save() {
 	static $cached = null;
 	if ( null !== $cached ) {
 		return $cached;
@@ -323,7 +323,7 @@ function get_google_font_preview_data() {
  * @param array<string, mixed> $fonts fonts object from metadata.
  * @return list<int>
  */
-function trove_extract_font_weights_from_fonts_object( $fonts ) {
+function extract_font_weights_from_fonts_object( $fonts ) {
 	if ( ! is_array( $fonts ) ) {
 		return array();
 	}
@@ -347,7 +347,7 @@ function trove_extract_font_weights_from_fonts_object( $fonts ) {
  * @param array<string, mixed> $axis Axis entry with min/max.
  * @return list<int>
  */
-function trove_font_weights_from_wght_axis( array $axis ) {
+function font_weights_from_wght_axis( array $axis ) {
 	$min = isset( $axis['min'] ) ? (int) round( (float) $axis['min'] ) : 400;
 	$max = isset( $axis['max'] ) ? (int) round( (float) $axis['max'] ) : 700;
 	$min = max( 1, min( 1000, $min ) );
@@ -404,7 +404,7 @@ function get_font_weight_values_for_family( $family ) {
 		return array( 300, 400, 500, 600, 700 );
 	}
 	$row     = $map[ $family ];
-	$weights = trove_extract_font_weights_from_fonts_object( $row['fonts'] ?? array() );
+	$weights = extract_font_weights_from_fonts_object( $row['fonts'] ?? array() );
 	if ( ! empty( $weights ) ) {
 		/**
 		 * Filter discrete weights parsed from Google Fonts metadata for a family.
@@ -417,7 +417,7 @@ function get_font_weight_values_for_family( $family ) {
 	$axes = isset( $row['axes'] ) && is_array( $row['axes'] ) ? $row['axes'] : array();
 	foreach ( $axes as $ax ) {
 		if ( is_array( $ax ) && isset( $ax['tag'] ) && 'wght' === $ax['tag'] ) {
-			$weights = trove_font_weights_from_wght_axis( $ax );
+			$weights = font_weights_from_wght_axis( $ax );
 			return apply_filters( 'trove_font_weight_values_for_family', $weights, $family );
 		}
 	}
@@ -432,7 +432,7 @@ function get_font_weight_values_for_family( $family ) {
  * @param list<int> $allowed    Allowed weights.
  * @return int
  */
-function trove_nearest_font_weight( $candidate, array $allowed ) {
+function nearest_font_weight( $candidate, array $allowed ) {
 	$candidate = absint( $candidate );
 	if ( empty( $allowed ) ) {
 		return 400;
@@ -481,7 +481,7 @@ function get_font_weight_map_for_customizer() {
  *
  * @return array<string, string> weight string => label
  */
-function trove_font_weight_choice_labels() {
+function font_weight_choice_labels() {
 	return array(
 		'100' => __( '100 — Thin', 'trove' ),
 		'200' => __( '200 — Extra Light', 'trove' ),

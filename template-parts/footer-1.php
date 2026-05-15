@@ -23,7 +23,7 @@ $show_social        = \Trove\should_render_footer_social_links();
 		</div>
 
 		<div class="site-footer__socials"<?php echo $show_social ? '' : ' hidden'; ?>>
-			<?php \Trove\trove_social_links(); ?>
+			<?php \Trove\social_links(); ?>
 		</div>
 	</div>
 
@@ -74,7 +74,7 @@ $show_social        = \Trove\should_render_footer_social_links();
 			<p class="site-footer__copy">
 				<span class="site-footer__copy-inner">
 				<?php
-					$copy = get_theme_mod( 'trove_footer_copy_text', (string) \Trove\Customizer\trove_customizer_default( 'trove_footer_copy_text', '' ) );
+					$copy = get_theme_mod( 'trove_footer_copy_text', (string) \Trove\Customizer\customizer_default( 'trove_footer_copy_text', '' ) );
 					if ( ! empty( $copy ) ) {
 						echo wp_kses_post( $copy );
 					} else {

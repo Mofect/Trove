@@ -14,8 +14,7 @@ defined( 'ABSPATH' ) || exit;
  * @return string `horizontal`|`vertical`|`collapsible`
  */
 function get_single_product_tabs_layout() {
-	$def = (string) \Trove\Customizer\trove_customizer_default( 'trove_woo_single_product_tabs_layout', 'horizontal' );
-	$v   = sanitize_key( (string) get_theme_mod( 'trove_woo_single_product_tabs_layout', $def ) );
+	$v = sanitize_key( (string) \Trove\Metabox\get_product_setting( 'tabs_layout', 0, 'horizontal' ) );
 	if ( 'collapsible' === $v ) {
 		return 'collapsible';
 	}

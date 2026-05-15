@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @return array<string, array{var:string, default:string}>
  */
-function trove_color_theme_mod_definitions() {
+function color_theme_mod_definitions() {
 	static $cached = null;
 	if ( null !== $cached ) {
 		return $cached;
@@ -59,7 +59,7 @@ function trove_color_theme_mod_definitions() {
 	foreach ( $map as $key => $var ) {
 		$cached[ $key ] = array(
 			'var'     => $var,
-			'default' => (string) trove_customizer_default( $key ),
+			'default' => (string) customizer_default( $key ),
 		);
 	}
 	return $cached;
@@ -70,8 +70,8 @@ function trove_color_theme_mod_definitions() {
  *
  * @return list<string>
  */
-function trove_global_color_scheme_setting_keys() {
-	return array_keys( trove_color_theme_mod_definitions() );
+function global_color_scheme_setting_keys() {
+	return array_keys( color_theme_mod_definitions() );
 }
 
 /**
@@ -79,15 +79,15 @@ function trove_global_color_scheme_setting_keys() {
  *
  * @return array<string, array{var:string, default:string, mode:string}>
  */
-function trove_typography_theme_mod_definitions() {
+function typography_theme_mod_definitions() {
 	$defs = array();
-	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
+	foreach ( typography_font_scope_meta() as $scope => $meta ) {
 		$weight_setting = isset( $meta['weight_setting'] ) ? (string) $meta['weight_setting'] : 'trove_' . $scope . '_font_weight';
 		$weight_var     = isset( $meta['weight_var'] ) ? (string) $meta['weight_var'] : '--trove-' . $scope . '-font-weight';
 
 		$defs[ $weight_setting ] = array(
 			'var'     => $weight_var,
-			'default' => (string) trove_customizer_default( $weight_setting, (string) $meta['default_weight'] ),
+			'default' => (string) customizer_default( $weight_setting, (string) $meta['default_weight'] ),
 			'mode'    => 'weight',
 		);
 	}
@@ -99,7 +99,7 @@ function trove_typography_theme_mod_definitions() {
  *
  * @return array<string, array<string, mixed>>
  */
-function trove_typography_font_scope_meta() {
+function typography_font_scope_meta() {
 	return array(
 		'body'       => array(
 			'selector'            => 'body',
@@ -186,9 +186,9 @@ function trove_typography_font_scope_meta() {
  *
  * @return array<string, string>
  */
-function trove_font_weight_setting_pairs() {
+function font_weight_setting_pairs() {
 	$pairs = array();
-	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
+	foreach ( typography_font_scope_meta() as $scope => $meta ) {
 		$family_setting = isset( $meta['family_setting'] ) ? (string) $meta['family_setting'] : 'trove_' . $scope . '_google_font_family';
 		$weight_setting = isset( $meta['weight_setting'] ) ? (string) $meta['weight_setting'] : 'trove_' . $scope . '_font_weight';
 		$pairs[ $family_setting ] = $weight_setting;
@@ -201,9 +201,9 @@ function trove_font_weight_setting_pairs() {
  *
  * @return array<string, string>
  */
-function trove_font_weight_family_map() {
+function font_weight_family_map() {
 	$out = array();
-	foreach ( trove_font_weight_setting_pairs() as $family_setting => $weight_setting ) {
+	foreach ( font_weight_setting_pairs() as $family_setting => $weight_setting ) {
 		$out[ $weight_setting ] = $family_setting;
 	}
 	return $out;
@@ -213,7 +213,7 @@ function trove_font_weight_family_map() {
  * @param mixed $value Raw numeric size.
  * @return float
  */
-function trove_sanitize_font_base_size( $value ) {
+function sanitize_font_base_size( $value ) {
 	$f = is_numeric( $value ) ? (float) $value : 16;
 	return max( 0.25, min( 500, round( $f, 4 ) ) );
 }
@@ -222,7 +222,7 @@ function trove_sanitize_font_base_size( $value ) {
  * @param mixed $value Raw unit slug.
  * @return string px|rem|em
  */
-function trove_sanitize_font_base_size_unit( $value ) {
+function sanitize_font_base_size_unit( $value ) {
 	$allowed = array( 'px', 'rem', 'em' );
 	$v       = is_string( $value ) ? strtolower( trim( $value ) ) : 'px';
 	return in_array( $v, $allowed, true ) ? $v : 'px';
@@ -232,18 +232,18 @@ function trove_sanitize_font_base_size_unit( $value ) {
  * @param mixed $value Raw weight.
  * @return int
  */
-function trove_sanitize_font_base_weight( $value ) {
+function sanitize_font_base_weight( $value ) {
 	$n       = absint( $value );
 	$n       = max( 1, min( 1000, $n ) );
-	$allowed = get_font_weight_values_for_family( trove_effective_google_font_family_during_save() );
-	return trove_nearest_font_weight( $n, $allowed );
+	$allowed = get_font_weight_values_for_family( effective_google_font_family_during_save() );
+	return nearest_font_weight( $n, $allowed );
 }
 
 /**
  * @param mixed $value Raw weight.
  * @return int
  */
-function trove_sanitize_font_weight_loose( $value ) {
+function sanitize_font_weight_loose( $value ) {
 	$n = absint( $value );
 	return max( 1, min( 1000, $n ) );
 }
@@ -252,7 +252,7 @@ function trove_sanitize_font_weight_loose( $value ) {
  * @param mixed $value Raw line-height number.
  * @return float
  */
-function trove_sanitize_font_base_line_height( $value ) {
+function sanitize_font_base_line_height( $value ) {
 	$f = is_numeric( $value ) ? (float) $value : 1.5;
 	return max( 0.25, min( 500, round( $f, 4 ) ) );
 }
@@ -261,7 +261,7 @@ function trove_sanitize_font_base_line_height( $value ) {
  * @param mixed $value Raw unit slug.
  * @return string
  */
-function trove_sanitize_font_base_line_height_unit( $value ) {
+function sanitize_font_base_line_height_unit( $value ) {
 	$allowed = array( 'unitless', 'px', 'rem', 'em', '%' );
 	$v       = is_string( $value ) ? trim( $value ) : 'unitless';
 	return in_array( $v, $allowed, true ) ? $v : 'unitless';
@@ -271,7 +271,7 @@ function trove_sanitize_font_base_line_height_unit( $value ) {
  * @param mixed $value Raw letter-spacing number.
  * @return float
  */
-function trove_sanitize_font_letter_spacing( $value ) {
+function sanitize_font_letter_spacing( $value ) {
 	$f = is_numeric( $value ) ? (float) $value : 0;
 	return max( -10, min( 10, round( $f, 4 ) ) );
 }
@@ -280,7 +280,7 @@ function trove_sanitize_font_letter_spacing( $value ) {
  * @param mixed $value Raw unit slug.
  * @return string px|rem|em
  */
-function trove_sanitize_font_letter_spacing_unit( $value ) {
+function sanitize_font_letter_spacing_unit( $value ) {
 	$allowed = array( 'px', 'rem', 'em' );
 	$v       = is_string( $value ) ? strtolower( trim( $value ) ) : 'em';
 	return in_array( $v, $allowed, true ) ? $v : 'em';
@@ -290,7 +290,7 @@ function trove_sanitize_font_letter_spacing_unit( $value ) {
  * @param float $f Numeric value.
  * @return string Trimmed for CSS (no trailing zeros).
  */
-function trove_format_css_float_string( $f ) {
+function format_css_float_string( $f ) {
 	$s = rtrim( rtrim( sprintf( '%.4F', (float) $f ), '0' ), '.' );
 	return '' !== $s ? $s : '0';
 }
@@ -298,11 +298,11 @@ function trove_format_css_float_string( $f ) {
 /**
  * @return string e.g. 16px, 1rem
  */
-function trove_font_base_size_css_value() {
-	$unit = trove_sanitize_font_base_size_unit( get_theme_mod( 'trove_font_base_size_unit', (string) trove_customizer_default( 'trove_font_base_size_unit', 'px' ) ) );
-	$raw  = get_theme_mod( 'trove_font_base_size', trove_customizer_default( 'trove_font_base_size', 16 ) );
+function font_base_size_css_value() {
+	$unit = sanitize_font_base_size_unit( get_theme_mod( 'trove_font_base_size_unit', (string) customizer_default( 'trove_font_base_size_unit', 'px' ) ) );
+	$raw  = get_theme_mod( 'trove_font_base_size', customizer_default( 'trove_font_base_size', 16 ) );
 	$v    = is_numeric( $raw ) ? (float) $raw : 16;
-	$v    = trove_sanitize_font_base_size( $v );
+	$v    = sanitize_font_base_size( $v );
 
 	if ( 'px' === $unit ) {
 		$n = (int) round( $v );
@@ -311,7 +311,7 @@ function trove_font_base_size_css_value() {
 	}
 	if ( 'rem' === $unit || 'em' === $unit ) {
 		$f = max( 0.5, min( 2.5, $v ) );
-		return trove_format_css_float_string( $f ) . $unit;
+		return format_css_float_string( $f ) . $unit;
 	}
 	return '16px';
 }
@@ -319,26 +319,26 @@ function trove_font_base_size_css_value() {
 /**
  * @return string e.g. 400
  */
-function trove_font_base_weight_css_value() {
-	$v       = get_theme_mod( 'trove_font_base_weight', trove_customizer_default( 'trove_font_base_weight', 400 ) );
+function font_base_weight_css_value() {
+	$v       = get_theme_mod( 'trove_font_base_weight', customizer_default( 'trove_font_base_weight', 400 ) );
 	$n       = absint( $v );
 	$allowed = get_font_weight_values_for_family( get_font_family_setting() );
-	return (string) trove_nearest_font_weight( $n, $allowed );
+	return (string) nearest_font_weight( $n, $allowed );
 }
 
 /**
  * @return string e.g. 1.5, 24px, 150%
  */
 
-function trove_font_base_line_height_css_value() {
-	$unit = trove_sanitize_font_base_line_height_unit( get_theme_mod( 'trove_font_base_line_height_unit', (string) trove_customizer_default( 'trove_font_base_line_height_unit', 'unitless' ) ) );
-	$raw  = get_theme_mod( 'trove_font_base_line_height', trove_customizer_default( 'trove_font_base_line_height', 1.5 ) );
+function font_base_line_height_css_value() {
+	$unit = sanitize_font_base_line_height_unit( get_theme_mod( 'trove_font_base_line_height_unit', (string) customizer_default( 'trove_font_base_line_height_unit', 'unitless' ) ) );
+	$raw  = get_theme_mod( 'trove_font_base_line_height', customizer_default( 'trove_font_base_line_height', 1.5 ) );
 	$v    = is_numeric( $raw ) ? (float) $raw : 1.5;
-	$v    = trove_sanitize_font_base_line_height( $v );
+	$v    = sanitize_font_base_line_height( $v );
 
 	if ( 'unitless' === $unit ) {
 		$f = max( 1, min( 3, $v ) );
-		return trove_format_css_float_string( $f );
+		return format_css_float_string( $f );
 	}
 	if ( 'px' === $unit ) {
 		$n = max( 12, min( 80, (int) round( $v ) ) );
@@ -346,7 +346,7 @@ function trove_font_base_line_height_css_value() {
 	}
 	if ( 'rem' === $unit || 'em' === $unit ) {
 		$f = max( 0.5, min( 4, $v ) );
-		return trove_format_css_float_string( $f ) . $unit;
+		return format_css_float_string( $f ) . $unit;
 	}
 	if ( '%' === $unit ) {
 		$n = max( 80, min( 250, (int) round( $v ) ) );
@@ -362,10 +362,10 @@ function trove_font_base_line_height_css_value() {
  * @param string $default_unit Default unit slug.
  * @return string
  */
-function trove_number_unit_css_value( $number_setting, $unit_setting, $default, $default_unit ) {
-	$unit = get_theme_mod( $unit_setting, (string) trove_customizer_default( $unit_setting, $default_unit ) );
-	$raw  = get_theme_mod( $number_setting, trove_customizer_default( $number_setting, $default ) );
-	return trove_number_unit_css_value_from_raw( $raw, $unit, $default, $default_unit );
+function number_unit_css_value( $number_setting, $unit_setting, $default, $default_unit ) {
+	$unit = get_theme_mod( $unit_setting, (string) customizer_default( $unit_setting, $default_unit ) );
+	$raw  = get_theme_mod( $number_setting, customizer_default( $number_setting, $default ) );
+	return number_unit_css_value_from_raw( $raw, $unit, $default, $default_unit );
 }
 
 /**
@@ -377,14 +377,14 @@ function trove_number_unit_css_value( $number_setting, $unit_setting, $default, 
  * @param string $default_unit Default unit.
  * @return string
  */
-function trove_number_unit_css_value_from_raw( $raw, $unit_raw, $default, $default_unit ) {
+function number_unit_css_value_from_raw( $raw, $unit_raw, $default, $default_unit ) {
 	if ( 'unitless' === $default_unit || '%' === $default_unit ) {
-		$unit = trove_sanitize_font_base_line_height_unit( (string) $unit_raw );
+		$unit = sanitize_font_base_line_height_unit( (string) $unit_raw );
 		$v    = is_numeric( $raw ) ? (float) $raw : (float) $default;
-		$v    = trove_sanitize_font_base_line_height( $v );
+		$v    = sanitize_font_base_line_height( $v );
 		if ( 'unitless' === $unit ) {
 			$f = max( 1, min( 3, $v ) );
-			return trove_format_css_float_string( $f );
+			return format_css_float_string( $f );
 		}
 		if ( 'px' === $unit ) {
 			$n = max( 12, min( 80, (int) round( $v ) ) );
@@ -392,25 +392,25 @@ function trove_number_unit_css_value_from_raw( $raw, $unit_raw, $default, $defau
 		}
 		if ( 'rem' === $unit || 'em' === $unit ) {
 			$f = max( 0.5, min( 4, $v ) );
-			return trove_format_css_float_string( $f ) . $unit;
+			return format_css_float_string( $f ) . $unit;
 		}
 		if ( '%' === $unit ) {
 			$n = max( 80, min( 250, (int) round( $v ) ) );
 			return $n . '%';
 		}
-		return trove_format_css_float_string( (float) $default );
+		return format_css_float_string( (float) $default );
 	}
 
-	$unit = trove_sanitize_font_base_size_unit( (string) $unit_raw );
+	$unit = sanitize_font_base_size_unit( (string) $unit_raw );
 	$v    = is_numeric( $raw ) ? (float) $raw : (float) $default;
-	$v    = trove_sanitize_font_base_size( $v );
+	$v    = sanitize_font_base_size( $v );
 	if ( 'px' === $unit ) {
 		$n = (int) round( $v );
 		$n = max( 1, min( 500, $n ) );
 		return $n . 'px';
 	}
 	$f = max( 0.25, min( 32, $v ) );
-	return trove_format_css_float_string( $f ) . $unit;
+	return format_css_float_string( $f ) . $unit;
 }
 
 /**
@@ -422,11 +422,11 @@ function trove_number_unit_css_value_from_raw( $raw, $unit_raw, $default, $defau
  * @param string $default_unit Default unit.
  * @return string
  */
-function trove_letter_spacing_css_value_from_raw( $raw, $unit_raw, $default, $default_unit ) {
-	$unit = trove_sanitize_font_letter_spacing_unit( (string) $unit_raw );
+function letter_spacing_css_value_from_raw( $raw, $unit_raw, $default, $default_unit ) {
+	$unit = sanitize_font_letter_spacing_unit( (string) $unit_raw );
 	$v    = is_numeric( $raw ) ? (float) $raw : (float) $default;
-	$v    = trove_sanitize_font_letter_spacing( $v );
-	return trove_format_css_float_string( $v ) . $unit;
+	$v    = sanitize_font_letter_spacing( $v );
+	return format_css_float_string( $v ) . $unit;
 }
 
 /**
@@ -436,17 +436,17 @@ function trove_letter_spacing_css_value_from_raw( $raw, $unit_raw, $default, $de
  * @param string $unit `px` or `rem`.
  * @return string
  */
-function trove_announcement_height_raw_to_css( $raw, $unit ) {
-	$unit = trove_sanitize_font_base_size_unit( (string) $unit );
+function announcement_height_raw_to_css( $raw, $unit ) {
+	$unit = sanitize_font_base_size_unit( (string) $unit );
 	$v    = is_numeric( $raw ) ? (float) $raw : 48.0;
-	$v    = trove_sanitize_font_base_size( $v );
+	$v    = sanitize_font_base_size( $v );
 	if ( 'px' === $unit ) {
 		$n = (int) round( $v );
 		$n = max( 24, min( 120, $n ) );
 		return $n . 'px';
 	}
 	$f = max( 0.25, min( 32, $v ) );
-	return trove_format_css_float_string( $f ) . $unit;
+	return format_css_float_string( $f ) . $unit;
 }
 
 /**
@@ -456,7 +456,7 @@ function trove_announcement_height_raw_to_css( $raw, $unit ) {
  * @param array{tablet:int,phone:int} $bp Breakpoints (max-width).
  * @return string CSS fragment.
  */
-function trove_announcement_bar_responsive_visibility_css( array $enabled_by_device, array $bp ) {
+function announcement_bar_responsive_visibility_css( array $enabled_by_device, array $bp ) {
 	$e_pc  = wp_validate_boolean( isset( $enabled_by_device['pc'] ) ? $enabled_by_device['pc'] : true );
 	$e_tab = wp_validate_boolean( isset( $enabled_by_device['tablet'] ) ? $enabled_by_device['tablet'] : true );
 	$e_ph  = wp_validate_boolean( isset( $enabled_by_device['phone'] ) ? $enabled_by_device['phone'] : true );
@@ -484,10 +484,10 @@ function trove_announcement_bar_responsive_visibility_css( array $enabled_by_dev
  * @param int    $default_weight Default value.
  * @return string
  */
-function trove_font_weight_css_value_for_settings( $weight_setting, $family_setting, $default_weight ) {
-	$n      = absint( get_theme_mod( $weight_setting, trove_customizer_default( $weight_setting, $default_weight ) ) );
-	$family = sanitize_google_font_family( get_theme_mod( $family_setting, (string) trove_customizer_default( $family_setting, 'system' ) ) );
-	return (string) trove_nearest_font_weight( $n, get_font_weight_values_for_family( $family ) );
+function font_weight_css_value_for_settings( $weight_setting, $family_setting, $default_weight ) {
+	$n      = absint( get_theme_mod( $weight_setting, customizer_default( $weight_setting, $default_weight ) ) );
+	$family = sanitize_google_font_family( get_theme_mod( $family_setting, (string) customizer_default( $family_setting, 'system' ) ) );
+	return (string) nearest_font_weight( $n, get_font_weight_values_for_family( $family ) );
 }
 
 /**
@@ -497,7 +497,7 @@ function trove_font_weight_css_value_for_settings( $weight_setting, $family_sett
  * @param mixed $value Raw candidate value.
  * @return string Sanitized color or empty string.
  */
-function trove_sanitize_css_color( $value ) {
+function sanitize_css_color( $value ) {
 	$raw = is_string( $value ) ? trim( $value ) : trim( (string) $value );
 	if ( '' === $raw ) {
 		return '';
@@ -579,7 +579,7 @@ function trove_sanitize_css_color( $value ) {
  * @param mixed $value Raw color.
  * @return bool
  */
-function trove_color_is_transparent_swatch( $value ) {
+function color_is_transparent_swatch( $value ) {
 	$raw = is_string( $value ) ? trim( $value ) : trim( (string) $value );
 	if ( '' === $raw ) {
 		return true;
@@ -587,13 +587,13 @@ function trove_color_is_transparent_swatch( $value ) {
 	if ( 'transparent' === strtolower( $raw ) ) {
 		return true;
 	}
-	/* hsla(…, 0) before sanitize (trove_sanitize_css_color may not accept hsla). */
+	/* hsla(…, 0) before sanitize (sanitize_css_color may not accept hsla). */
 	if ( preg_match( '/^hsla\(/i', $raw ) && preg_match( '/,\s*([0-9.]+)\s*\)\s*$/', $raw, $hm ) ) {
 		if ( (float) $hm[1] <= 0.0 ) {
 			return true;
 		}
 	}
-	$san = trove_sanitize_css_color( $value );
+	$san = sanitize_css_color( $value );
 	if ( '' === $san ) {
 		return true;
 	}
@@ -609,8 +609,8 @@ function trove_color_is_transparent_swatch( $value ) {
  * @param mixed $value Raw color.
  * @return string Non-empty key, or empty string if invalid.
  */
-function trove_normalize_color_for_scheme_dedupe( $value ) {
-	$san = trove_sanitize_css_color( $value );
+function normalize_color_for_scheme_dedupe( $value ) {
+	$san = sanitize_css_color( $value );
 	if ( '' === $san ) {
 		return '';
 	}
@@ -643,12 +643,12 @@ function trove_normalize_color_for_scheme_dedupe( $value ) {
  * @param string $default Valid fallback color.
  * @return string
  */
-function trove_color_theme_mod( $key, $default ) {
+function color_theme_mod( $key, $default ) {
 	$raw = get_theme_mod( $key );
 	if ( null === $raw || false === $raw || '' === $raw ) {
 		return $default;
 	}
-	$san = trove_sanitize_css_color( is_string( $raw ) ? $raw : (string) $raw );
+	$san = sanitize_css_color( is_string( $raw ) ? $raw : (string) $raw );
 	return '' !== $san ? $san : $default;
 }
 
@@ -658,7 +658,7 @@ function trove_color_theme_mod( $key, $default ) {
  * @param int $width Raw width in px.
  * @return int
  */
-function trove_clamp_content_width( $width ) {
+function clamp_content_width( $width ) {
 	$w = absint( $width );
 	if ( $w < 600 || $w > 1400 ) {
 		return 800;
@@ -672,7 +672,7 @@ function trove_clamp_content_width( $width ) {
  * @param int $width Raw width in px.
  * @return int
  */
-function trove_clamp_content_wide_width( $width ) {
+function clamp_content_wide_width( $width ) {
 	$w = absint( $width );
 	if ( $w < 800 || $w > 2400 ) {
 		return 1200;
@@ -685,17 +685,17 @@ function trove_clamp_content_wide_width( $width ) {
  *
  * @return int
  */
-function trove_get_content_width_px() {
-	$def = (int) trove_customizer_default( 'trove_content_width', 800 );
+function get_content_width_px() {
+	$def = (int) customizer_default( 'trove_content_width', 800 );
 	$raw = get_theme_mod( 'trove_content_width', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_content_width( $raw );
+		return clamp_content_width( $raw );
 	}
 	$legacy_pc = get_theme_mod( 'trove_content_width_pc', null );
 	if ( null !== $legacy_pc && false !== $legacy_pc && '' !== $legacy_pc && is_numeric( $legacy_pc ) ) {
-		return trove_clamp_content_width( $legacy_pc );
+		return clamp_content_width( $legacy_pc );
 	}
-	return trove_clamp_content_width( $def );
+	return clamp_content_width( $def );
 }
 
 /**
@@ -703,13 +703,13 @@ function trove_get_content_width_px() {
  *
  * @return int
  */
-function trove_get_content_wide_width_px() {
-	$def = (int) trove_customizer_default( 'trove_content_wide_width', 1200 );
+function get_content_wide_width_px() {
+	$def = (int) customizer_default( 'trove_content_wide_width', 1200 );
 	$raw = get_theme_mod( 'trove_content_wide_width', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_content_wide_width( $raw );
+		return clamp_content_wide_width( $raw );
 	}
-	return trove_clamp_content_wide_width( $def );
+	return clamp_content_wide_width( $def );
 }
 
 /**
@@ -718,7 +718,7 @@ function trove_get_content_wide_width_px() {
  * @param int $px Raw value.
  * @return int
  */
-function trove_clamp_content_vertical_spacing_px( $px ) {
+function clamp_content_vertical_spacing_px( $px ) {
 	$w = absint( $px );
 	return min( 200, max( 0, $w ) );
 }
@@ -728,13 +728,13 @@ function trove_clamp_content_vertical_spacing_px( $px ) {
  *
  * @return int
  */
-function trove_get_content_vertical_spacing_px() {
-	$def = (int) trove_customizer_default( 'trove_content_vertical_spacing', 48 );
+function get_content_vertical_spacing_px() {
+	$def = (int) customizer_default( 'trove_content_vertical_spacing', 48 );
 	$raw = get_theme_mod( 'trove_content_vertical_spacing', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_content_vertical_spacing_px( $raw );
+		return clamp_content_vertical_spacing_px( $raw );
 	}
-	return trove_clamp_content_vertical_spacing_px( $def );
+	return clamp_content_vertical_spacing_px( $def );
 }
 
 /**
@@ -743,7 +743,7 @@ function trove_get_content_vertical_spacing_px() {
  * @param int $px Raw value.
  * @return int
  */
-function trove_clamp_content_horizontal_spacing_px( $px ) {
+function clamp_content_horizontal_spacing_px( $px ) {
 	$w = absint( $px );
 	return min( 200, max( 0, $w ) );
 }
@@ -753,13 +753,13 @@ function trove_clamp_content_horizontal_spacing_px( $px ) {
  *
  * @return int
  */
-function trove_get_content_horizontal_spacing_px() {
-	$def = (int) trove_customizer_default( 'trove_content_horizontal_spacing', 20 );
+function get_content_horizontal_spacing_px() {
+	$def = (int) customizer_default( 'trove_content_horizontal_spacing', 20 );
 	$raw = get_theme_mod( 'trove_content_horizontal_spacing', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_content_horizontal_spacing_px( $raw );
+		return clamp_content_horizontal_spacing_px( $raw );
 	}
-	return trove_clamp_content_horizontal_spacing_px( $def );
+	return clamp_content_horizontal_spacing_px( $def );
 }
 
 /**
@@ -767,7 +767,7 @@ function trove_get_content_horizontal_spacing_px() {
  *
  * @return array<string, array{var:string, default:string}>
  */
-function trove_button_color_theme_mod_definitions() {
+function button_color_theme_mod_definitions() {
 	static $cached = null;
 	if ( null !== $cached ) {
 		return $cached;
@@ -805,7 +805,7 @@ function trove_button_color_theme_mod_definitions() {
 		$fb = isset( $fallbacks[ $key ] ) ? $fallbacks[ $key ] : '#111111';
 		$out[ $key ] = array(
 			'var'     => $var,
-			'default' => (string) trove_customizer_default( $key, $fb ),
+			'default' => (string) customizer_default( $key, $fb ),
 		);
 	}
 	$cached = $out;
@@ -817,7 +817,7 @@ function trove_button_color_theme_mod_definitions() {
  *
  * @return array<string, array{var:string, default:string}>
  */
-function trove_text_field_color_theme_mod_definitions() {
+function text_field_color_theme_mod_definitions() {
 	static $cached = null;
 	if ( null !== $cached ) {
 		return $cached;
@@ -839,7 +839,7 @@ function trove_text_field_color_theme_mod_definitions() {
 		$fb = isset( $fallbacks[ $key ] ) ? $fallbacks[ $key ] : '#111111';
 		$out[ $key ] = array(
 			'var'     => $var,
-			'default' => (string) trove_customizer_default( $key, $fb ),
+			'default' => (string) customizer_default( $key, $fb ),
 		);
 	}
 	$cached = $out;
@@ -855,8 +855,8 @@ function trove_text_field_color_theme_mod_definitions() {
  * @param int    $max Max.
  * @return int
  */
-function trove_get_int_theme_mod_in_range( $key, $fallback, $min, $max ) {
-	$def = (int) trove_customizer_default( (string) $key, (int) $fallback );
+function get_int_theme_mod_in_range( $key, $fallback, $min, $max ) {
+	$def = (int) customizer_default( (string) $key, (int) $fallback );
 	$raw = get_theme_mod( (string) $key, null );
 	$n   = $def;
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
@@ -869,96 +869,96 @@ function trove_get_int_theme_mod_in_range( $key, $fallback, $min, $max ) {
  * @param int $px Raw border radius.
  * @return int
  */
-function trove_clamp_button_border_radius_px( $px ) {
+function clamp_button_border_radius_px( $px ) {
 	return min( 32, max( 0, absint( $px ) ) );
 }
 
 /**
  * @return int
  */
-function trove_get_button_border_radius_px() {
-	$def = (int) trove_customizer_default( 'trove_button_border_radius', 6 );
+function get_button_border_radius_px() {
+	$def = (int) customizer_default( 'trove_button_border_radius', 6 );
 	$raw = get_theme_mod( 'trove_button_border_radius', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_button_border_radius_px( $raw );
+		return clamp_button_border_radius_px( $raw );
 	}
-	return trove_clamp_button_border_radius_px( $def );
+	return clamp_button_border_radius_px( $def );
 }
 
 /**
  * @param int $px Raw border width.
  * @return int
  */
-function trove_clamp_button_border_width_px( $px ) {
+function clamp_button_border_width_px( $px ) {
 	return min( 8, max( 0, absint( $px ) ) );
 }
 
 /**
  * @return int
  */
-function trove_get_button_border_width_px() {
-	$def = (int) trove_customizer_default( 'trove_button_border_width', 1 );
+function get_button_border_width_px() {
+	$def = (int) customizer_default( 'trove_button_border_width', 1 );
 	$raw = get_theme_mod( 'trove_button_border_width', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_button_border_width_px( $raw );
+		return clamp_button_border_width_px( $raw );
 	}
-	return trove_clamp_button_border_width_px( $def );
+	return clamp_button_border_width_px( $def );
 }
 
 /**
  * @param int $px Raw font size in px.
  * @return int
  */
-function trove_clamp_button_text_font_size_px( $px ) {
+function clamp_button_text_font_size_px( $px ) {
 	return min( 24, max( 10, absint( $px ) ) );
 }
 
 /**
  * @return int
  */
-function trove_get_button_text_font_size_px() {
-	$def = (int) trove_customizer_default( 'trove_button_text_font_size', 16 );
+function get_button_text_font_size_px() {
+	$def = (int) customizer_default( 'trove_button_text_font_size', 16 );
 	$raw = get_theme_mod( 'trove_button_text_font_size', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_button_text_font_size_px( $raw );
+		return clamp_button_text_font_size_px( $raw );
 	}
-	return trove_clamp_button_text_font_size_px( $def );
+	return clamp_button_text_font_size_px( $def );
 }
 
 /**
  * @return int
  */
-function trove_get_button_secondary_border_radius_px() {
-	$def = (int) trove_customizer_default( 'trove_button_secondary_border_radius', 6 );
+function get_button_secondary_border_radius_px() {
+	$def = (int) customizer_default( 'trove_button_secondary_border_radius', 6 );
 	$raw = get_theme_mod( 'trove_button_secondary_border_radius', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_button_border_radius_px( $raw );
+		return clamp_button_border_radius_px( $raw );
 	}
-	return trove_clamp_button_border_radius_px( $def );
+	return clamp_button_border_radius_px( $def );
 }
 
 /**
  * @return int
  */
-function trove_get_button_secondary_border_width_px() {
-	$def = (int) trove_customizer_default( 'trove_button_secondary_border_width', 1 );
+function get_button_secondary_border_width_px() {
+	$def = (int) customizer_default( 'trove_button_secondary_border_width', 1 );
 	$raw = get_theme_mod( 'trove_button_secondary_border_width', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_button_border_width_px( $raw );
+		return clamp_button_border_width_px( $raw );
 	}
-	return trove_clamp_button_border_width_px( $def );
+	return clamp_button_border_width_px( $def );
 }
 
 /**
  * @return int
  */
-function trove_get_button_secondary_text_font_size_px() {
-	$def = (int) trove_customizer_default( 'trove_button_secondary_text_font_size', 14 );
+function get_button_secondary_text_font_size_px() {
+	$def = (int) customizer_default( 'trove_button_secondary_text_font_size', 14 );
 	$raw = get_theme_mod( 'trove_button_secondary_text_font_size', null );
 	if ( null !== $raw && false !== $raw && '' !== $raw && is_numeric( $raw ) ) {
-		return trove_clamp_button_text_font_size_px( $raw );
+		return clamp_button_text_font_size_px( $raw );
 	}
-	return trove_clamp_button_text_font_size_px( $def );
+	return clamp_button_text_font_size_px( $def );
 }
 
 /**
@@ -966,7 +966,7 @@ function trove_get_button_secondary_text_font_size_px() {
  *
  * @return array{top:int,right:int,bottom:int,left:int}
  */
-function trove_default_button_padding_sides() {
+function default_button_padding_sides() {
 	return array(
 		'top'    => 5,
 		'right'  => 20,
@@ -984,7 +984,7 @@ function trove_default_button_padding_sides() {
  * @param array<string, int>   $fallback Sides default.
  * @return string JSON string.
  */
-function trove_sanitize_spacing_box_json( $value, $min, $max, array $fallback ) {
+function sanitize_spacing_box_json( $value, $min, $max, array $fallback ) {
 	$min = max( 0, (int) $min );
 	$max = max( $min, (int) $max );
 	$data = null;
@@ -1018,22 +1018,22 @@ function trove_sanitize_spacing_box_json( $value, $min, $max, array $fallback ) 
  * @param string $key Theme mod key (e.g. trove_button_padding_pc).
  * @return array{top:int,right:int,bottom:int,left:int}
  */
-function trove_get_button_padding_sides_for_mod( $key ) {
+function get_button_padding_sides_for_mod( $key ) {
 	$key = (string) $key;
-	$fb  = trove_default_button_padding_sides();
-	$def = trove_customizer_default( $key, '' );
+	$fb  = default_button_padding_sides();
+	$def = customizer_default( $key, '' );
 	if ( '' === $def || null === $def ) {
-		$def = trove_sanitize_spacing_box_json( array_merge( $fb, array( 'linked' => false ) ), 0, 60, $fb );
+		$def = sanitize_spacing_box_json( array_merge( $fb, array( 'linked' => false ) ), 0, 60, $fb );
 	} elseif ( is_array( $def ) ) {
-		$def = trove_sanitize_spacing_box_json( $def, 0, 60, $fb );
+		$def = sanitize_spacing_box_json( $def, 0, 60, $fb );
 	} else {
-		$def = trove_sanitize_spacing_box_json( (string) $def, 0, 60, $fb );
+		$def = sanitize_spacing_box_json( (string) $def, 0, 60, $fb );
 	}
 	$raw = get_theme_mod( $key, null );
 	if ( null === $raw || false === $raw || '' === $raw ) {
 		$raw = $def;
 	}
-	$san = trove_sanitize_spacing_box_json( is_array( $raw ) ? $raw : (string) $raw, 0, 60, $fb );
+	$san = sanitize_spacing_box_json( is_array( $raw ) ? $raw : (string) $raw, 0, 60, $fb );
 	$dec = json_decode( $san, true );
 	if ( ! is_array( $dec ) ) {
 		return $fb;
@@ -1052,7 +1052,7 @@ function trove_get_button_padding_sides_for_mod( $key ) {
  * @param array{top:int,right:int,bottom:int,left:int} $sides Sides in px.
  * @return string
  */
-function trove_button_padding_vars_declaration( array $sides ) {
+function button_padding_vars_declaration( array $sides ) {
 	return '--trove-button-padding-top:' . (int) $sides['top'] . 'px;'
 		. '--trove-button-padding-right:' . (int) $sides['right'] . 'px;'
 		. '--trove-button-padding-bottom:' . (int) $sides['bottom'] . 'px;'
@@ -1065,7 +1065,7 @@ function trove_button_padding_vars_declaration( array $sides ) {
  * @param array{top:int,right:int,bottom:int,left:int} $sides Sides in px.
  * @return string
  */
-function trove_button_secondary_padding_vars_declaration( array $sides ) {
+function button_secondary_padding_vars_declaration( array $sides ) {
 	return '--trove-button-secondary-padding-top:' . (int) $sides['top'] . 'px;'
 		. '--trove-button-secondary-padding-right:' . (int) $sides['right'] . 'px;'
 		. '--trove-button-secondary-padding-bottom:' . (int) $sides['bottom'] . 'px;'
@@ -1075,33 +1075,33 @@ function trove_button_secondary_padding_vars_declaration( array $sides ) {
 /**
  * Inline CSS for accent, content width, and header border.
  */
-function trove_build_theme_variable_css( $selector = ':root', $include_responsive_content = true ) {
+function build_theme_variable_css( $selector = ':root', $include_responsive_content = true ) {
 	$font_family = get_font_family_setting();
 
-	$w_content   = trove_get_content_width_px();
-	$w_wide      = trove_get_content_wide_width_px();
-	$v_spacing   = trove_get_content_vertical_spacing_px();
-	$h_spacing   = trove_get_content_horizontal_spacing_px();
+	$w_content   = get_content_width_px();
+	$w_wide      = get_content_wide_width_px();
+	$v_spacing   = get_content_vertical_spacing_px();
+	$h_spacing   = get_content_horizontal_spacing_px();
 
 	$bp = get_responsive_breakpoints_max();
 
 	$root_parts = array();
-	foreach ( trove_color_theme_mod_definitions() as $mod_key => $row ) {
-		$root_parts[] = $row['var'] . ':' . esc_attr( trove_color_theme_mod( $mod_key, $row['default'] ) );
+	foreach ( color_theme_mod_definitions() as $mod_key => $row ) {
+		$root_parts[] = $row['var'] . ':' . esc_attr( color_theme_mod( $mod_key, $row['default'] ) );
 	}
 
-	foreach ( trove_button_color_theme_mod_definitions() as $mod_key => $row ) {
-		$root_parts[] = $row['var'] . ':' . esc_attr( trove_color_theme_mod( $mod_key, $row['default'] ) );
+	foreach ( button_color_theme_mod_definitions() as $mod_key => $row ) {
+		$root_parts[] = $row['var'] . ':' . esc_attr( color_theme_mod( $mod_key, $row['default'] ) );
 	}
-	foreach ( trove_text_field_color_theme_mod_definitions() as $mod_key => $row ) {
-		$root_parts[] = $row['var'] . ':' . esc_attr( trove_color_theme_mod( $mod_key, $row['default'] ) );
+	foreach ( text_field_color_theme_mod_definitions() as $mod_key => $row ) {
+		$root_parts[] = $row['var'] . ':' . esc_attr( color_theme_mod( $mod_key, $row['default'] ) );
 	}
 
 	$footer_color_mods = array(
 		'trove_footer_border_color' => '--trove-footer-border',
 	);
 	foreach ( $footer_color_mods as $mod_key => $css_var ) {
-		$c = trove_sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
+		$c = sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
 		if ( '' !== $c ) {
 			$root_parts[] = $css_var . ':' . esc_attr( $c );
 		}
@@ -1111,7 +1111,7 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 		'trove_header_border_color' => '--trove-header-border',
 	);
 	foreach ( $header_color_mods as $mod_key => $css_var ) {
-		$c = trove_sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
+		$c = sanitize_css_color( (string) get_theme_mod( $mod_key, '' ) );
 		if ( '' !== $c ) {
 			$root_parts[] = $css_var . ':' . esc_attr( $c );
 		}
@@ -1121,19 +1121,19 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 		'trove_announcement_height',
 		array_replace(
 			array( 'pc' => 48, 'tablet' => 48, 'phone' => 48 ),
-			(array) trove_customizer_default( 'trove_announcement_height', array() )
+			(array) customizer_default( 'trove_announcement_height', array() )
 		)
 	);
-	$ann_h_unit = (string) get_theme_mod( 'trove_announcement_height_unit', (string) trove_customizer_default( 'trove_announcement_height_unit', 'px' ) );
+	$ann_h_unit = (string) get_theme_mod( 'trove_announcement_height_unit', (string) customizer_default( 'trove_announcement_height_unit', 'px' ) );
 	$fz_vals    = get_responsive_mod_values(
 		'trove_announcement_text_size',
 		array_replace(
 			array( 'pc' => 'medium', 'tablet' => 'medium', 'phone' => 'medium' ),
-			(array) trove_customizer_default( 'trove_announcement_text_size', array() )
+			(array) customizer_default( 'trove_announcement_text_size', array() )
 		)
 	);
-	$root_parts[] = '--trove-announcement-min-height:' . esc_attr( trove_announcement_height_raw_to_css( $ann_h_vals['pc'], $ann_h_unit ) );
-	$root_parts[] = '--trove-announcement-font-size:' . esc_attr( \Trove\trove_announcement_text_size_slug_to_css( $fz_vals['pc'] ) );
+	$root_parts[] = '--trove-announcement-min-height:' . esc_attr( announcement_height_raw_to_css( $ann_h_vals['pc'], $ann_h_unit ) );
+	$root_parts[] = '--trove-announcement-font-size:' . esc_attr( \Trove\announcement_text_size_slug_to_css( $fz_vals['pc'] ) );
 
 	$header_logo_w = \Trove\get_header_logo_width();
 	$root_parts[]  = '--trove-header-logo-max-width:' . (int) $header_logo_w . 'px';
@@ -1144,39 +1144,39 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 	$root_parts[] = '--trove-content-vertical-spacing:' . (int) $v_spacing . 'px';
 	$root_parts[] = '--trove-content-horizontal-spacing:' . (int) $h_spacing . 'px';
 
-	$btn_r = trove_get_button_border_radius_px();
-	$btn_w = trove_get_button_border_width_px();
-	$btn_fs = trove_get_button_text_font_size_px();
-	$btn2_r = trove_get_button_secondary_border_radius_px();
-	$btn2_w = trove_get_button_secondary_border_width_px();
-	$btn2_fs = trove_get_button_secondary_text_font_size_px();
+	$btn_r = get_button_border_radius_px();
+	$btn_w = get_button_border_width_px();
+	$btn_fs = get_button_text_font_size_px();
+	$btn2_r = get_button_secondary_border_radius_px();
+	$btn2_w = get_button_secondary_border_width_px();
+	$btn2_fs = get_button_secondary_text_font_size_px();
 	$root_parts[] = '--trove-button-border-radius:' . (int) $btn_r . 'px';
 	$root_parts[] = '--trove-button-border-width:' . (int) $btn_w . 'px';
 	$root_parts[] = '--trove-button-font-size:' . (int) $btn_fs . 'px';
 	$root_parts[] = '--trove-button-secondary-border-radius:' . (int) $btn2_r . 'px';
 	$root_parts[] = '--trove-button-secondary-border-width:' . (int) $btn2_w . 'px';
 	$root_parts[] = '--trove-button-secondary-font-size:' . (int) $btn2_fs . 'px';
-	$root_parts[] = '--trove-input-field-height:' . trove_get_int_theme_mod_in_range( 'trove_input_field_height', 42, 28, 80 ) . 'px';
-	$root_parts[] = '--trove-input-field-text-size:' . trove_get_int_theme_mod_in_range( 'trove_input_field_text_size', 16, 10, 24 ) . 'px';
-	$root_parts[] = '--trove-input-field-border-width:' . trove_get_int_theme_mod_in_range( 'trove_input_field_border_width', 1, 0, 8 ) . 'px';
-	$root_parts[] = '--trove-input-field-border-radius:' . trove_get_int_theme_mod_in_range( 'trove_input_field_border_radius', 3, 0, 32 ) . 'px';
-	$root_parts[] = '--trove-textarea-field-height:' . trove_get_int_theme_mod_in_range( 'trove_textarea_field_height', 120, 60, 400 ) . 'px';
-	$root_parts[] = '--trove-textarea-field-text-size:' . trove_get_int_theme_mod_in_range( 'trove_textarea_field_text_size', 16, 10, 24 ) . 'px';
-	$root_parts[] = '--trove-textarea-field-border-width:' . trove_get_int_theme_mod_in_range( 'trove_textarea_field_border_width', 1, 0, 8 ) . 'px';
-	$root_parts[] = '--trove-textarea-field-border-radius:' . trove_get_int_theme_mod_in_range( 'trove_textarea_field_border_radius', 3, 0, 32 ) . 'px';
+	$root_parts[] = '--trove-input-field-height:' . get_int_theme_mod_in_range( 'trove_input_field_height', 42, 28, 80 ) . 'px';
+	$root_parts[] = '--trove-input-field-text-size:' . get_int_theme_mod_in_range( 'trove_input_field_text_size', 16, 10, 24 ) . 'px';
+	$root_parts[] = '--trove-input-field-border-width:' . get_int_theme_mod_in_range( 'trove_input_field_border_width', 1, 0, 8 ) . 'px';
+	$root_parts[] = '--trove-input-field-border-radius:' . get_int_theme_mod_in_range( 'trove_input_field_border_radius', 3, 0, 32 ) . 'px';
+	$root_parts[] = '--trove-textarea-field-height:' . get_int_theme_mod_in_range( 'trove_textarea_field_height', 120, 60, 400 ) . 'px';
+	$root_parts[] = '--trove-textarea-field-text-size:' . get_int_theme_mod_in_range( 'trove_textarea_field_text_size', 16, 10, 24 ) . 'px';
+	$root_parts[] = '--trove-textarea-field-border-width:' . get_int_theme_mod_in_range( 'trove_textarea_field_border_width', 1, 0, 8 ) . 'px';
+	$root_parts[] = '--trove-textarea-field-border-radius:' . get_int_theme_mod_in_range( 'trove_textarea_field_border_radius', 3, 0, 32 ) . 'px';
 
-	$pad_pc = trove_get_button_padding_sides_for_mod( 'trove_button_padding_pc' );
-	$root_parts[] = trove_button_padding_vars_declaration( $pad_pc );
-	$pad2_pc = trove_get_button_padding_sides_for_mod( 'trove_button_secondary_padding_pc' );
-	$root_parts[] = trove_button_secondary_padding_vars_declaration( $pad2_pc );
+	$pad_pc = get_button_padding_sides_for_mod( 'trove_button_padding_pc' );
+	$root_parts[] = button_padding_vars_declaration( $pad_pc );
+	$pad2_pc = get_button_padding_sides_for_mod( 'trove_button_secondary_padding_pc' );
+	$root_parts[] = button_secondary_padding_vars_declaration( $pad2_pc );
 
-	$boxed_radius = absint( get_theme_mod( 'trove_blog_boxed_border_radius', (int) trove_customizer_default( 'trove_blog_boxed_border_radius', 10 ) ) );
+	$boxed_radius = absint( get_theme_mod( 'trove_blog_boxed_border_radius', (int) customizer_default( 'trove_blog_boxed_border_radius', 10 ) ) );
 	$boxed_radius = max( 0, min( 20, $boxed_radius ) );
 	$root_parts[] = '--trove-blog-boxed-radius:' . (int) $boxed_radius . 'px';
 	$root_parts[] = '--trove-font-body-scale:1';
 	$typography_tablet_parts = array();
 	$typography_phone_parts  = array();
-	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
+	foreach ( typography_font_scope_meta() as $scope => $meta ) {
 		$prefix = 'trove_' . $scope;
 		$family_setting = isset( $meta['family_setting'] ) ? (string) $meta['family_setting'] : $prefix . '_google_font_family';
 		$size_setting   = isset( $meta['size_setting'] ) ? (string) $meta['size_setting'] : $prefix . '_font_size';
@@ -1200,54 +1200,54 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 		$letter_unit_def = isset( $meta['default_letter_spacing_unit'] ) ? (string) $meta['default_letter_spacing_unit'] : 'em';
 		$weight_default = isset( $meta['default_weight'] ) ? (int) $meta['default_weight'] : 400;
 
-		$family = sanitize_google_font_family( get_theme_mod( $family_setting, (string) trove_customizer_default( $family_setting, $family_default ) ) );
+		$family = sanitize_google_font_family( get_theme_mod( $family_setting, (string) customizer_default( $family_setting, $family_default ) ) );
 		$size_defaults = array(
-			'pc'     => trove_customizer_default( $size_setting . '_pc', trove_customizer_default( $size_setting, $size_default ) ),
-			'tablet' => trove_customizer_default( $size_setting . '_tablet', trove_customizer_default( $size_setting, $size_default ) ),
-			'phone'  => trove_customizer_default( $size_setting . '_phone', trove_customizer_default( $size_setting, $size_default ) ),
+			'pc'     => customizer_default( $size_setting . '_pc', customizer_default( $size_setting, $size_default ) ),
+			'tablet' => customizer_default( $size_setting . '_tablet', customizer_default( $size_setting, $size_default ) ),
+			'phone'  => customizer_default( $size_setting . '_phone', customizer_default( $size_setting, $size_default ) ),
 		);
 		$line_defaults = array(
-			'pc'     => trove_customizer_default( $line_setting . '_pc', trove_customizer_default( $line_setting, $line_default ) ),
-			'tablet' => trove_customizer_default( $line_setting . '_tablet', trove_customizer_default( $line_setting, $line_default ) ),
-			'phone'  => trove_customizer_default( $line_setting . '_phone', trove_customizer_default( $line_setting, $line_default ) ),
+			'pc'     => customizer_default( $line_setting . '_pc', customizer_default( $line_setting, $line_default ) ),
+			'tablet' => customizer_default( $line_setting . '_tablet', customizer_default( $line_setting, $line_default ) ),
+			'phone'  => customizer_default( $line_setting . '_phone', customizer_default( $line_setting, $line_default ) ),
 		);
 		$size_values = get_responsive_mod_values( $size_setting, $size_defaults );
 		$line_values = get_responsive_mod_values( $line_setting, $line_defaults );
 		$letter_defaults = array(
-			'pc'     => trove_customizer_default( $letter_setting . '_pc', trove_customizer_default( $letter_setting, $letter_default ) ),
-			'tablet' => trove_customizer_default( $letter_setting . '_tablet', trove_customizer_default( $letter_setting, $letter_default ) ),
-			'phone'  => trove_customizer_default( $letter_setting . '_phone', trove_customizer_default( $letter_setting, $letter_default ) ),
+			'pc'     => customizer_default( $letter_setting . '_pc', customizer_default( $letter_setting, $letter_default ) ),
+			'tablet' => customizer_default( $letter_setting . '_tablet', customizer_default( $letter_setting, $letter_default ) ),
+			'phone'  => customizer_default( $letter_setting . '_phone', customizer_default( $letter_setting, $letter_default ) ),
 		);
 		$letter_values = get_responsive_mod_values( $letter_setting, $letter_defaults );
-		$size_unit_value = (string) get_theme_mod( $size_unit, (string) trove_customizer_default( $size_unit, $size_unit_def ) );
-		$line_unit_value = (string) get_theme_mod( $line_unit, (string) trove_customizer_default( $line_unit, $line_unit_def ) );
-		$letter_unit_value = (string) get_theme_mod( $letter_unit, (string) trove_customizer_default( $letter_unit, $letter_unit_def ) );
-		$size_css_pc = trove_number_unit_css_value_from_raw( $size_values['pc'], $size_unit_value, $size_default, $size_unit_def );
-		$line_css_pc = trove_number_unit_css_value_from_raw( $line_values['pc'], $line_unit_value, $line_default, $line_unit_def );
-		$letter_css_pc = trove_letter_spacing_css_value_from_raw( $letter_values['pc'], $letter_unit_value, $letter_default, $letter_unit_def );
-		$typography_tablet_parts[] = $size_var . ':' . esc_attr( trove_number_unit_css_value_from_raw( $size_values['tablet'], $size_unit_value, $size_default, $size_unit_def ) );
-		$typography_tablet_parts[] = $line_var . ':' . esc_attr( trove_number_unit_css_value_from_raw( $line_values['tablet'], $line_unit_value, $line_default, $line_unit_def ) );
-		$typography_tablet_parts[] = $letter_var . ':' . esc_attr( trove_letter_spacing_css_value_from_raw( $letter_values['tablet'], $letter_unit_value, $letter_default, $letter_unit_def ) );
-		$typography_phone_parts[] = $size_var . ':' . esc_attr( trove_number_unit_css_value_from_raw( $size_values['phone'], $size_unit_value, $size_default, $size_unit_def ) );
-		$typography_phone_parts[] = $line_var . ':' . esc_attr( trove_number_unit_css_value_from_raw( $line_values['phone'], $line_unit_value, $line_default, $line_unit_def ) );
-		$typography_phone_parts[] = $letter_var . ':' . esc_attr( trove_letter_spacing_css_value_from_raw( $letter_values['phone'], $letter_unit_value, $letter_default, $letter_unit_def ) );
+		$size_unit_value = (string) get_theme_mod( $size_unit, (string) customizer_default( $size_unit, $size_unit_def ) );
+		$line_unit_value = (string) get_theme_mod( $line_unit, (string) customizer_default( $line_unit, $line_unit_def ) );
+		$letter_unit_value = (string) get_theme_mod( $letter_unit, (string) customizer_default( $letter_unit, $letter_unit_def ) );
+		$size_css_pc = number_unit_css_value_from_raw( $size_values['pc'], $size_unit_value, $size_default, $size_unit_def );
+		$line_css_pc = number_unit_css_value_from_raw( $line_values['pc'], $line_unit_value, $line_default, $line_unit_def );
+		$letter_css_pc = letter_spacing_css_value_from_raw( $letter_values['pc'], $letter_unit_value, $letter_default, $letter_unit_def );
+		$typography_tablet_parts[] = $size_var . ':' . esc_attr( number_unit_css_value_from_raw( $size_values['tablet'], $size_unit_value, $size_default, $size_unit_def ) );
+		$typography_tablet_parts[] = $line_var . ':' . esc_attr( number_unit_css_value_from_raw( $line_values['tablet'], $line_unit_value, $line_default, $line_unit_def ) );
+		$typography_tablet_parts[] = $letter_var . ':' . esc_attr( letter_spacing_css_value_from_raw( $letter_values['tablet'], $letter_unit_value, $letter_default, $letter_unit_def ) );
+		$typography_phone_parts[] = $size_var . ':' . esc_attr( number_unit_css_value_from_raw( $size_values['phone'], $size_unit_value, $size_default, $size_unit_def ) );
+		$typography_phone_parts[] = $line_var . ':' . esc_attr( number_unit_css_value_from_raw( $line_values['phone'], $line_unit_value, $line_default, $line_unit_def ) );
+		$typography_phone_parts[] = $letter_var . ':' . esc_attr( letter_spacing_css_value_from_raw( $letter_values['phone'], $letter_unit_value, $letter_default, $letter_unit_def ) );
 		$root_parts[] = $family_var . ':' . get_body_font_family_css_value( $family );
 		$root_parts[] = $size_var . ':' . esc_attr( $size_css_pc );
-		$root_parts[] = $weight_var . ':' . esc_attr( trove_font_weight_css_value_for_settings( $weight_setting, $family_setting, (int) trove_customizer_default( $weight_setting, $weight_default ) ) );
+		$root_parts[] = $weight_var . ':' . esc_attr( font_weight_css_value_for_settings( $weight_setting, $family_setting, (int) customizer_default( $weight_setting, $weight_default ) ) );
 		$root_parts[] = $line_var . ':' . esc_attr( $line_css_pc );
 		$root_parts[] = $letter_var . ':' . esc_attr( $letter_css_pc );
 	}
 
 	$css  = $selector . '{' . implode( ';', $root_parts ) . '}';
 
-	$pad_tablet = trove_get_button_padding_sides_for_mod( 'trove_button_padding_tablet' );
-	$pad_phone  = trove_get_button_padding_sides_for_mod( 'trove_button_padding_phone' );
-	$pad2_tablet = trove_get_button_padding_sides_for_mod( 'trove_button_secondary_padding_tablet' );
-	$pad2_phone  = trove_get_button_padding_sides_for_mod( 'trove_button_secondary_padding_phone' );
-	$css       .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{' . trove_button_padding_vars_declaration( $pad_tablet ) . '}}';
-	$css       .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{' . trove_button_padding_vars_declaration( $pad_phone ) . '}}';
-	$css       .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{' . trove_button_secondary_padding_vars_declaration( $pad2_tablet ) . '}}';
-	$css       .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{' . trove_button_secondary_padding_vars_declaration( $pad2_phone ) . '}}';
+	$pad_tablet = get_button_padding_sides_for_mod( 'trove_button_padding_tablet' );
+	$pad_phone  = get_button_padding_sides_for_mod( 'trove_button_padding_phone' );
+	$pad2_tablet = get_button_padding_sides_for_mod( 'trove_button_secondary_padding_tablet' );
+	$pad2_phone  = get_button_padding_sides_for_mod( 'trove_button_secondary_padding_phone' );
+	$css       .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{' . button_padding_vars_declaration( $pad_tablet ) . '}}';
+	$css       .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{' . button_padding_vars_declaration( $pad_phone ) . '}}';
+	$css       .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{' . button_secondary_padding_vars_declaration( $pad2_tablet ) . '}}';
+	$css       .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{' . button_secondary_padding_vars_declaration( $pad2_phone ) . '}}';
 	if ( ! empty( $typography_tablet_parts ) ) {
 		$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{' . implode( ';', $typography_tablet_parts ) . '}}';
 	}
@@ -1258,16 +1258,16 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 	$css .= '.site-footer__extra-responsive .trove-fe--tablet,.site-footer__extra-responsive .trove-fe--phone{display:none;}';
 	$css .= '.site-footer__extra-responsive .trove-fe--pc{display:block;}';
 	if ( $include_responsive_content ) {
-		$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{--trove-announcement-min-height:' . esc_attr( trove_announcement_height_raw_to_css( $ann_h_vals['tablet'], $ann_h_unit ) ) . ';--trove-announcement-font-size:' . esc_attr( \Trove\trove_announcement_text_size_slug_to_css( $fz_vals['tablet'] ) ) . ';}}';
+		$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){' . $selector . '{--trove-announcement-min-height:' . esc_attr( announcement_height_raw_to_css( $ann_h_vals['tablet'], $ann_h_unit ) ) . ';--trove-announcement-font-size:' . esc_attr( \Trove\announcement_text_size_slug_to_css( $fz_vals['tablet'] ) ) . ';}}';
 	}
 	$css .= '@media (max-width:' . (int) $bp['tablet'] . 'px){.site-footer__extra-responsive .trove-fe--pc{display:none;}.site-footer__extra-responsive .trove-fe--tablet{display:block;}}';
 	if ( $include_responsive_content ) {
-		$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{--trove-announcement-min-height:' . esc_attr( trove_announcement_height_raw_to_css( $ann_h_vals['phone'], $ann_h_unit ) ) . ';--trove-announcement-font-size:' . esc_attr( \Trove\trove_announcement_text_size_slug_to_css( $fz_vals['phone'] ) ) . ';}.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
+		$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){' . $selector . '{--trove-announcement-min-height:' . esc_attr( announcement_height_raw_to_css( $ann_h_vals['phone'], $ann_h_unit ) ) . ';--trove-announcement-font-size:' . esc_attr( \Trove\announcement_text_size_slug_to_css( $fz_vals['phone'] ) ) . ';}.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
 	} else {
 		$css .= '@media (max-width:' . (int) $bp['phone'] . 'px){.site-footer__extra-responsive .trove-fe--tablet{display:none;}.site-footer__extra-responsive .trove-fe--phone{display:block;}}';
 	}
 
-	$header_min = absint( get_theme_mod( 'trove_header_min_height', (int) trove_customizer_default( 'trove_header_min_height', 0 ) ) );
+	$header_min = absint( get_theme_mod( 'trove_header_min_height', (int) customizer_default( 'trove_header_min_height', 0 ) ) );
 	if ( $header_min > 0 && $header_min <= 400 ) {
 		$css .= '.site-header{min-height:' . $header_min . 'px;}';
 	}
@@ -1276,10 +1276,10 @@ function trove_build_theme_variable_css( $selector = ':root', $include_responsiv
 		'trove_announcement_enabled',
 		array_replace(
 			array( 'pc' => true, 'tablet' => true, 'phone' => true ),
-			(array) trove_customizer_default( 'trove_announcement_enabled', array() )
+			(array) customizer_default( 'trove_announcement_enabled', array() )
 		)
 	);
-	$css .= trove_announcement_bar_responsive_visibility_css( $ann_enabled, $bp );
+	$css .= announcement_bar_responsive_visibility_css( $ann_enabled, $bp );
 
 	return $css;
 }
@@ -1292,7 +1292,7 @@ function output_customizer_css() {
 		return;
 	}
 
-	wp_add_inline_style( 'trove-style', trove_build_theme_variable_css( ':root', true ) );
+	wp_add_inline_style( 'trove-style', build_theme_variable_css( ':root', true ) );
 }
 add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\output_customizer_css', 20 );
 
@@ -1312,7 +1312,7 @@ function enqueue_editor_customizer_css() {
 	}
 
 	wp_enqueue_style( $handle );
-	wp_add_inline_style( $handle, trove_build_theme_variable_css( ':root, .editor-styles-wrapper', false ) );
+	wp_add_inline_style( $handle, build_theme_variable_css( ':root, .editor-styles-wrapper', false ) );
 }
 add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\enqueue_editor_customizer_css', 20 );
 
@@ -1322,9 +1322,9 @@ add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\enqueue_editor_customizer
  *
  * @return array<string, string>
  */
-function trove_preview_font_family_var_map() {
+function preview_font_family_var_map() {
 	$map = array();
-	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
+	foreach ( typography_font_scope_meta() as $scope => $meta ) {
 		$family_setting         = isset( $meta['family_setting'] ) ? (string) $meta['family_setting'] : 'trove_' . $scope . '_google_font_family';
 		$map[ $family_setting ] = isset( $meta['family_var'] ) ? (string) $meta['family_var'] : '--trove-' . $scope . '-font-family';
 	}
@@ -1336,9 +1336,9 @@ function trove_preview_font_family_var_map() {
  *
  * @return array<string, array{unit:string,var:string,mode:string}>
  */
-function trove_preview_number_unit_pairs() {
+function preview_number_unit_pairs() {
 	$pairs = array();
-	foreach ( trove_typography_font_scope_meta() as $scope => $meta ) {
+	foreach ( typography_font_scope_meta() as $scope => $meta ) {
 		$prefix        = 'trove_' . $scope;
 		$size_setting  = isset( $meta['size_setting'] ) ? (string) $meta['size_setting'] : $prefix . '_font_size';
 		$size_unit     = isset( $meta['size_unit_setting'] ) ? (string) $meta['size_unit_setting'] : $prefix . '_font_size_unit';
@@ -1363,14 +1363,14 @@ function trove_preview_number_unit_pairs() {
  */
 function enqueue_customizer_preview_scripts() {
 	$ver = defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0';
-	$uri = get_template_directory_uri();
+	$uri = \TROVE_URI;
 
 	$preview_colors = array();
 	$preview_color_exclude = array(
 		'trove_header_cart_badge_color',
 		'trove_header_cart_count_color',
 	);
-	foreach ( trove_color_theme_mod_definitions() as $mod => $row ) {
+	foreach ( color_theme_mod_definitions() as $mod => $row ) {
 		if ( in_array( $mod, $preview_color_exclude, true ) ) {
 			continue;
 		}
@@ -1379,13 +1379,13 @@ function enqueue_customizer_preview_scripts() {
 			'default' => $row['default'],
 		);
 	}
-	foreach ( trove_button_color_theme_mod_definitions() as $mod => $row ) {
+	foreach ( button_color_theme_mod_definitions() as $mod => $row ) {
 		$preview_colors[ $mod ] = array(
 			'var'     => $row['var'],
 			'default' => $row['default'],
 		);
 	}
-	foreach ( trove_text_field_color_theme_mod_definitions() as $mod => $row ) {
+	foreach ( text_field_color_theme_mod_definitions() as $mod => $row ) {
 		$preview_colors[ $mod ] = array(
 			'var'     => $row['var'],
 			'default' => $row['default'],
@@ -1393,7 +1393,7 @@ function enqueue_customizer_preview_scripts() {
 	}
 
 	$preview_typography = array();
-	foreach ( trove_typography_theme_mod_definitions() as $mod => $row ) {
+	foreach ( typography_theme_mod_definitions() as $mod => $row ) {
 		$preview_typography[ $mod ] = array(
 			'var'     => $row['var'],
 			'default' => $row['default'],
@@ -1417,9 +1417,9 @@ function enqueue_customizer_preview_scripts() {
 			'fonts'           => get_google_font_preview_data(),
 			'typography'      => $preview_typography,
 			'fontWeights'     => get_font_weight_map_for_customizer(),
-			'fontFamilies'    => trove_preview_font_family_var_map(),
-			'weightFamilies'  => trove_font_weight_family_map(),
-			'numberUnitPairs' => trove_preview_number_unit_pairs(),
+			'fontFamilies'    => preview_font_family_var_map(),
+			'weightFamilies'  => font_weight_family_map(),
+			'numberUnitPairs' => preview_number_unit_pairs(),
 			'footer'          => array(
 				'allRightsReserved'           => __( 'All rights reserved.', 'trove' ),
 				'newsletterTitleDefault'      => __( 'Subscribe to our emails', 'trove' ),
@@ -1483,7 +1483,7 @@ function render_footer_content_preview_partial() {
  */
 function get_header_classnames() {
 	$classes = array( 'site-header' );
-	if ( get_theme_mod( 'trove_header_bottom_border', (bool) trove_customizer_default( 'trove_header_bottom_border', false ) ) ) {
+	if ( get_theme_mod( 'trove_header_bottom_border', (bool) customizer_default( 'trove_header_bottom_border', false ) ) ) {
 		$classes[] = 'trove-header-has-border';
 	}
 	$allowed = array(
@@ -1493,14 +1493,14 @@ function get_header_classnames() {
 		'vertical-centered-logo',
 		'vertical-left-logo',
 	);
-	$layout = get_theme_mod( 'trove_header_layout', (string) trove_customizer_default( 'trove_header_layout', 'horizontal-left-logo' ) );
+	$layout = get_theme_mod( 'trove_header_layout', (string) customizer_default( 'trove_header_layout', 'horizontal-left-logo' ) );
 	$layout = is_string( $layout ) ? sanitize_key( $layout ) : '';
 	if ( '' !== $layout && in_array( $layout, $allowed, true ) ) {
 		$classes[] = 'trove-header__' . $layout;
 	}
 
 	$sticky_allowed = array( 'none', 'on_scroll_up', 'always' );
-	$sticky         = get_theme_mod( 'trove_header_sticky', (string) trove_customizer_default( 'trove_header_sticky', 'none' ) );
+	$sticky         = get_theme_mod( 'trove_header_sticky', (string) customizer_default( 'trove_header_sticky', 'none' ) );
 	$sticky         = is_string( $sticky ) ? sanitize_key( $sticky ) : 'none';
 	if ( ! in_array( $sticky, $sticky_allowed, true ) ) {
 		$sticky = 'none';
@@ -1508,7 +1508,7 @@ function get_header_classnames() {
 	$classes[] = 'trove-header-sticky-' . $sticky;
 
 	$align_allowed = array( 'left', 'center', 'right' );
-	$align         = get_theme_mod( 'trove_header_menu_alignment', (string) trove_customizer_default( 'trove_header_menu_alignment', 'right' ) );
+	$align         = get_theme_mod( 'trove_header_menu_alignment', (string) customizer_default( 'trove_header_menu_alignment', 'right' ) );
 	$align         = is_string( $align ) ? sanitize_key( $align ) : 'right';
 	if ( ! in_array( $align, $align_allowed, true ) ) {
 		$align = 'right';
@@ -1535,7 +1535,7 @@ function the_header_class_attr() {
 function get_header_nav_classnames() {
 	$classes = array( 'site-header__nav' );
 	$align_allowed = array( 'left', 'center', 'right' );
-	$align         = get_theme_mod( 'trove_header_menu_alignment', (string) trove_customizer_default( 'trove_header_menu_alignment', 'right' ) );
+	$align         = get_theme_mod( 'trove_header_menu_alignment', (string) customizer_default( 'trove_header_menu_alignment', 'right' ) );
 	$align         = is_string( $align ) ? sanitize_key( $align ) : 'right';
 	if ( ! in_array( $align, $align_allowed, true ) ) {
 		$align = 'right';

@@ -93,8 +93,18 @@ get_header();
 	}
 	?>
 </header>
+
 <main id="primary" class="site-main">
-	<?php do_action( 'trove_blog_loop' ); ?>
+	<?php if ( \Trove\is_posts_listing_sidebar_enabled() ) : ?>
+		<div class="trove-listing-with-sidebar">
+			<div class="trove-listing-with-sidebar__content">
+				<?php do_action( 'trove_blog_loop' ); ?>
+			</div>
+			<?php get_sidebar(); ?>
+		</div>
+	<?php else : ?>
+		<?php do_action( 'trove_blog_loop' ); ?>
+	<?php endif; ?>
 </main>
 <?php
 get_footer();

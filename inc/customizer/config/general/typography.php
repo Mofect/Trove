@@ -7,7 +7,7 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -45,7 +45,7 @@ $scopes = apply_filters('trove_typography_options', array(
 		'size_description'    => __( 'Set the value and unit on the same row.', 'trove' ),
 		'weight_description'  => __( 'Choices match the weights available for the selected body font.', 'trove' ),
 		'line_description'    => __( 'Set the value and unit on the same row.', 'trove' ),
-		'weight_sanitize'     => '\Trove\Customizer\trove_sanitize_font_base_weight',
+		'weight_sanitize'     => '\Trove\Customizer\sanitize_font_base_weight',
 	),
 	'menu'       => array(
 		'group'               => __( 'Menu typography', 'trove' ),
@@ -62,7 +62,7 @@ $scopes = apply_filters('trove_typography_options', array(
 		'weight'              => 500,
 		'line'                => 1.5,
 		'line_unit'           => 'unitless',
-		'weight_sanitize'     => '\Trove\Customizer\trove_sanitize_font_weight_loose',
+		'weight_sanitize'     => '\Trove\Customizer\sanitize_font_weight_loose',
 	),
 	'h1' => array(
 		'group'          => __( 'H1-H6 typography', 'trove' ),
@@ -167,7 +167,7 @@ foreach ( $scopes as $id => $meta ) {
 	$line_unit      = isset( $meta['line_unit_setting'] ) ? (string) $meta['line_unit_setting'] : 'trove_' . $id . '_font_line_height_unit';
 	$letter_setting = isset( $meta['letter_setting'] ) ? (string) $meta['letter_setting'] : 'trove_' . $id . '_font_letter_spacing';
 	$letter_unit    = isset( $meta['letter_unit_setting'] ) ? (string) $meta['letter_unit_setting'] : 'trove_' . $id . '_font_letter_spacing_unit';
-	$weight_sanitize = isset( $meta['weight_sanitize'] ) ? (string) $meta['weight_sanitize'] : '\Trove\Customizer\trove_sanitize_font_weight_loose';
+	$weight_sanitize = isset( $meta['weight_sanitize'] ) ? (string) $meta['weight_sanitize'] : '\Trove\Customizer\sanitize_font_weight_loose';
 	$letter_default = isset( $default_letter_spacing[ $id ]['value'] ) ? $default_letter_spacing[ $id ]['value'] : 0;
 	$letter_unit_default = isset( $default_letter_spacing[ $id ]['unit'] ) ? $default_letter_spacing[ $id ]['unit'] : 'em';
 	$is_heading_scope = in_array( $id, array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true );
@@ -181,7 +181,7 @@ foreach ( $scopes as $id => $meta ) {
 		'label'       => $family_label,
 		'description' => isset( $meta['family_description'] ) ? (string) $meta['family_description'] : '',
 		'type'        => 'google_font',
-		'default'     => (string) trove_customizer_default(
+		'default'     => (string) customizer_default(
 			$family_setting,
 			isset( $meta['family_default'] ) ? (string) $meta['family_default'] : 'system'
 		),
@@ -191,7 +191,7 @@ foreach ( $scopes as $id => $meta ) {
 		'label'             => $weight_label,
 		'description'       => isset( $meta['weight_description'] ) ? (string) $meta['weight_description'] : '',
 		'type'              => 'select',
-		'default'           => (string) trove_customizer_default( $weight_setting, (string) $meta['weight'] ),
+		'default'           => (string) customizer_default( $weight_setting, (string) $meta['weight'] ),
 		'transport'         => 'postMessage',
 		'choices'           => array( '400' => __( '400 — Regular', 'trove' ) ),
 		'sanitize_callback' => $weight_sanitize,
@@ -203,16 +203,16 @@ foreach ( $scopes as $id => $meta ) {
 		'responsive'             => true,
 		'unit_setting'           => $size_unit,
 		'default'                => array(
-			'pc'     => trove_customizer_default( $size_setting . '_pc', trove_customizer_default( $size_setting, $meta['size'] ) ),
-			'tablet' => trove_customizer_default( $size_setting . '_tablet', trove_customizer_default( $size_setting, $meta['size'] ) ),
-			'phone'  => trove_customizer_default( $size_setting . '_phone', trove_customizer_default( $size_setting, $meta['size'] ) ),
+			'pc'     => customizer_default( $size_setting . '_pc', customizer_default( $size_setting, $meta['size'] ) ),
+			'tablet' => customizer_default( $size_setting . '_tablet', customizer_default( $size_setting, $meta['size'] ) ),
+			'phone'  => customizer_default( $size_setting . '_phone', customizer_default( $size_setting, $meta['size'] ) ),
 		),
-		'unit_default'           => (string) trove_customizer_default( $size_unit, $meta['size_unit'] ),
+		'unit_default'           => (string) customizer_default( $size_unit, $meta['size_unit'] ),
 		'transport'              => 'postMessage',
 		'input_attrs'            => array( 'min' => 0.5, 'max' => 32, 'step' => 0.0625 ),
 		'unit_choices'           => array( 'px' => 'px', 'rem' => 'rem', 'em' => 'em' ),
-		'sanitize_callback'      => '\Trove\Customizer\trove_sanitize_font_base_size',
-		'unit_sanitize_callback' => '\Trove\Customizer\trove_sanitize_font_base_size_unit',
+		'sanitize_callback'      => '\Trove\Customizer\sanitize_font_base_size',
+		'unit_sanitize_callback' => '\Trove\Customizer\sanitize_font_base_size_unit',
 	);
 	$fields[ $line_setting ] = array(
 		'label'                  => $line_label,
@@ -221,11 +221,11 @@ foreach ( $scopes as $id => $meta ) {
 		'responsive'             => true,
 		'unit_setting'           => $line_unit,
 		'default'                => array(
-			'pc'     => trove_customizer_default( $line_setting . '_pc', trove_customizer_default( $line_setting, $meta['line'] ) ),
-			'tablet' => trove_customizer_default( $line_setting . '_tablet', trove_customizer_default( $line_setting, $meta['line'] ) ),
-			'phone'  => trove_customizer_default( $line_setting . '_phone', trove_customizer_default( $line_setting, $meta['line'] ) ),
+			'pc'     => customizer_default( $line_setting . '_pc', customizer_default( $line_setting, $meta['line'] ) ),
+			'tablet' => customizer_default( $line_setting . '_tablet', customizer_default( $line_setting, $meta['line'] ) ),
+			'phone'  => customizer_default( $line_setting . '_phone', customizer_default( $line_setting, $meta['line'] ) ),
 		),
-		'unit_default'           => (string) trove_customizer_default( $line_unit, $meta['line_unit'] ),
+		'unit_default'           => (string) customizer_default( $line_unit, $meta['line_unit'] ),
 		'transport'              => 'postMessage',
 		'input_attrs'            => array( 'min' => 0.5, 'max' => 250, 'step' => 0.05 ),
 		'unit_choices'           => array(
@@ -235,8 +235,8 @@ foreach ( $scopes as $id => $meta ) {
 			'em'       => 'em',
 			'%'        => '%',
 		),
-		'sanitize_callback'      => '\Trove\Customizer\trove_sanitize_font_base_line_height',
-		'unit_sanitize_callback' => '\Trove\Customizer\trove_sanitize_font_base_line_height_unit',
+		'sanitize_callback'      => '\Trove\Customizer\sanitize_font_base_line_height',
+		'unit_sanitize_callback' => '\Trove\Customizer\sanitize_font_base_line_height_unit',
 	);
 	$fields[ $letter_setting ] = array(
 		'label'                  => $letter_label,
@@ -244,16 +244,16 @@ foreach ( $scopes as $id => $meta ) {
 		'responsive'             => true,
 		'unit_setting'           => $letter_unit,
 		'default'                => array(
-			'pc'     => trove_customizer_default( $letter_setting . '_pc', trove_customizer_default( $letter_setting, $letter_default ) ),
-			'tablet' => trove_customizer_default( $letter_setting . '_tablet', trove_customizer_default( $letter_setting, $letter_default ) ),
-			'phone'  => trove_customizer_default( $letter_setting . '_phone', trove_customizer_default( $letter_setting, $letter_default ) ),
+			'pc'     => customizer_default( $letter_setting . '_pc', customizer_default( $letter_setting, $letter_default ) ),
+			'tablet' => customizer_default( $letter_setting . '_tablet', customizer_default( $letter_setting, $letter_default ) ),
+			'phone'  => customizer_default( $letter_setting . '_phone', customizer_default( $letter_setting, $letter_default ) ),
 		),
-		'unit_default'           => (string) trove_customizer_default( $letter_unit, $letter_unit_default ),
+		'unit_default'           => (string) customizer_default( $letter_unit, $letter_unit_default ),
 		'transport'              => 'postMessage',
 		'input_attrs'            => array( 'min' => -10, 'max' => 10, 'step' => 0.01 ),
 		'unit_choices'           => array( 'px' => 'px', 'rem' => 'rem', 'em' => 'em' ),
-		'sanitize_callback'      => '\Trove\Customizer\trove_sanitize_font_letter_spacing',
-		'unit_sanitize_callback' => '\Trove\Customizer\trove_sanitize_font_letter_spacing_unit',
+		'sanitize_callback'      => '\Trove\Customizer\sanitize_font_letter_spacing',
+		'unit_sanitize_callback' => '\Trove\Customizer\sanitize_font_letter_spacing_unit',
 	);
 }
 

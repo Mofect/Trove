@@ -185,7 +185,9 @@
 	}
 
 	function initSingleProductQtyButtons() {
-		document.querySelectorAll( 'body.single-product form.cart .quantity' ).forEach( enhanceSingleProductQtyField );
+		document.querySelectorAll(
+			'body.single-product form.cart .quantity, body.single-product form.cart.grouped_form .quantity'
+		).forEach( enhanceSingleProductQtyField );
 	}
 
 	function initSingleProductSummarySticksy() {
@@ -299,6 +301,111 @@
 			window.jQuery( document.body ).on( 'found_variation reset_image', function () {
 				window.setTimeout( syncSummaryStickyRange, 0 );
 			} );
+		}
+	}
+
+	/**
+	 * Sticky WooCommerce shop filter sidebar (.widget-area--woocommerce-sidebar inside .shop-main).
+	 */
+	function initWooShopSidebarSticksy() {
+		var widgetArea = document.querySelector(
+			'.shop-main .widget-area.widget-area--woocommerce-sidebar'
+		);
+		var products = document.querySelector( '.shop-main .trove-products' );
+		if ( ! widgetArea || ! products ) {
+			return;
+		}
+		if ( widgetArea.getAttribute( 'data-trove-sticksy-sidebar-init' ) === '1' ) {
+			return;
+		}
+		var Sticksy = window.Sticksy;
+		if ( typeof Sticksy !== 'function' ) {
+			return;
+		}
+		var mqSidebarStack = window.matchMedia( '(max-width: 900px)' );
+		function isShopSidebarStackedViewport() {
+			return mqSidebarStack.matches === true;
+		}
+		function bindMediaQueryChange( mq, handler ) {
+			if ( mq.addEventListener ) {
+				mq.addEventListener( 'change', handler );
+				return;
+			}
+			if ( mq.addListener ) {
+				mq.addListener( handler );
+			}
+		}
+		var inner = widgetArea.querySelector( ':scope > .trove-woo-sidebar-sticky-inner' );
+		if ( ! inner ) {
+			inner = document.createElement( 'div' );
+			inner.className = 'trove-woo-sidebar-sticky-inner';
+			while ( widgetArea.firstChild ) {
+				inner.appendChild( widgetArea.firstChild );
+			}
+			widgetArea.appendChild( inner );
+		}
+
+		function syncShopSidebarStickyRange() {
+			if ( isShopSidebarStackedViewport() ) {
+				widgetArea.style.minHeight = '';
+				return;
+			}
+			var productsHeight = Math.ceil( products.offsetHeight );
+			var innerHeight = Math.ceil( inner.offsetHeight );
+			var minHeight = Math.max( productsHeight, innerHeight );
+			if ( minHeight > 0 ) {
+				widgetArea.style.minHeight = minHeight + 'px';
+			}
+		}
+		syncShopSidebarStickyRange();
+
+		var sticky = new Sticksy( inner, {
+			topSpacing: 80,
+			listen: true,
+		} );
+		var sidebarStickyOn = ! isShopSidebarStackedViewport();
+		if ( ! sidebarStickyOn ) {
+			sticky.disable();
+		}
+		widgetArea._troveSticksySidebar = sticky;
+		widgetArea.setAttribute( 'data-trove-sticksy-sidebar-init', '1' );
+
+		function applyShopSidebarStickyForViewport() {
+			var on = ! isShopSidebarStackedViewport();
+			if ( on !== sidebarStickyOn ) {
+				sidebarStickyOn = on;
+				if ( on ) {
+					syncShopSidebarStickyRange();
+					sticky.enable();
+				} else {
+					sticky.disable();
+					widgetArea.style.minHeight = '';
+					widgetArea.classList.remove( 'trove-woo-sidebar-sticky--fixed' );
+				}
+				return;
+			}
+			if ( on ) {
+				syncShopSidebarStickyRange();
+				sticky.hardRefresh();
+			}
+		}
+		applyShopSidebarStickyForViewport();
+		bindMediaQueryChange( mqSidebarStack, applyShopSidebarStickyForViewport );
+
+		sticky.onStateChanged = function ( state ) {
+			if ( isShopSidebarStackedViewport() ) {
+				return;
+			}
+			widgetArea.classList.toggle( 'trove-woo-sidebar-sticky--fixed', state === 'fixed' );
+		};
+		window.addEventListener( 'resize', syncShopSidebarStickyRange );
+		window.addEventListener( 'load', syncShopSidebarStickyRange );
+
+		if ( typeof ResizeObserver !== 'undefined' ) {
+			var ro = new ResizeObserver( function () {
+				window.requestAnimationFrame( syncShopSidebarStickyRange );
+			} );
+			ro.observe( products );
 		}
 	}
 
@@ -1174,8 +1281,10 @@
 		initMiniCartQuantitySelectorIntoTotal();
 		initSingleProductQtyButtons();
 		initSingleProductSummarySticksy();
+		initWooShopSidebarSticksy();
 		initSingleProductSliderThumbCarousel();
 		window.addEventListener( 'load', initSingleProductSummarySticksy, { once: true } );
+		window.addEventListener( 'load', initWooShopSidebarSticksy, { once: true } );
 		window.addEventListener(
 			'load',
 			function () {

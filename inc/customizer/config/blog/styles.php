@@ -7,7 +7,7 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,7 +16,7 @@ return array(
 		'label'             => __( 'Boxed style', 'trove' ),
 		'description'       => __( 'Adds an outer border around each post in blog listings.', 'trove' ),
 		'type'              => 'switch',
-		'default'           => (bool) trove_customizer_default( 'trove_blog_boxed_style', false ),
+		'default'           => (bool) customizer_default( 'trove_blog_boxed_style', false ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'wp_validate_boolean',
 	),
@@ -26,7 +26,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_blog_boxed_border_radius', 10 ),
+		'default'           => (int) customizer_default( 'trove_blog_boxed_border_radius', 10 ),
 		'input_attrs'       => array(
 			'min'  => 0,
 			'max'  => 20,

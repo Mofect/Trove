@@ -122,12 +122,12 @@ defined( 'ABSPATH' ) || exit;
  * @param string                              $to      New prefix.
  * @return array<string, array<string, mixed>>
  */
-function trove_prefixed_options( array $options, $from, $to ) {
+function prefixed_options( array $options, $from, $to ) {
 	$out = array();
 	foreach ( $options as $setting_id => $field ) {
 		$new_id = str_replace( (string) $from, (string) $to, (string) $setting_id );
 		if ( is_array( $field ) && array_key_exists( 'default', $field ) ) {
-			$field['default'] = \Trove\Customizer\trove_customizer_default( $new_id, $field['default'] );
+			$field['default'] = \Trove\Customizer\customizer_default( $new_id, $field['default'] );
 		}
 		$out[ $new_id ] = $field;
 	}
@@ -278,6 +278,17 @@ function get_options() {
 	$blog_styles_options   = require __DIR__ . '/blog/styles.php';
 	$blog_settings_options = require __DIR__ . '/blog/settings.php';
 
+	$blog_listing_sidebar_options = array(
+		'trove_blog_enable_sidebar' => array(
+			'label'             => __( 'Enable sidebar', 'trove' ),
+			'description'       => __( 'Show the Blog Sidebar widget area beside the post listing.', 'trove' ),
+			'type'              => 'switch',
+			'default'           => (bool) \Trove\Customizer\customizer_default( 'trove_blog_enable_sidebar', false ),
+			'transport'         => 'refresh',
+			'sanitize_callback' => 'wp_validate_boolean',
+		),
+	);
+
 	$pages = array(
 		'post_types_title' => array(
 			'type'     => 'trove-group-title',
@@ -298,7 +309,7 @@ function get_options() {
 				),
 				'settings' => array(
 					'label'   => __( 'Settings', 'trove' ),
-					'options' => $blog_settings_options,
+					'options' => array_merge( $blog_listing_sidebar_options, $blog_settings_options ),
 				)
 			),
 		),
@@ -306,27 +317,33 @@ function get_options() {
 			'title'     => __( 'Search page', 'trove' ),
 			'container' => array( 'priority' => 136 ),
 			'tabs'      => array(
-				'layout'   => array( 'label' => __( 'Layout', 'trove' ), 'options' => trove_prefixed_options( $blog_layout_options, 'trove_blog_', 'trove_search_page_' ) ),
-				'styles'   => array( 'label' => __( 'Styles', 'trove' ), 'options' => trove_prefixed_options( $blog_styles_options, 'trove_blog_', 'trove_search_page_' ) ),
-				'settings' => array( 'label' => __( 'Settings', 'trove' ), 'options' => trove_prefixed_options( $blog_settings_options, 'trove_blog_', 'trove_search_page_' ) ),
+				'layout'   => array( 'label' => __( 'Layout', 'trove' ), 'options' => prefixed_options( $blog_layout_options, 'trove_blog_', 'trove_search_page_' ) ),
+				'styles'   => array( 'label' => __( 'Styles', 'trove' ), 'options' => prefixed_options( $blog_styles_options, 'trove_blog_', 'trove_search_page_' ) ),
+				'settings' => array( 'label' => __( 'Settings', 'trove' ), 'options' => prefixed_options( $blog_settings_options, 'trove_blog_', 'trove_search_page_' ) ),
 			),
 		),
 		'author_page' => array(
 			'title'     => __( 'Author page', 'trove' ),
 			'container' => array( 'priority' => 137 ),
 			'tabs'      => array(
-				'layout'   => array( 'label' => __( 'Layout', 'trove' ), 'options' => trove_prefixed_options( $blog_layout_options, 'trove_blog_', 'trove_author_page_' ) ),
-				'styles'   => array( 'label' => __( 'Styles', 'trove' ), 'options' => trove_prefixed_options( $blog_styles_options, 'trove_blog_', 'trove_author_page_' ) ),
-				'settings' => array( 'label' => __( 'Settings', 'trove' ), 'options' => trove_prefixed_options( $blog_settings_options, 'trove_blog_', 'trove_author_page_' ) ),
+				'layout'   => array( 'label' => __( 'Layout', 'trove' ), 'options' => prefixed_options( $blog_layout_options, 'trove_blog_', 'trove_author_page_' ) ),
+				'styles'   => array( 'label' => __( 'Styles', 'trove' ), 'options' => prefixed_options( $blog_styles_options, 'trove_blog_', 'trove_author_page_' ) ),
+				'settings' => array( 'label' => __( 'Settings', 'trove' ), 'options' => prefixed_options( $blog_settings_options, 'trove_blog_', 'trove_author_page_' ) ),
 			),
 		),
 		'archive_page' => array(
 			'title'     => __( 'Archive page', 'trove' ),
 			'container' => array( 'priority' => 138 ),
 			'tabs'      => array(
-				'layout'   => array( 'label' => __( 'Layout', 'trove' ), 'options' => trove_prefixed_options( $blog_layout_options, 'trove_blog_', 'trove_archive_page_' ) ),
-				'styles'   => array( 'label' => __( 'Styles', 'trove' ), 'options' => trove_prefixed_options( $blog_styles_options, 'trove_blog_', 'trove_archive_page_' ) ),
-				'settings' => array( 'label' => __( 'Settings', 'trove' ), 'options' => trove_prefixed_options( $blog_settings_options, 'trove_blog_', 'trove_archive_page_' ) ),
+				'layout'   => array( 'label' => __( 'Layout', 'trove' ), 'options' => prefixed_options( $blog_layout_options, 'trove_blog_', 'trove_archive_page_' ) ),
+				'styles'   => array( 'label' => __( 'Styles', 'trove' ), 'options' => prefixed_options( $blog_styles_options, 'trove_blog_', 'trove_archive_page_' ) ),
+				'settings' => array(
+					'label'   => __( 'Settings', 'trove' ),
+					'options' => array_merge(
+						prefixed_options( $blog_listing_sidebar_options, 'trove_blog_', 'trove_archive_page_' ),
+						prefixed_options( $blog_settings_options, 'trove_blog_', 'trove_archive_page_' )
+					),
+				),
 			),
 		),
 	);
@@ -359,10 +376,10 @@ function get_options() {
 			'woocommerce_single_product' => array(
 				'title'     => __( 'Single Product', 'trove' ),
 				'container' => array(
-					'priority'              => 142
+					'priority' => 142,
 				),
 				'options'   => require __DIR__ . '/woocommerce/single-product.php',
-			)
+			),
 		);
 	}
 

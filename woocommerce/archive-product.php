@@ -9,15 +9,7 @@ namespace Trove;
 
 defined( 'ABSPATH' ) || exit;
 
-$show_sidebar = false;
-if ( class_exists( 'WooCommerce' ) ) {
-	$show_sidebar = wp_validate_boolean(
-		get_theme_mod(
-			'trove_woo_enable_filter',
-			(bool) \Trove\Customizer\trove_customizer_default( 'trove_woo_enable_filter', true )
-		)
-	);
-}
+$show_sidebar = is_woo_shop_filter_sidebar_enabled();
 
 get_header( 'shop' );
 
@@ -57,10 +49,15 @@ if ( woocommerce_product_loop() ) {
 
 	if ( $show_sidebar ) {
 		echo '<div class="shop-main">';
-		echo '<aside class="trove-shop-filters" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'trove' ) . '">';
-		if ( is_active_sidebar( 'shop-sidebar' ) ) {
-			dynamic_sidebar( 'shop-sidebar' );
+		if ( is_active_sidebar( 'woocommerce-sidebar' ) ) {
+			/**
+			 * Hook: woocommerce_sidebar.
+			 *
+			 * @hooked woocommerce_get_sidebar - 10
+			 */
+			do_action( 'woocommerce_sidebar' );
 		} else {
+			echo '<aside class="widget-area widget-area--woocommerce-sidebar trove-shop-filters" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'trove' ) . '">';
 			if ( class_exists( 'WC_Widget_Price_Filter' ) ) {
 				the_widget(
 					'WC_Widget_Price_Filter',
@@ -85,8 +82,8 @@ if ( woocommerce_product_loop() ) {
 					)
 				);
 			}
+		    echo '</aside>';
 		}
-		echo '</aside>';
 		echo '<div class="trove-products">';
 	}
 
@@ -133,12 +130,5 @@ if ( woocommerce_product_loop() ) {
  * @hooked woocommerce_output_content_wrapper_end - 10 (outputs closing divs for the content)
  */
 do_action( 'woocommerce_after_main_content' );
-
-/**
- * Hook: woocommerce_sidebar.
- *
- * @hooked woocommerce_get_sidebar - 10
- */
-do_action( 'woocommerce_sidebar' );
 
 get_footer( 'shop' );

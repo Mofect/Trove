@@ -85,9 +85,8 @@ final class Manager {
 			}
 		}
 
-		// Page settings is always tabbed so header controls never render in a flat list if
-		// something strips per-field `tab` (they still group via field_tab_for_grouping()).
-		if ( 'page_settings' === $id ) {
+		// Always tabbed so grouped controls never render in a flat list if `tab` is stripped.
+		if ( in_array( $id, array( 'page_settings', 'product_settings' ), true ) ) {
 			$use_tabs = true;
 		}
 
@@ -118,6 +117,14 @@ final class Manager {
 	private static function field_tab_for_grouping( $metabox_id, array $field ) {
 		$metabox_id = sanitize_key( (string) $metabox_id );
 		$allowed    = array( 'content', 'header', 'footer', 'page_banner' );
+
+		if ( PRODUCT_SETTINGS_METABOX_ID === $metabox_id ) {
+			$tab = isset( $field['tab'] ) ? sanitize_key( (string) $field['tab'] ) : '';
+			if ( in_array( $tab, array( 'gallery', 'content' ), true ) ) {
+				return $tab;
+			}
+			return 'gallery';
+		}
 
 		if ( 'page_settings' === $metabox_id ) {
 			$fid = isset( $field['id'] ) ? sanitize_key( (string) $field['id'] ) : '';
@@ -164,7 +171,46 @@ final class Manager {
 	}
 
 	/**
-	 * Renders fields grouped under Content / Header / Footer tabs.
+	 * Tab labels for a tabbed metabox.
+	 *
+	 * @param string $metabox_id Metabox id.
+	 * @return array<string, string>
+	 */
+	private static function metabox_tabs_for( $metabox_id ) {
+		$metabox_id = sanitize_key( (string) $metabox_id );
+
+		if ( PRODUCT_SETTINGS_METABOX_ID === $metabox_id ) {
+			/**
+			 * Product settings metabox tab labels.
+			 *
+			 * @param array<string, string> $tabs Tab id => label.
+			 */
+			return apply_filters(
+				'trove_product_settings_metabox_tabs',
+				array(
+					'gallery' => __( 'Gallery', 'trove' ),
+					'content' => __( 'Content', 'trove' ),
+				)
+			);
+		}
+
+		/**
+		 * Page settings metabox tab labels.
+		 *
+		 * @param array<string, string> $tabs Tab id => label.
+		 */
+		return apply_filters(
+			'trove_page_settings_metabox_tabs',
+			array(
+				'page_banner' => __( 'Page banner', 'trove' ),
+				'header'      => __( 'Header', 'trove' ),
+				'content'     => __( 'Content', 'trove' ),
+			)
+		);
+	}
+
+	/**
+	 * Renders fields grouped under metabox tabs.
 	 *
 	 * @param string    $metabox_id Metabox id.
 	 * @param \WP_Post  $post       Post object.
@@ -175,20 +221,8 @@ final class Manager {
 		$metabox_id = sanitize_key( (string) $metabox_id );
 		$post_id    = (int) $post->ID;
 
-		$tabs = apply_filters(
-			'trove_page_settings_metabox_tabs',
-			array(
-				'page_banner' => __( 'Page banner', 'trove' ),
-				'header'      => __( 'Header', 'trove' ),
-				'content'     => __( 'Content', 'trove' ),
-			)
-		);
-
-		$grouped = array(
-			'page_banner' => array(),
-			'header'      => array(),
-			'content'     => array()
-		);
+		$tabs    = self::metabox_tabs_for( $metabox_id );
+		$grouped = array_fill_keys( array_keys( $tabs ), array() );
 
 		foreach ( $items as $field ) {
 			$tab = self::field_tab_for_grouping( $metabox_id, $field );
@@ -288,6 +322,10 @@ final class Manager {
 			foreach ( $box['fields'] as $field_raw ) {
 				$field = Fields::normalize_field( $field_raw );
 				if ( null === $field ) {
+					continue;
+				}
+
+				if ( 'heading' === $field['type'] ) {
 					continue;
 				}
 

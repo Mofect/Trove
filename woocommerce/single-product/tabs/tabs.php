@@ -2,8 +2,8 @@
 /**
  * Single Product tabs
  *
- * Trove: optional inner wrapper `.trove-woo-vertical-tabs` when Customizer
- * “Product tabs layout” is vertical (see `trove_woo_single_product_tabs_layout`).
+ * Trove: optional inner wrapper `.trove-woo-vertical-tabs` when the product’s
+ * “Product tabs layout” setting is vertical (Product settings metabox).
  * When layout is collapsible, tabs render without `.woocommerce-tabs` (reviews output as `#reviews.woocommerce-Reviews`).
  *
  * @see woocommerce/templates/single-product/tabs/tabs.php
@@ -24,9 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $product_tabs = apply_filters( 'woocommerce_product_tabs', array() );
 
-$trove_tabs_default = (string) \Trove\Customizer\trove_customizer_default( 'trove_woo_single_product_tabs_layout', 'horizontal' );
-$trove_tabs_layout  = get_theme_mod( 'trove_woo_single_product_tabs_layout', $trove_tabs_default );
-$trove_tabs_layout  = is_string( $trove_tabs_layout ) ? sanitize_key( $trove_tabs_layout ) : 'horizontal';
+$trove_tabs_layout = \Trove\get_single_product_tabs_layout();
 $trove_vertical_tabs   = ( 'vertical' === $trove_tabs_layout );
 $trove_collapsible_tabs = \Trove\is_single_product_tabs_collapsible();
 

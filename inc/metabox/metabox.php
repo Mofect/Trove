@@ -13,11 +13,12 @@ require_once get_template_directory() . '/inc/metabox/class-registry.php';
 require_once get_template_directory() . '/inc/metabox/class-fields.php';
 require_once get_template_directory() . '/inc/metabox/class-manager.php';
 require_once get_template_directory() . '/inc/metabox/helpers.php';
+require_once get_template_directory() . '/inc/metabox/product-single-settings.php';
 
 Manager::init();
-
-require_once get_template_directory() . '/inc/metabox/page-header-colors.php';
 require_once get_template_directory() . '/inc/metabox/config/page-settings.php';
+require_once get_template_directory() . '/inc/metabox/config/product-settings.php';
+require_once get_template_directory() . '/inc/metabox/page-header-colors.php';
 require_once get_template_directory() . '/inc/metabox/page-content-spacing.php';
 require_once get_template_directory() . '/inc/components/page-banner.php';
 
@@ -29,7 +30,7 @@ add_action(
 			return;
 		}
 
-		$dir = \get_template_directory_uri() . '/inc/metabox';
+		$dir = \TROVE_URI . '/inc/metabox';
 
 		wp_register_style(
 			'trove-metabox-admin',
@@ -41,7 +42,7 @@ add_action(
 
 		wp_register_style(
 			'trove-customizer-alignment-metabox',
-			\get_template_directory_uri() . '/inc/customizer/css/customizer-alignment-control.css',
+			\TROVE_URI . '/inc/customizer/css/customizer-alignment-control.css',
 			array( 'trove-metabox-admin' ),
 			TROVE_THEME_VERSION
 		);
@@ -81,6 +82,23 @@ add_action(
 			array(
 				'title'  => __( 'Choose image', 'trove' ),
 				'button' => __( 'Use image', 'trove' ),
+			)
+		);
+
+		wp_register_script(
+			'trove-metabox-product-video',
+			$dir . '/js/metabox-product-video.js',
+			array( 'jquery', 'media-editor' ),
+			TROVE_THEME_VERSION,
+			true
+		);
+		wp_enqueue_script( 'trove-metabox-product-video' );
+		wp_localize_script(
+			'trove-metabox-product-video',
+			'troveMbVideoL10n',
+			array(
+				'title'  => __( 'Choose video', 'trove' ),
+				'button' => __( 'Use video', 'trove' ),
 			)
 		);
 

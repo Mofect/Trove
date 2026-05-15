@@ -7,7 +7,7 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,7 +20,7 @@ return array(
 	'trove_woo_info_message_background' => array(
 		'label'             => __( 'Background', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_woo_info_message_background', '#eef4ff' ),
+		'default'           => customizer_default( 'trove_woo_info_message_background', '#eef4ff' ),
 		'priority'          => 2,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -28,7 +28,7 @@ return array(
 	'trove_woo_info_message_text' => array(
 		'label'             => __( 'Text', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_woo_info_message_text', '#1f3f8f' ),
+		'default'           => customizer_default( 'trove_woo_info_message_text', '#1f3f8f' ),
 		'priority'          => 3,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -41,7 +41,7 @@ return array(
 	'trove_woo_failed_message_background' => array(
 		'label'             => __( 'Background', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_woo_failed_message_background', '#ffe8ee' ),
+		'default'           => customizer_default( 'trove_woo_failed_message_background', '#ffe8ee' ),
 		'priority'          => 5,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -49,7 +49,7 @@ return array(
 	'trove_woo_failed_message_text' => array(
 		'label'             => __( 'Text', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_woo_failed_message_text', '#8b1f43' ),
+		'default'           => customizer_default( 'trove_woo_failed_message_text', '#8b1f43' ),
 		'priority'          => 6,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -62,7 +62,7 @@ return array(
 	'trove_woo_success_message_background' => array(
 		'label'             => __( 'Background', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_woo_success_message_background', '#e9f8ec' ),
+		'default'           => customizer_default( 'trove_woo_success_message_background', '#e9f8ec' ),
 		'priority'          => 8,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -70,7 +70,7 @@ return array(
 	'trove_woo_success_message_text' => array(
 		'label'             => __( 'Text', 'trove' ),
 		'type'              => 'color',
-		'default'           => trove_customizer_default( 'trove_woo_success_message_text', '#216e39' ),
+		'default'           => customizer_default( 'trove_woo_success_message_text', '#216e39' ),
 		'priority'          => 9,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',

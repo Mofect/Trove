@@ -14,12 +14,12 @@ defined( 'ABSPATH' ) || exit;
  *
  * @return string
  */
-function trove_metabox_header_border_theme_mod_resolved() {
+function metabox_header_border_theme_mod_resolved() {
 	$raw = get_theme_mod( 'trove_header_border_color', '' );
 	if ( null === $raw || false === $raw || '' === $raw ) {
 		return '';
 	}
-	return \Trove\Customizer\trove_sanitize_css_color( is_string( $raw ) ? $raw : (string) $raw );
+	return \Trove\Customizer\sanitize_css_color( is_string( $raw ) ? $raw : (string) $raw );
 }
 
 /**
@@ -29,14 +29,14 @@ function trove_metabox_header_border_theme_mod_resolved() {
  */
 function sanitize_page_settings_header_text_color( $raw, $field ) {
 	unset( $field );
-	$san = \Trove\Customizer\trove_sanitize_css_color( $raw );
+	$san = \Trove\Customizer\sanitize_css_color( $raw );
 	if ( '' === $san ) {
 		return '';
 	}
-	$defs   = \Trove\Customizer\trove_color_theme_mod_definitions();
+	$defs   = \Trove\Customizer\color_theme_mod_definitions();
 	$def    = isset( $defs['trove_header_text_color'] ) ? (string) $defs['trove_header_text_color']['default'] : '#111111';
-	$global = \Trove\Customizer\trove_color_theme_mod( 'trove_header_text_color', $def );
-	if ( \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $global ) ) {
+	$global = \Trove\Customizer\color_theme_mod( 'trove_header_text_color', $def );
+	if ( \Trove\Customizer\normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\normalize_color_for_scheme_dedupe( $global ) ) {
 		return '';
 	}
 	return $san;
@@ -49,14 +49,14 @@ function sanitize_page_settings_header_text_color( $raw, $field ) {
  */
 function sanitize_page_settings_header_link_color( $raw, $field ) {
 	unset( $field );
-	$san = \Trove\Customizer\trove_sanitize_css_color( $raw );
+	$san = \Trove\Customizer\sanitize_css_color( $raw );
 	if ( '' === $san ) {
 		return '';
 	}
-	$defs   = \Trove\Customizer\trove_color_theme_mod_definitions();
+	$defs   = \Trove\Customizer\color_theme_mod_definitions();
 	$def    = isset( $defs['trove_header_link_color'] ) ? (string) $defs['trove_header_link_color']['default'] : '#000000';
-	$global = \Trove\Customizer\trove_color_theme_mod( 'trove_header_link_color', $def );
-	if ( \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $global ) ) {
+	$global = \Trove\Customizer\color_theme_mod( 'trove_header_link_color', $def );
+	if ( \Trove\Customizer\normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\normalize_color_for_scheme_dedupe( $global ) ) {
 		return '';
 	}
 	return $san;
@@ -69,14 +69,14 @@ function sanitize_page_settings_header_link_color( $raw, $field ) {
  */
 function sanitize_page_settings_header_link_hover_color( $raw, $field ) {
 	unset( $field );
-	$san = \Trove\Customizer\trove_sanitize_css_color( $raw );
+	$san = \Trove\Customizer\sanitize_css_color( $raw );
 	if ( '' === $san ) {
 		return '';
 	}
-	$defs   = \Trove\Customizer\trove_color_theme_mod_definitions();
+	$defs   = \Trove\Customizer\color_theme_mod_definitions();
 	$def    = isset( $defs['trove_header_link_hover_color'] ) ? (string) $defs['trove_header_link_hover_color']['default'] : '#666666';
-	$global = \Trove\Customizer\trove_color_theme_mod( 'trove_header_link_hover_color', $def );
-	if ( \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $global ) ) {
+	$global = \Trove\Customizer\color_theme_mod( 'trove_header_link_hover_color', $def );
+	if ( \Trove\Customizer\normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\normalize_color_for_scheme_dedupe( $global ) ) {
 		return '';
 	}
 	return $san;
@@ -89,12 +89,12 @@ function sanitize_page_settings_header_link_hover_color( $raw, $field ) {
  */
 function sanitize_page_settings_header_border_color( $raw, $field ) {
 	unset( $field );
-	$san = \Trove\Customizer\trove_sanitize_css_color( $raw );
+	$san = \Trove\Customizer\sanitize_css_color( $raw );
 	if ( '' === $san ) {
 		return '';
 	}
-	$global = trove_metabox_header_border_theme_mod_resolved();
-	if ( \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $global ) ) {
+	$global = metabox_header_border_theme_mod_resolved();
+	if ( \Trove\Customizer\normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\normalize_color_for_scheme_dedupe( $global ) ) {
 		return '';
 	}
 	return $san;
@@ -107,14 +107,14 @@ function sanitize_page_settings_header_border_color( $raw, $field ) {
  */
 function sanitize_page_settings_header_background_color( $raw, $field ) {
 	unset( $field );
-	$san = \Trove\Customizer\trove_sanitize_css_color( $raw );
+	$san = \Trove\Customizer\sanitize_css_color( $raw );
 	if ( '' === $san ) {
 		return '';
 	}
-	$defs   = \Trove\Customizer\trove_color_theme_mod_definitions();
+	$defs   = \Trove\Customizer\color_theme_mod_definitions();
 	$def    = isset( $defs['trove_header_background'] ) ? (string) $defs['trove_header_background']['default'] : '#ffffff';
-	$global = \Trove\Customizer\trove_color_theme_mod( 'trove_header_background', $def );
-	if ( \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\trove_normalize_color_for_scheme_dedupe( $global ) ) {
+	$global = \Trove\Customizer\color_theme_mod( 'trove_header_background', $def );
+	if ( \Trove\Customizer\normalize_color_for_scheme_dedupe( $san ) === \Trove\Customizer\normalize_color_for_scheme_dedupe( $global ) ) {
 		return '';
 	}
 	return $san;
@@ -149,7 +149,7 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 	if ( ! $transparent ) {
 		$bg_raw = get_post_field_value( $post_id, 'page_settings', 'header_background_color', null );
 		if ( null !== $bg_raw && '' !== (string) $bg_raw ) {
-			$c = \Trove\Customizer\trove_sanitize_css_color( $bg_raw );
+			$c = \Trove\Customizer\sanitize_css_color( $bg_raw );
 			if ( '' !== $c ) {
 				$decls[] = '--trove-header-background:' . esc_attr( $c );
 			}
@@ -158,7 +158,7 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 
 	$text_raw = get_post_field_value( $post_id, 'page_settings', 'header_text_color', null );
 	if ( null !== $text_raw && '' !== (string) $text_raw ) {
-		$c = \Trove\Customizer\trove_sanitize_css_color( $text_raw );
+		$c = \Trove\Customizer\sanitize_css_color( $text_raw );
 		if ( '' !== $c ) {
 			$decls[] = '--trove-header-text:' . esc_attr( $c );
 		}
@@ -166,7 +166,7 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 
 	$link_raw = get_post_field_value( $post_id, 'page_settings', 'header_link_color', null );
 	if ( null !== $link_raw && '' !== (string) $link_raw ) {
-		$c = \Trove\Customizer\trove_sanitize_css_color( $link_raw );
+		$c = \Trove\Customizer\sanitize_css_color( $link_raw );
 		if ( '' !== $c ) {
 			$decls[] = '--trove-header-link:' . esc_attr( $c );
 		}
@@ -174,7 +174,7 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 
 	$link_hover_raw = get_post_field_value( $post_id, 'page_settings', 'header_link_hover_color', null );
 	if ( null !== $link_hover_raw && '' !== (string) $link_hover_raw ) {
-		$c = \Trove\Customizer\trove_sanitize_css_color( $link_hover_raw );
+		$c = \Trove\Customizer\sanitize_css_color( $link_hover_raw );
 		if ( '' !== $c ) {
 			$decls[] = '--trove-header-link-hover:' . esc_attr( $c );
 		}
@@ -182,7 +182,7 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 
 	$border_raw = get_post_field_value( $post_id, 'page_settings', 'header_border_color', null );
 	if ( null !== $border_raw && '' !== (string) $border_raw ) {
-		$c = \Trove\Customizer\trove_sanitize_css_color( $border_raw );
+		$c = \Trove\Customizer\sanitize_css_color( $border_raw );
 		if ( '' !== $c ) {
 			$decls[] = '--trove-header-border:' . esc_attr( $c );
 		}

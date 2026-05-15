@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * @return array<string, mixed> Keys: `defaults`, `color_scheme_presets`.
  */
-function trove_customizer_setting_data() {
+function customizer_setting_data() {
 	static $cache = null;
 	if ( null !== $cache ) {
 		return $cache;
@@ -63,9 +63,9 @@ function trove_customizer_setting_data() {
  * @param mixed|null $fallback Used when the key is absent from JSON.
  * @return mixed
  */
-function trove_customizer_default( $key, $fallback = null ) {
+function customizer_default( $key, $fallback = null ) {
 	$key = (string) $key;
-	$data = trove_customizer_setting_data();
+	$data = customizer_setting_data();
 	$defs = isset( $data['defaults'] ) && is_array( $data['defaults'] ) ? $data['defaults'] : array();
 	return array_key_exists( $key, $defs ) ? $defs[ $key ] : $fallback;
 }
@@ -75,8 +75,8 @@ function trove_customizer_default( $key, $fallback = null ) {
  *
  * @return list<array{colors: array<string, string>}>
  */
-function trove_customizer_color_scheme_presets_raw() {
-	$data   = trove_customizer_setting_data();
+function customizer_color_scheme_presets_raw() {
+	$data   = customizer_setting_data();
 	$presets = isset( $data['color_scheme_presets'] ) && is_array( $data['color_scheme_presets'] ) ? $data['color_scheme_presets'] : array();
 	$out     = array();
 	foreach ( $presets as $row ) {

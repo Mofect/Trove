@@ -449,7 +449,7 @@ final class Options_Registry {
 		$max       = isset( $field['input_attrs']['max'] ) ? (int) $field['input_attrs']['max'] : 60;
 		$transport = isset( $field['transport'] ) ? $field['transport'] : 'refresh';
 
-		$fb           = trove_default_button_padding_sides();
+		$fb           = default_button_padding_sides();
 		$raw_defaults = isset( $field['default'] ) && is_array( $field['default'] ) ? $field['default'] : array();
 
 		foreach ( $devices as $suffix => $_label ) {
@@ -459,14 +459,14 @@ final class Options_Registry {
 				$fb,
 				isset( $raw_defaults[ $suffix ] ) && is_array( $raw_defaults[ $suffix ] ) ? $raw_defaults[ $suffix ] : array()
 			);
-			$default_json = trove_sanitize_spacing_box_json( $merged, $min, $max, $fb );
+			$default_json = sanitize_spacing_box_json( $merged, $min, $max, $fb );
 			$wp_customize->add_setting(
 				$sub_id,
 				array(
 					'default'           => $default_json,
 					'transport'         => $transport,
 					'sanitize_callback' => function ( $value ) use ( $min, $max, $fb ) {
-						return trove_sanitize_spacing_box_json( $value, $min, $max, $fb );
+						return sanitize_spacing_box_json( $value, $min, $max, $fb );
 					},
 				)
 			);
@@ -1131,7 +1131,7 @@ final class Options_Registry {
 	 * @return string
 	 */
 	public function sanitize_color_value( $value ) {
-		return trove_sanitize_css_color( $value );
+		return sanitize_css_color( $value );
 	}
 
 	/**

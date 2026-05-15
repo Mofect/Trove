@@ -43,7 +43,7 @@ add_filter( 'trove_header_classnames', __NAMESPACE__ . '\\filter_header_classnam
  * @return string
  */
 function get_header_logo_url() {
-	$logo_url = get_theme_mod( 'trove_header_logo', (string) \Trove\Customizer\trove_customizer_default( 'trove_header_logo', '' ) );
+	$logo_url = get_theme_mod( 'trove_header_logo', (string) \Trove\Customizer\customizer_default( 'trove_header_logo', '' ) );
 	return is_string( $logo_url ) ? trim( $logo_url ) : '';
 }
 
@@ -91,7 +91,7 @@ function get_header_brand_logo_config() {
  * @return int
  */
 function get_header_logo_width() {
-	$w = absint( get_theme_mod( 'trove_header_logo_width', (int) \Trove\Customizer\trove_customizer_default( 'trove_header_logo_width', 200 ) ) );
+	$w = absint( get_theme_mod( 'trove_header_logo_width', (int) \Trove\Customizer\customizer_default( 'trove_header_logo_width', 200 ) ) );
 	return min( 400, max( 40, $w ) );
 }
 
@@ -112,7 +112,7 @@ function sanitize_header_logo_width( $value ) {
  * @return void
  */
 function render_header() {
-	$layout = get_theme_mod( 'trove_header_layout', (string) \Trove\Customizer\trove_customizer_default( 'trove_header_layout', 'horizontal-left-logo' ) );
+	$layout = get_theme_mod( 'trove_header_layout', (string) \Trove\Customizer\customizer_default( 'trove_header_layout', 'horizontal-left-logo' ) );
 	$layout = is_string( $layout ) ? sanitize_key( $layout ) : 'horizontal-left-logo';
 
 	if ( 'vertical-centered-logo' === $layout || 'vertical-left-logo' === $layout ) {
@@ -131,7 +131,7 @@ add_action( 'trove_header', __NAMESPACE__ . '\\render_header' );
 function get_footer_menu_slot_ids() {
 	$menu_ids = array();
 	for ( $i = 1; $i <= 5; $i++ ) {
-		$menu_ids[] = absint( get_theme_mod( 'trove_footer_menu_' . $i . '_id', (int) \Trove\Customizer\trove_customizer_default( 'trove_footer_menu_' . $i . '_id', 0 ) ) );
+		$menu_ids[] = absint( get_theme_mod( 'trove_footer_menu_' . $i . '_id', (int) \Trove\Customizer\customizer_default( 'trove_footer_menu_' . $i . '_id', 0 ) ) );
 	}
 	return $menu_ids;
 }
@@ -161,7 +161,7 @@ function get_footer_menus( $menu_ids ) {
  * @return string
  */
 function get_footer_brand_name() {
-	$brand_name = get_theme_mod( 'trove_footer_brand_name', (string) \Trove\Customizer\trove_customizer_default( 'trove_footer_brand_name', '' ) );
+	$brand_name = get_theme_mod( 'trove_footer_brand_name', (string) \Trove\Customizer\customizer_default( 'trove_footer_brand_name', '' ) );
 	return '' !== trim( $brand_name ) ? $brand_name : get_bloginfo( 'name' );
 }
 
@@ -171,7 +171,7 @@ function get_footer_brand_name() {
  * @return string
  */
 function get_footer_brand_description() {
-	$brand_description = get_theme_mod( 'trove_footer_brand_description', (string) \Trove\Customizer\trove_customizer_default( 'trove_footer_brand_description', '' ) );
+	$brand_description = get_theme_mod( 'trove_footer_brand_description', (string) \Trove\Customizer\customizer_default( 'trove_footer_brand_description', '' ) );
 	return '' !== trim( $brand_description ) ? $brand_description : get_bloginfo( 'description' );
 }
 
@@ -181,7 +181,7 @@ function get_footer_brand_description() {
  * @return bool
  */
 function should_render_footer_brand_info() {
-	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_brand_info', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_show_brand_info', false ) ) );
+	return wp_validate_boolean( get_theme_mod( 'trove_footer_show_brand_info', (bool) \Trove\Customizer\customizer_default( 'trove_footer_show_brand_info', false ) ) );
 }
 
 /**
@@ -190,7 +190,7 @@ function should_render_footer_brand_info() {
  * @return string
  */
 function get_footer_logo_url() {
-	$logo_url = get_theme_mod( 'trove_footer_logo', (string) \Trove\Customizer\trove_customizer_default( 'trove_footer_logo', '' ) );
+	$logo_url = get_theme_mod( 'trove_footer_logo', (string) \Trove\Customizer\customizer_default( 'trove_footer_logo', '' ) );
 	return is_string( $logo_url ) ? trim( $logo_url ) : '';
 }
 
@@ -200,9 +200,9 @@ function get_footer_logo_url() {
  * @return void
  */
 function render_footer() {
-	$footer_layout = get_theme_mod( 'trove_footer_layout', (string) \Trove\Customizer\trove_customizer_default( 'trove_footer_layout', 'footer-1' ) );
+	$footer_layout = get_theme_mod( 'trove_footer_layout', (string) \Trove\Customizer\customizer_default( 'trove_footer_layout', 'footer-1' ) );
 	$footer_classes   = array( 'site-footer', 'light-scheme' );
-	if ( wp_validate_boolean( get_theme_mod( 'trove_footer_top_border', (bool) \Trove\Customizer\trove_customizer_default( 'trove_footer_top_border', true ) ) ) ) {
+	if ( wp_validate_boolean( get_theme_mod( 'trove_footer_top_border', (bool) \Trove\Customizer\customizer_default( 'trove_footer_top_border', true ) ) ) ) {
 		$footer_classes[] = 'trove-footer-has-top-border';
 	}
 

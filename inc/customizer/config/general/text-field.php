@@ -7,7 +7,7 @@
 
 namespace Trove\Customizer\Config;
 
-use function \Trove\Customizer\trove_customizer_default;
+use function \Trove\Customizer\customizer_default;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -29,7 +29,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_input_field_height', 42 ),
+		'default'           => (int) customizer_default( 'trove_input_field_height', 42 ),
 		'input_attrs'       => array( 'min' => 28, 'max' => 80, 'step' => 1 ),
 		'sanitize_callback' => 'absint',
 		'priority'          => 2,
@@ -39,7 +39,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_input_field_text_size', 16 ),
+		'default'           => (int) customizer_default( 'trove_input_field_text_size', 16 ),
 		'input_attrs'       => array( 'min' => 10, 'max' => 24, 'step' => 1 ),
 		'sanitize_callback' => 'absint',
 		'priority'          => 3,
@@ -49,7 +49,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_input_field_border_width', 1 ),
+		'default'           => (int) customizer_default( 'trove_input_field_border_width', 1 ),
 		'input_attrs'       => array( 'min' => 0, 'max' => 8, 'step' => 1 ),
 		'sanitize_callback' => 'absint',
 		'priority'          => 4,
@@ -59,7 +59,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_input_field_border_radius', 3 ),
+		'default'           => (int) customizer_default( 'trove_input_field_border_radius', 3 ),
 		'input_attrs'       => array( 'min' => 0, 'max' => 32, 'step' => 1 ),
 		'sanitize_callback' => 'absint',
 		'priority'          => 5,
@@ -67,7 +67,7 @@ return array(
 	'trove_input_field_border_color' => array(
 		'label'             => __( 'Border color', 'trove' ),
 		'type'              => 'color',
-		'default'           => (string) trove_customizer_default( 'trove_input_field_border_color', '#dddddd' ),
+		'default'           => (string) customizer_default( 'trove_input_field_border_color', '#dddddd' ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
 		'swatch_hint'       => __( 'Input border', 'trove' ),
@@ -76,7 +76,7 @@ return array(
 	'trove_input_field_text_color' => array(
 		'label'             => __( 'Text color', 'trove' ),
 		'type'              => 'color',
-		'default'           => (string) trove_customizer_default( 'trove_input_field_text_color', '#111111' ),
+		'default'           => (string) customizer_default( 'trove_input_field_text_color', '#111111' ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
 		'swatch_hint'       => __( 'Input text', 'trove' ),
@@ -94,7 +94,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_textarea_field_height', 120 ),
+		'default'           => (int) customizer_default( 'trove_textarea_field_height', 120 ),
 		'input_attrs'       => array( 'min' => 60, 'max' => 400, 'step' => 1 ),
 		'sanitize_callback' => 'absint',
 		'priority'          => 21,
@@ -104,7 +104,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_textarea_field_text_size', 16 ),
+		'default'           => (int) customizer_default( 'trove_textarea_field_text_size', 16 ),
 		'input_attrs'       => array( 'min' => 10, 'max' => 24, 'step' => 1 ),
 		'sanitize_callback' => 'absint',
 		'priority'          => 22,
@@ -114,7 +114,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_textarea_field_border_width', 1 ),
+		'default'           => (int) customizer_default( 'trove_textarea_field_border_width', 1 ),
 		'input_attrs'       => array( 'min' => 0, 'max' => 8, 'step' => 1 ),
 		'sanitize_callback' => 'absint',
 		'priority'          => 23,
@@ -124,7 +124,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) trove_customizer_default( 'trove_textarea_field_border_radius', 3 ),
+		'default'           => (int) customizer_default( 'trove_textarea_field_border_radius', 3 ),
 		'input_attrs'       => array( 'min' => 0, 'max' => 32, 'step' => 1 ),
 		'sanitize_callback' => 'absint',
 		'priority'          => 24,
@@ -132,7 +132,7 @@ return array(
 	'trove_textarea_field_border_color' => array(
 		'label'             => __( 'Border color', 'trove' ),
 		'type'              => 'color',
-		'default'           => (string) trove_customizer_default( 'trove_textarea_field_border_color', '#eeeeee' ),
+		'default'           => (string) customizer_default( 'trove_textarea_field_border_color', '#eeeeee' ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
 		'swatch_hint'       => __( 'Textarea border', 'trove' ),
@@ -141,7 +141,7 @@ return array(
 	'trove_textarea_field_text_color' => array(
 		'label'             => __( 'Text color', 'trove' ),
 		'type'              => 'color',
-		'default'           => (string) trove_customizer_default( 'trove_textarea_field_text_color', '#111111' ),
+		'default'           => (string) customizer_default( 'trove_textarea_field_text_color', '#111111' ),
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
 		'swatch_hint'       => __( 'Textarea text', 'trove' ),

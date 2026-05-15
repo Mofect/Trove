@@ -19,8 +19,8 @@ function sanitize_page_settings_content_vertical_spacing( $raw, $field ) {
 	if ( null === $raw || '' === (string) $raw ) {
 		return '';
 	}
-	$clamped = (int) \Trove\Customizer\trove_clamp_content_vertical_spacing_px( absint( $raw ) );
-	$global  = (int) \Trove\Customizer\trove_get_content_vertical_spacing_px();
+	$clamped = (int) \Trove\Customizer\clamp_content_vertical_spacing_px( absint( $raw ) );
+	$global  = (int) \Trove\Customizer\get_content_vertical_spacing_px();
 	if ( $clamped === $global ) {
 		return '';
 	}
@@ -37,8 +37,8 @@ function sanitize_page_settings_content_horizontal_spacing( $raw, $field ) {
 	if ( null === $raw || '' === (string) $raw ) {
 		return '';
 	}
-	$clamped = (int) \Trove\Customizer\trove_clamp_content_horizontal_spacing_px( absint( $raw ) );
-	$global  = (int) \Trove\Customizer\trove_get_content_horizontal_spacing_px();
+	$clamped = (int) \Trove\Customizer\clamp_content_horizontal_spacing_px( absint( $raw ) );
+	$global  = (int) \Trove\Customizer\get_content_horizontal_spacing_px();
 	if ( $clamped === $global ) {
 		return '';
 	}
@@ -71,12 +71,12 @@ function build_page_content_spacing_override_css( $post_id, $selector ) {
 
 	$v_raw = get_post_field_value( $post_id, 'page_settings', 'content_vertical_spacing', null );
 	if ( null !== $v_raw && '' !== (string) $v_raw && is_numeric( $v_raw ) ) {
-		$decls[] = '--trove-content-vertical-spacing:' . (int) \Trove\Customizer\trove_clamp_content_vertical_spacing_px( (int) $v_raw ) . 'px';
+		$decls[] = '--trove-content-vertical-spacing:' . (int) \Trove\Customizer\clamp_content_vertical_spacing_px( (int) $v_raw ) . 'px';
 	}
 
 	$h_raw = get_post_field_value( $post_id, 'page_settings', 'content_horizontal_spacing', null );
 	if ( null !== $h_raw && '' !== (string) $h_raw && is_numeric( $h_raw ) ) {
-		$decls[] = '--trove-content-horizontal-spacing:' . (int) \Trove\Customizer\trove_clamp_content_horizontal_spacing_px( (int) $h_raw ) . 'px';
+		$decls[] = '--trove-content-horizontal-spacing:' . (int) \Trove\Customizer\clamp_content_horizontal_spacing_px( (int) $h_raw ) . 'px';
 	}
 
 	if ( empty( $decls ) ) {
