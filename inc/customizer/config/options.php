@@ -380,6 +380,13 @@ function get_options() {
 				),
 				'options'   => require __DIR__ . '/woocommerce/single-product.php',
 			),
+			'woocommerce_cart' => array(
+				'title'     => __( 'Cart', 'trove' ),
+				'container' => array(
+					'priority' => 143,
+				),
+				'options'   => require __DIR__ . '/woocommerce/cart.php',
+			),
 		);
 	}
 

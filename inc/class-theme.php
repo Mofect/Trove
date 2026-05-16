@@ -35,6 +35,7 @@ class TroveTheme {
 		require_once \TROVE_DIR . '/inc/components/woocommerce/grouped-product.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/review-media.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/orders.php';
+		require_once \TROVE_DIR . '/inc/components/woocommerce/free-shipping-bar.php';
 	}
 
 	/**

@@ -54,6 +54,7 @@ function color_theme_mod_definitions() {
 		'trove_woo_failed_message_text'       => '--trove-woo-failed-message-text',
 		'trove_woo_success_message_background' => '--trove-woo-success-message-bg',
 		'trove_woo_success_message_text'       => '--trove-woo-success-message-text',
+		'trove_woo_cart_free_shipping_bar_color' => '--trove-woo-free-shipping-bar-color',
 	);
 	$cached = array();
 	foreach ( $map as $key => $var ) {

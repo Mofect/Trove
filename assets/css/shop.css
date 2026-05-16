@@ -2536,6 +2536,45 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 }
 
 
+/* Free shipping bar (Customizer → WooCommerce → Cart) */
+.trove-free-shipping-bar {
+	margin: 0 0 1.25rem;
+	padding: 0;
+}
+
+.wc-block-mini-cart__drawer .wp-block-woocommerce-mini-cart-items-block > .trove-free-shipping-bar {
+	margin: 0 0 1.25rem;
+	padding: 0;
+}
+
+.wp-block-woocommerce-cart-order-summary-block > .trove-free-shipping-bar {
+	margin: 0 0 1.25rem;
+	padding: 0;
+}
+
+.trove-free-shipping-bar__message {
+	margin: 0 0 0.6rem;
+	font-size: 1.4rem;
+	line-height: 1.4;
+}
+
+.trove-free-shipping-bar__track {
+	display: block;
+	width: 100%;
+	height: 0.35rem;
+	border-radius: 999px;
+	background: var(--trove-border, #e5e5e5);
+	overflow: hidden;
+}
+
+.trove-free-shipping-bar__fill {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background-color: var(--trove-woo-free-shipping-bar-color, #22c55e);
+	transition: width 0.35s ease;
+}
+
 /* Product thumbnail hover image swap */
 .trove-product-thumbnail {
 	position: relative;
