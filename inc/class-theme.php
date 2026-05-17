@@ -36,6 +36,8 @@ class TroveTheme {
 		require_once \TROVE_DIR . '/inc/components/woocommerce/review-media.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/orders.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/free-shipping-bar.php';
+		require_once \TROVE_DIR . '/inc/components/woocommerce/cart-cross-sells.php';
+		require_once \TROVE_DIR . '/inc/components/woocommerce/product-carousel.php';
 	}
 
 	/**
@@ -358,6 +360,14 @@ class TroveTheme {
 					'trove-product-ajax-cart',
 					self::asset_url( 'assets/js/shop.js' ),
 					array( 'jquery', 'sticksy' ),
+					TROVE_THEME_VERSION,
+					true
+				);
+			} elseif ( function_exists( 'is_cart' ) && is_cart() && \Trove\woo_cart_enable_cross_sells() ) {
+				wp_enqueue_script(
+					'trove-cart-cross-sells',
+					self::asset_url( 'assets/js/shop.js' ),
+					array( 'jquery' ),
 					TROVE_THEME_VERSION,
 					true
 				);

@@ -247,9 +247,13 @@ function filter_related_products_count( $args ) {
 		return $args;
 	}
 	$count = (int) \Trove\Metabox\get_product_setting( 'related_products_count', 0, '4' );
+	$total = \Trove\woo_product_carousel_total( 'related' );
 	if ( $count > 0 ) {
-		$args['posts_per_page'] = $count;
+		$args['posts_per_page'] = max( $count, $total );
+	} else {
+		$args['posts_per_page'] = $total;
 	}
+	$args['columns'] = \Trove\woo_product_carousel_visible( 'related' );
 	return $args;
 }
 add_filter( 'woocommerce_output_related_products_args', __NAMESPACE__ . '\\filter_related_products_count' );
