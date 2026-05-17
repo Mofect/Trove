@@ -127,6 +127,65 @@ function product_loop_thumbnail_with_hover( $html, $post_id ) {
 add_filter( 'woocommerce_product_get_image', __NAMESPACE__ . '\\product_loop_thumbnail_with_hover', 20, 2 );
 
 /**
+ * WooCommerce → Customizer → Product Images → Thumbnail cropping mode.
+ *
+ * @return string `1:1`, `custom`, or `uncropped`.
+ */
+function get_woocommerce_thumbnail_cropping_mode() {
+	return (string) get_option( 'woocommerce_thumbnail_cropping', '1:1' );
+}
+
+/**
+ * CSS aspect-ratio value matching WooCommerce thumbnail cropping (Product Images customizer section).
+ *
+ * @return string e.g. `1 / 1`, `4 / 3`, or `auto` when uncropped.
+ */
+function get_woocommerce_product_thumbnail_aspect_ratio_css() {
+	$cropping = get_woocommerce_thumbnail_cropping_mode();
+
+	if ( 'uncropped' === $cropping ) {
+		return 'auto';
+	}
+
+	if ( 'custom' === $cropping ) {
+		$width  = max( 1, (float) get_option( 'woocommerce_thumbnail_cropping_custom_width', 4 ) );
+		$height = max( 1, (float) get_option( 'woocommerce_thumbnail_cropping_custom_height', 3 ) );
+		return $width . ' / ' . $height;
+	}
+
+	$parts = array_map( 'floatval', explode( ':', $cropping ) );
+	if ( count( $parts ) >= 2 && $parts[0] > 0 && $parts[1] > 0 ) {
+		return $parts[0] . ' / ' . $parts[1];
+	}
+
+	return '1 / 1';
+}
+
+/**
+ * Body class for thumbnail cropping (cart/catalog layout hooks).
+ *
+ * @param string[] $classes Body classes.
+ * @return string[]
+ */
+function filter_body_class_woocommerce_thumbnail_cropping( $classes ) {
+	if ( ! class_exists( 'WooCommerce' ) ) {
+		return $classes;
+	}
+
+	$cropping = get_woocommerce_thumbnail_cropping_mode();
+	if ( 'uncropped' === $cropping ) {
+		$classes[] = 'trove-woo-thumbnail-crop-uncropped';
+	} elseif ( 'custom' === $cropping ) {
+		$classes[] = 'trove-woo-thumbnail-crop-custom';
+	} else {
+		$classes[] = 'trove-woo-thumbnail-crop-fixed';
+	}
+
+	return $classes;
+}
+add_filter( 'body_class', __NAMESPACE__ . '\\filter_body_class_woocommerce_thumbnail_cropping' );
+
+/**
  * Add custom extra tabs to single product tabs.
  *
  * @param array<string, array<string, mixed>> $tabs Product tabs.

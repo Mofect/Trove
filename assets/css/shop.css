@@ -105,7 +105,14 @@ body.admin-bar .woocommerce-store-notice {
 	color: var(--trove-button-text, #ffffff);
 	font-size: var(--trove-button-font-size, 15px);
 	font-weight: var(--trove-button-font-weight, 500);
-	padding: var(--trove-button-padding, 10px 24px);
+	padding: var(--trove-button-padding, 12px 24px);
+}
+
+.woocommerce #content table.cart td.actions .input-text,
+.woocommerce table.cart td.actions .input-text,
+.woocommerce-page #content table.cart td.actions .input-text,
+.woocommerce-page table.cart td.actions .input-text {
+	width: 150px;
 }
 
 .woocommerce:where(body:not(.woocommerce-block-theme-has-button-styles)) #respond input#submit:hover,
@@ -459,7 +466,8 @@ h2.wc-block-mini-cart__title {
 .is-small table.wc-block-cart-items .wc-block-cart-items__row {
     grid-template-columns: 115px 300px;
 }
-/* Mini-cart drawer: hide short description under the line title (blocks product metadata). */
+/* Cart page + mini-cart drawer: hide product short description (blocks product metadata). */
+body.woocommerce-cart .wp-block-woocommerce-cart .wc-block-components-product-metadata__description,
 .wc-block-mini-cart__drawer .wc-block-components-product-metadata__description {
 	display: none !important;
 }
@@ -492,6 +500,44 @@ h2.wc-block-mini-cart__title {
 .is-mobile table.wc-block-cart-items .wc-block-cart-items__row .wc-block-cart-item__image, 
 .is-small table.wc-block-cart-items .wc-block-cart-items__row .wc-block-cart-item__image {
 	padding-right: 0;
+}
+
+table.wc-block-cart-items .wc-block-cart-items__row .wc-block-cart-item__image {
+	padding-left: 0;
+}
+
+/* Cart page: larger line-item thumbnails; aspect ratio from WooCommerce → Product Images → Thumbnail cropping. */
+body.woocommerce-cart .is-medium table.wc-block-cart-items .wc-block-cart-items__row,
+body.woocommerce-cart .is-mobile table.wc-block-cart-items .wc-block-cart-items__row,
+body.woocommerce-cart .is-small table.wc-block-cart-items .wc-block-cart-items__row {
+	grid-template-columns: var(--trove-woo-cart-thumbnail-width, 14rem) minmax(0, 1fr);
+}
+
+body.woocommerce-cart table.wc-block-cart-items .wc-block-cart-items__row .wc-block-cart-item__image {
+	width: var(--trove-woo-cart-thumbnail-width, 14rem);
+	min-width: var(--trove-woo-cart-thumbnail-width, 14rem);
+}
+
+body.woocommerce-cart table.wc-block-cart-items .wc-block-cart-items__row .wc-block-cart-item__image a {
+	display: block;
+	width: 100%;
+}
+
+body.woocommerce-cart:not(.trove-woo-thumbnail-crop-uncropped) table.wc-block-cart-items .wc-block-cart-items__row .wc-block-cart-item__image img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-width: none;
+	aspect-ratio: var(--trove-woo-product-thumbnail-aspect-ratio, 1 / 1);
+	object-fit: cover;
+}
+
+body.woocommerce-cart.trove-woo-thumbnail-crop-uncropped table.wc-block-cart-items .wc-block-cart-items__row .wc-block-cart-item__image img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-width: none;
+	object-fit: contain;
 }
 
 .editor-styles-wrapper table.wc-block-cart-items .wc-block-cart-items__row .wc-block-components-product-name, 
@@ -628,10 +674,7 @@ body.woocommerce-page .site-main {
 	max-width: var(--trove-content-wide-width);
 }
 
-.single-product .site-main {
-	padding-top: 2rem;
-}
-.tax-product_cat .site-main {
+body:has(.woocommerce-breadcrumb) main.site-main {
 	padding-top: 0;
 }
 
@@ -2258,6 +2301,11 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 }
 
 /* Product card */
+.woocommerce ul.products li.product,
+.woocommerce-page ul.products li.product {
+	margin-bottom: 2em;
+}
+
 .woocommerce ul.products li.product .woocommerce-loop-category__title, 
 .woocommerce ul.products li.product .woocommerce-loop-product__title, 
 .woocommerce ul.products li.product h3 {
@@ -2334,23 +2382,82 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 	border-bottom: 2px solid var(--trove-text);
 }
 
-/* Badges */
-.woocommerce span.onsale {
+/* Sale badges (Customizer → WooCommerce → Badge + button border radius). */
+.woocommerce span.onsale,
+.wc-block-grid__product-onsale,
+.wc-block-grid__product-link > .wc-block-grid__product-onsale,
+.wc-block-grid__product-image .wc-block-grid__product-onsale,
+.wc-block-components-product-sale-badge {
 	min-width: auto;
 	min-height: auto;
-	background: #000;
+	background: var(--trove-woo-sale-badge-bg, #ff0000) !important;
+	color: #fff !important;
 	padding: 0.5rem 1rem;
-	border-radius: 50%;
 	line-height: 1;
-	border-radius: var(--trove-button-radius, 3px);
+	border: 0 !important;
+	border-radius: var(--trove-button-border-radius, 3px);
+	font-size: 1rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	text-align: center;
+	width: auto;
+	display: inline-block;
+	box-sizing: border-box;
 }
 
 .woocommerce span.onsale,
 .woocommerce ul.products li.product .onsale {
 	top: 0;
-    left: 0;
-    right: auto;
-    margin: .5em 0 0 .5em;
+	left: 0;
+	right: auto;
+	margin: 0.5em 0 0 0.5em;
+}
+
+.wc-block-grid__product-link {
+	position: relative;
+}
+
+.wc-block-grid__product-onsale,
+.wc-block-grid__product-link > .wc-block-grid__product-onsale {
+	position: absolute !important;
+	top: 0 !important;
+	left: 0 !important;
+	right: auto !important;
+	margin: 0.8em 0 0 0.5em !important;
+	z-index: 9;
+}
+
+.wc-block-grid__product-onsale span {
+	color: #fff !important;
+	background: transparent;
+}
+
+.trove-woo-badge {
+	display: inline-block;
+	padding: 0.5rem 1rem;
+	line-height: 1;
+	border: 0;
+	border-radius: var(--trove-button-border-radius, 3px);
+	font-size: 1rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	color: #fff;
+}
+
+.trove-woo-badge--sale {
+	background: var(--trove-woo-sale-badge-bg, #ff0000);
+}
+
+.trove-woo-badge--featured {
+	background: var(--trove-woo-featured-badge-bg, #22c55e);
+}
+
+.trove-woo-badge--new {
+	background: var(--trove-woo-new-badge-bg, #000000);
+}
+
+.trove-woo-badge--out-of-stock {
+	background: var(--trove-woo-out-of-stock-badge-bg, #9ca3af);
 }
 
 /* WooCommerce breadcrumb */
@@ -2359,10 +2466,6 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 	margin: 1em auto !important;
 	padding-left: var(--trove-content-horizontal-spacing, 20px) !important;
 	padding-right: var(--trove-content-horizontal-spacing, 20px) !important;
-}
-
-.woocommerce-products-header__title {
-	margin-top: 0;
 }
 
 /* Shop sidebar layout */
@@ -2384,6 +2487,51 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 	display: flex;
 	flex-direction: column;
 	gap: 3rem;
+}
+
+/*
+ * Sticksy placeholder clones: must not paint (handles use visibility/display !important).
+ * Sticksy may set display on dummies when fixed; layout height comes from .widget-area min-height in shop.js.
+ */
+.sticksy-dummy-node {
+	display: none !important;
+	position: absolute !important;
+	width: 0 !important;
+	height: 0 !important;
+	min-height: 0 !important;
+	max-height: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	overflow: hidden !important;
+	opacity: 0 !important;
+	visibility: hidden !important;
+	pointer-events: none !important;
+	clip: rect(0, 0, 0, 0) !important;
+	clip-path: inset(100%) !important;
+	border: 0 !important;
+}
+
+.sticksy-dummy-node,
+.sticksy-dummy-node * {
+	visibility: hidden !important;
+	pointer-events: none !important;
+}
+
+.sticksy-dummy-node * {
+	display: none !important;
+	opacity: 0 !important;
+}
+
+.sticksy-dummy-node .ui-slider-handle,
+.sticksy-dummy-node .price_slider,
+.sticksy-dummy-node .price_slider_wrapper {
+	position: absolute !important;
+	left: -9999px !important;
+	width: 0 !important;
+	height: 0 !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
 .trove-products {
@@ -2447,8 +2595,8 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 	border: none !important;
 }
 
-/* Selected range */
-.trove-shop-widget--price .price_slider .ui-slider-range {
+/* Selected range (real sidebar only — not Sticksy clones). */
+.trove-woo-sidebar-sticky-inner .trove-shop-widget--price .price_slider .ui-slider-range {
 	background: #1a1a1a !important;
 	border-radius: 2px;
 	position: absolute;
@@ -2457,7 +2605,7 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 }
 
 /* Slider handles */
-.trove-shop-widget--price .price_slider .ui-slider-handle {
+.trove-woo-sidebar-sticky-inner .trove-shop-widget--price .price_slider .ui-slider-handle {
 	position: absolute !important;
 	display: block !important;
 	visibility: visible !important;
@@ -2474,8 +2622,8 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 	cursor: ew-resize !important;
 }
 
-.trove-shop-widget--price .price_slider .ui-slider-handle:focus,
-.trove-shop-widget--price .price_slider .ui-slider-handle:active {
+.trove-woo-sidebar-sticky-inner .trove-shop-widget--price .price_slider .ui-slider-handle:focus,
+.trove-woo-sidebar-sticky-inner .trove-shop-widget--price .price_slider .ui-slider-handle:active {
 	outline: none !important;
 	box-shadow: 0 0 0 3px rgba(26,26,26,0.15) !important;
 }
@@ -2547,9 +2695,49 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 	padding: 0;
 }
 
-/* Cart page: bar is mini-cart drawer only. */
-body.woocommerce-cart .wp-block-woocommerce-cart .trove-free-shipping-bar {
+/* Cart page: full-width bar on top of .wp-block-woocommerce-cart.alignwide. */
+body.woocommerce-cart .wp-block-woocommerce-cart.alignwide > .trove-free-shipping-bar,
+body.woocommerce-cart .wp-block-woocommerce-cart > .trove-free-shipping-bar {
+	margin: 0 0 1.25rem;
+	padding: 0;
+}
+
+/* Hide bar when the cart block is empty (filled cart block unmounted). */
+body.woocommerce-cart .wp-block-woocommerce-cart:has(.wp-block-woocommerce-empty-cart-block) > .trove-free-shipping-bar,
+body.woocommerce-cart .entry-content:has(.wp-block-woocommerce-empty-cart-block) > .trove-free-shipping-bar {
 	display: none !important;
+}
+
+/* Hoisted SSR sibling (outside .wp-block-woocommerce-cart); JS keeps a single bar inside the cart root. */
+body.woocommerce-cart .entry-content > .trove-free-shipping-bar {
+	display: none !important;
+}
+
+body.woocommerce-cart .wc-block-cart__sidebar .trove-free-shipping-bar,
+body.woocommerce-cart .wp-block-woocommerce-cart-order-summary-block > .trove-free-shipping-bar,
+body.woocommerce-cart .wp-block-woocommerce-cart-totals-block > .trove-free-shipping-bar {
+	display: none !important;
+}
+
+/* Empty cart */
+body.woocommerce-cart .wc-block-cart__empty-cart__title {
+	letter-spacing: 0;
+}
+
+/* Empty cart: dots separator → 1px rule between empty message and "New in store". */
+body.woocommerce-cart .wp-block-woocommerce-empty-cart-block .wp-block-separator.has-alpha-channel-opacity.is-style-dots {
+	border: 0;
+	border-top: 1px solid var(--trove-border, #e5e5e5) !important;
+	background: none !important;
+	height: 0;
+	line-height: 0;
+	margin: 5rem 0;
+	text-align: inherit;
+}
+
+body.woocommerce-cart .wp-block-woocommerce-empty-cart-block .wp-block-separator.has-alpha-channel-opacity.is-style-dots::before {
+	content: none;
+	display: none;
 }
 
 .trove-free-shipping-bar__message {
@@ -2575,11 +2763,62 @@ body.woocommerce-cart .wp-block-woocommerce-cart .trove-free-shipping-bar {
 	transition: width 0.35s ease;
 }
 
-/* Product thumbnail hover image swap */
+/* WooCommerce product grid block (e.g. empty cart "New in store"). */
+.wc-block-grid__product {
+	text-align: left;
+}
+
+.wc-block-grid__product-add-to-cart.wp-block-button .wp-block-button__link {
+	padding: 0;
+	background: none;
+	color: var(--trove-text);
+	border: 0;
+}
+
+.wc-block-grid__product-add-to-cart.wp-block-button .wp-block-button__link:hover {
+	text-decoration: underline;
+}
+
+.wc-block-grid__product .wc-block-grid__product-add-to-cart {
+	margin: 1rem 0 0;
+}
+
+.wc-block-grid__product .wc-block-grid__product-add-to-cart:not(:has(.loading)) {
+	opacity: 0;
+	visibility: hidden;
+}
+
+.wc-block-grid__product:hover .wc-block-grid__product-add-to-cart,
+.wc-block-grid__product .wc-block-grid__product-add-to-cart:has(.loading) {
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.wc-block-grid.has-4-columns:not(.alignwide):not(.alignfull) .wc-block-grid__product,
+.wc-block-grid.has-5-columns.alignfull .wc-block-grid__product {
+	font-size: 1em;
+}
+
+.wc-block-grid__product .wc-block-grid__product-image:not(.wc-block-components-product-image),
+.wc-block-grid__product .wc-block-grid__product-title {
+	margin: 3px 0 8px;
+}
+
+.wc-block-grid__product .wc-block-grid__product-price,
+.wc-block-grid__product .wc-block-grid__product-rating {
+	margin: 0 auto 8px;
+}
+
+/* Product thumbnail hover image swap (aspect ratio matches WooCommerce Product Images cropping). */
 .trove-product-thumbnail {
 	position: relative;
 	display: block;
 	overflow: hidden;
+}
+
+body:not(.trove-woo-thumbnail-crop-uncropped) .trove-product-thumbnail {
+	aspect-ratio: var(--trove-woo-product-thumbnail-aspect-ratio, 1 / 1);
 }
 
 .trove-product-thumbnail .trove-product-img {
@@ -2587,6 +2826,12 @@ body.woocommerce-cart .wp-block-woocommerce-cart .trove-free-shipping-bar {
 	width: 100%;
 	height: auto;
 	transition: opacity 0.4s ease;
+}
+
+body:not(.trove-woo-thumbnail-crop-uncropped) .trove-product-thumbnail .trove-product-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
 
 .trove-product-thumbnail .trove-product-img--hover {

@@ -55,6 +55,10 @@ function color_theme_mod_definitions() {
 		'trove_woo_success_message_background' => '--trove-woo-success-message-bg',
 		'trove_woo_success_message_text'       => '--trove-woo-success-message-text',
 		'trove_woo_cart_free_shipping_bar_color' => '--trove-woo-free-shipping-bar-color',
+		'trove_woo_sale_badge_color'           => '--trove-woo-sale-badge-bg',
+		'trove_woo_featured_badge_color'       => '--trove-woo-featured-badge-bg',
+		'trove_woo_new_badge_color'            => '--trove-woo-new-badge-bg',
+		'trove_woo_out_of_stock_badge_color'   => '--trove-woo-out-of-stock-badge-bg',
 	);
 	$cached = array();
 	foreach ( $map as $key => $var ) {
@@ -1174,6 +1178,9 @@ function build_theme_variable_css( $selector = ':root', $include_responsive_cont
 	$boxed_radius = absint( get_theme_mod( 'trove_blog_boxed_border_radius', (int) customizer_default( 'trove_blog_boxed_border_radius', 10 ) ) );
 	$boxed_radius = max( 0, min( 20, $boxed_radius ) );
 	$root_parts[] = '--trove-blog-boxed-radius:' . (int) $boxed_radius . 'px';
+	if ( class_exists( 'WooCommerce' ) ) {
+		$root_parts[] = '--trove-woo-product-thumbnail-aspect-ratio:' . esc_attr( \Trove\get_woocommerce_product_thumbnail_aspect_ratio_css() );
+	}
 	$root_parts[] = '--trove-font-body-scale:1';
 	$typography_tablet_parts = array();
 	$typography_phone_parts  = array();
@@ -1270,7 +1277,7 @@ function build_theme_variable_css( $selector = ':root', $include_responsive_cont
 
 	$header_min = absint( get_theme_mod( 'trove_header_min_height', (int) customizer_default( 'trove_header_min_height', 0 ) ) );
 	if ( $header_min > 0 && $header_min <= 400 ) {
-		$css .= '.site-header{min-height:' . $header_min . 'px;}';
+		$css .= '.site-header{--trove-header-height:' . $header_min . 'px;min-height:' . $header_min . 'px;height:var(--trove-header-height);}';
 	}
 
 	$ann_enabled = get_responsive_mod_values(

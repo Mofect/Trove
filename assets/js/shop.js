@@ -4,6 +4,27 @@
 ( function () {
 	'use strict';
 
+	/**
+	 * Sticksy clones siblings for layout; strip painted UI (e.g. jQuery UI slider handles) from dummies.
+	 *
+	 * @param {Element|Document} root Container to search within.
+	 */
+	function neutralizeSticksyDummies( root ) {
+		var scope = root || document;
+		if ( ! scope.querySelectorAll ) {
+			return;
+		}
+		scope.querySelectorAll( '.sticksy-dummy-node' ).forEach( function ( dummy ) {
+			dummy.setAttribute( 'aria-hidden', 'true' );
+			dummy.style.setProperty( 'display', 'none', 'important' );
+			dummy.style.setProperty( 'height', '0', 'important' );
+			dummy.style.setProperty( 'overflow', 'hidden', 'important' );
+			dummy.style.setProperty( 'opacity', '0', 'important' );
+			dummy.style.setProperty( 'visibility', 'hidden', 'important' );
+			dummy.style.setProperty( 'pointer-events', 'none', 'important' );
+		} );
+	}
+
 	/* pushCartToBlocksStore() uses a short 0ms burst, then a few rAF, then 2ms polls. */
 
 	function getConfig() {
@@ -259,6 +280,7 @@
 			topSpacing: 80,
 			listen: true,
 		} );
+		neutralizeSticksyDummies( summary );
 		var summaryStickyOn = ! isProductSummaryMobileViewport();
 		/* Constructor always starts enabled ({ enabled:false } is ignored due to sticksy internals). */
 		if ( ! summaryStickyOn ) {
@@ -284,6 +306,7 @@
 			if ( on ) {
 				syncSummaryStickyRange();
 				sticky.hardRefresh();
+				neutralizeSticksyDummies( summary );
 			}
 		}
 		applyProductSummaryStickyForViewport();
@@ -294,6 +317,7 @@
 				return;
 			}
 			summary.classList.toggle( 'trove-product-summary-sticky--fixed', state === 'fixed' );
+			neutralizeSticksyDummies( summary );
 		};
 		window.addEventListener( 'resize', syncSummaryStickyRange );
 		window.addEventListener( 'load', syncSummaryStickyRange );
@@ -363,6 +387,7 @@
 			topSpacing: 80,
 			listen: true,
 		} );
+		neutralizeSticksyDummies( widgetArea );
 		var sidebarStickyOn = ! isShopSidebarStackedViewport();
 		if ( ! sidebarStickyOn ) {
 			sticky.disable();
@@ -387,16 +412,31 @@
 			if ( on ) {
 				syncShopSidebarStickyRange();
 				sticky.hardRefresh();
+				neutralizeSticksyDummies( widgetArea );
 			}
 		}
 		applyShopSidebarStickyForViewport();
 		bindMediaQueryChange( mqSidebarStack, applyShopSidebarStickyForViewport );
+
+		function refreshSidebarPriceSliders() {
+			if ( ! window.jQuery ) {
+				return;
+			}
+			window.jQuery( widgetArea ).find( '.price_slider' ).each( function () {
+				var $slider = window.jQuery( this );
+				if ( $slider.hasClass( 'ui-slider' ) && $slider.slider ) {
+					$slider.slider( 'option', 'refresh' );
+				}
+			} );
+		}
 
 		sticky.onStateChanged = function ( state ) {
 			if ( isShopSidebarStackedViewport() ) {
 				return;
 			}
 			widgetArea.classList.toggle( 'trove-woo-sidebar-sticky--fixed', state === 'fixed' );
+			neutralizeSticksyDummies( widgetArea );
+			window.requestAnimationFrame( refreshSidebarPriceSliders );
 		};
 		window.addEventListener( 'resize', syncShopSidebarStickyRange );
 		window.addEventListener( 'load', syncShopSidebarStickyRange );

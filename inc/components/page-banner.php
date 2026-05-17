@@ -383,10 +383,10 @@ function render_page_banner_after_header() {
 		return;
 	}
 
-	$align = get_post_field_value( $post_id, 'page_settings', 'page_title_alignment', 'left' );
-	$align = is_string( $align ) ? sanitize_key( $align ) : 'left';
+	$align = get_post_field_value( $post_id, 'page_settings', 'page_title_alignment', 'center' );
+	$align = is_string( $align ) ? sanitize_key( $align ) : 'center';
 	if ( ! in_array( $align, array( 'left', 'center', 'right' ), true ) ) {
-		$align = 'left';
+		$align = 'center';
 	}
 
 	$size = get_post_field_value( $post_id, 'page_settings', 'page_title_size', 'medium' );

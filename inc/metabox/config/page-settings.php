@@ -78,7 +78,7 @@ function register_page_settings_metabox() {
 					'type'               => 'alignment',
 					'name'               => __( 'Page title alignment', 'trove' ),
 					'description'        => __( 'Align the page title within the banner.', 'trove' ),
-					'default'            => 'left',
+					'default'            => 'center',
 					'options'            => array(
 						'left'   => __( 'Left', 'trove' ),
 						'center' => __( 'Center', 'trove' ),
@@ -301,8 +301,8 @@ function sanitize_page_settings_page_banner_height( $raw, $field ) {
  * @return string
  */
 function sanitize_page_settings_page_title_alignment( $raw, $field ) {
-	$v = isset( $raw ) ? sanitize_key( (string) wp_unslash( $raw ) ) : 'left';
-	return in_array( $v, array( 'left', 'center', 'right' ), true ) ? $v : 'left';
+	$v = isset( $raw ) ? sanitize_key( (string) wp_unslash( $raw ) ) : 'center';
+	return in_array( $v, array( 'left', 'center', 'right' ), true ) ? $v : 'center';
 }
 
 /**

@@ -1,5 +1,5 @@
 /**
- * Free shipping progress bar: sync with cart subtotal in the mini-cart drawer.
+ * Free shipping progress bar: cart page (top of cart block) and mini-cart drawer.
  */
 ( function () {
 	'use strict';
@@ -160,6 +160,10 @@
 	}
 
 	function getSubtotal() {
+		var cart = getCartFromStore();
+		if ( cart && cart.items && cart.items.length === 0 ) {
+			return 0;
+		}
 		var storeSubtotal = getSubtotalFromStore();
 		if ( storeSubtotal !== null && ! isNaN( storeSubtotal ) ) {
 			return storeSubtotal;
@@ -237,19 +241,204 @@
 		bar.setAttribute( 'data-subtotal', String( subtotal ) );
 	}
 
-	function isOnCartPageBlock( bar ) {
+	function isInCartSidebar( bar ) {
 		return !! (
 			bar &&
 			bar.closest &&
-			bar.closest( '.wp-block-woocommerce-cart' )
+			bar.closest(
+				'.wc-block-cart__sidebar, .wp-block-woocommerce-cart-totals-block, .wp-block-woocommerce-cart-order-summary-block'
+			)
 		);
 	}
 
-	function removeCartPageBars() {
+	function getCartBlockRoot() {
+		return (
+			document.querySelector( '.wp-block-woocommerce-cart.alignwide' ) ||
+			document.querySelector( '.wp-block-woocommerce-cart' )
+		);
+	}
+
+	function cartStoreHasItems() {
+		var cart = getCartFromStore();
+		return !!( cart && cart.items && cart.items.length > 0 );
+	}
+
+	function cartStoreIsEmpty() {
+		var cart = getCartFromStore();
+		return !!( cart && cart.items && cart.items.length === 0 );
+	}
+
+	function cartPageHasItemsFromDom() {
+		var root = getCartBlockRoot();
+		if ( ! root ) {
+			return null;
+		}
+		if ( root.querySelector( '.wp-block-woocommerce-empty-cart-block' ) ) {
+			return false;
+		}
+		return !! root.querySelector( '.wc-block-cart-items__row, .wc-block-cart-item' );
+	}
+
+	function cartPageHasItems() {
+		if ( cartStoreIsEmpty() ) {
+			return false;
+		}
+		if ( cartStoreHasItems() ) {
+			return true;
+		}
+		var dom = cartPageHasItemsFromDom();
+		if ( dom !== null ) {
+			return dom;
+		}
+		return fallbackSubtotal > 0;
+	}
+
+	function cartPageShouldShowBar() {
+		return cartPageHasItems();
+	}
+
+	function removeAllCartPageBars( root ) {
+		if ( ! root ) {
+			root = getCartBlockRoot();
+		}
 		getAllBars().forEach( function ( bar ) {
-			if ( isOnCartPageBlock( bar ) ) {
+			if ( isInCartSidebar( bar ) ) {
+				return;
+			}
+			if ( root && ( root.contains( bar ) || bar.parentNode === root ) ) {
+				bar.remove();
+				return;
+			}
+			if (
+				bar.classList.contains( 'trove-free-shipping-bar' ) &&
+				bar.parentElement &&
+				bar.parentElement.classList.contains( 'entry-content' )
+			) {
 				bar.remove();
 			}
+		} );
+	}
+
+	function getCartRootBars( root ) {
+		var bars = [];
+		if ( ! root ) {
+			return bars;
+		}
+		Array.prototype.forEach.call( root.children, function ( child ) {
+			if ( child.classList && child.classList.contains( 'trove-free-shipping-bar' ) ) {
+				bars.push( child );
+			}
+		} );
+		return bars;
+	}
+
+	function dedupeCartRootBars( root ) {
+		var bars = getCartRootBars( root );
+		for ( var i = 1; i < bars.length; i++ ) {
+			bars[ i ].remove();
+		}
+		return bars[ 0 ] || null;
+	}
+
+	function removeMisplacedCartPageBars( root ) {
+		if ( ! root ) {
+			root = getCartBlockRoot();
+		}
+		if ( ! root ) {
+			return;
+		}
+		getAllBars().forEach( function ( bar ) {
+			if ( isInCartSidebar( bar ) ) {
+				bar.remove();
+				return;
+			}
+			if ( ! root.contains( bar ) ) {
+				/* SSR fragment: bar sibling of .wp-block-woocommerce-cart (data-block-name on bar). */
+				placeBarOnCartBlock( bar, root );
+				return;
+			}
+			if ( bar.parentNode !== root ) {
+				bar.remove();
+			}
+		} );
+		dedupeCartRootBars( root );
+	}
+
+	function placeBarOnCartBlock( bar, root ) {
+		if ( ! root || ! bar ) {
+			return false;
+		}
+		dedupeCartRootBars( root );
+		if ( root.firstElementChild === bar ) {
+			return true;
+		}
+		root.insertBefore( bar, root.firstChild );
+		dedupeCartRootBars( root );
+		return true;
+	}
+
+	function ensureCartPageBar( subtotal, allowInject ) {
+		if ( ! document.body.classList.contains( 'woocommerce-cart' ) ) {
+			return;
+		}
+
+		var root = getCartBlockRoot();
+		if ( ! root ) {
+			return;
+		}
+
+		if ( typeof subtotal !== 'number' || isNaN( subtotal ) ) {
+			subtotal = getSubtotal();
+		}
+
+		removeMisplacedCartPageBars( root );
+
+		if ( ! cartPageShouldShowBar( subtotal ) ) {
+			removeAllCartPageBars( root );
+			return;
+		}
+
+		var existing = dedupeCartRootBars( root );
+		if ( existing ) {
+			placeBarOnCartBlock( existing, root );
+			updateBarElement( existing, subtotal );
+			return;
+		}
+
+		if ( ! allowInject ) {
+			return;
+		}
+
+		var temp = document.createElement( 'div' );
+		temp.innerHTML = buildBarHtml( subtotal );
+		var bar = temp.firstElementChild;
+		if ( bar && placeBarOnCartBlock( bar, root ) ) {
+			updateBarElement( bar, subtotal );
+		}
+	}
+
+	function watchCartBlockRoot() {
+		if ( ! document.body.classList.contains( 'woocommerce-cart' ) ) {
+			return;
+		}
+		var root = getCartBlockRoot();
+		if ( ! root || root.dataset.troveBarWatch ) {
+			return;
+		}
+		root.dataset.troveBarWatch = '1';
+		new MutationObserver( function () {
+			scheduleRefresh( 50 );
+		} ).observe( root, { childList: true } );
+	}
+
+	function scheduleCartPageBarRetries() {
+		if ( ! document.body.classList.contains( 'woocommerce-cart' ) ) {
+			return;
+		}
+		[ 0, 150, 400 ].forEach( function ( ms ) {
+			window.setTimeout( function () {
+				ensureCartPageBar( undefined, true );
+			}, ms );
 		} );
 	}
 
@@ -328,13 +517,18 @@
 			typeof subtotalOverride === 'number' && ! isNaN( subtotalOverride )
 				? subtotalOverride
 				: getSubtotal();
-		removeCartPageBars();
+		var cartRoot = getCartBlockRoot();
+		removeMisplacedCartPageBars( cartRoot );
 		getAllBars().forEach( function ( bar ) {
-			if ( isOnCartPageBlock( bar ) ) {
+			if ( isInCartSidebar( bar ) ) {
+				return;
+			}
+			if ( cartRoot && bar.parentNode === cartRoot ) {
 				return;
 			}
 			updateBarElement( bar, subtotal );
 		} );
+		ensureCartPageBar( subtotal, true );
 		ensureDrawerBar( subtotal );
 	}
 
@@ -370,10 +564,11 @@
 	}
 
 	function init() {
-		removeCartPageBars();
 		var cart = getCartFromStore();
 		lastCartSignature = getCartSignature( cart );
 		refreshAllBars();
+		watchCartBlockRoot();
+		scheduleCartPageBarRetries();
 
 		if ( window.jQuery ) {
 			window.jQuery( document.body ).on(
@@ -426,7 +621,7 @@
 			wp.data.subscribe( onCartStoreChange );
 		}
 
-		if ( window.MutationObserver && document.body ) {
+		if ( window.MutationObserver && document.body && ! document.body.classList.contains( 'woocommerce-cart' ) ) {
 			var scheduled = false;
 			new MutationObserver( function () {
 				if ( scheduled ) {

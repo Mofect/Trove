@@ -366,24 +366,32 @@ function get_options() {
 				),
 				'options'   => require __DIR__ . '/woocommerce/message-bar.php',
 			),
+			'woocommerce_badges' => array(
+				'title'     => __( 'Badge', 'trove' ),
+				'container' => array(
+					'priority'              => 141,
+					'color_swatches_layout' => true,
+				),
+				'options'   => require __DIR__ . '/woocommerce/badges.php',
+			),
 			'woocommerce_product_catalog' => array(
 				'title'     => __( 'Product catalog', 'trove' ),
 				'container' => array(
-					'priority'              => 141
+					'priority'              => 142,
 				),
 				'options'   => require __DIR__ . '/woocommerce/product-catalog.php',
 			),
 			'woocommerce_single_product' => array(
 				'title'     => __( 'Single Product', 'trove' ),
 				'container' => array(
-					'priority' => 142,
+					'priority' => 143,
 				),
 				'options'   => require __DIR__ . '/woocommerce/single-product.php',
 			),
 			'woocommerce_cart' => array(
 				'title'     => __( 'Cart', 'trove' ),
 				'container' => array(
-					'priority' => 143,
+					'priority' => 144,
 				),
 				'options'   => require __DIR__ . '/woocommerce/cart.php',
 			),

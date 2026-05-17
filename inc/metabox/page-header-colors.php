@@ -121,6 +121,18 @@ function sanitize_page_settings_header_background_color( $raw, $field ) {
 }
 
 /**
+ * Reset submenu colors to global body/link tokens when per-page header text/link overrides are active.
+ *
+ * @return string CSS rules or empty string.
+ */
+function build_page_header_submenu_color_reset_css() {
+	return 'header.site-header .site-header__nav .primary-menu .sub-menu{color:var(--trove-text)}'
+		. 'header.site-header .site-header__nav .primary-menu .sub-menu a{color:var(--trove-link)}'
+		. 'header.site-header .site-header__nav .primary-menu .sub-menu a:hover,'
+		. 'header.site-header .site-header__nav .primary-menu .sub-menu a:focus-visible{color:var(--trove-link-hover)}';
+}
+
+/**
  * Build CSS that overrides header color variables for one post.
  *
  * @param int    $post_id  Post ID.
@@ -144,7 +156,8 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 
 	$transparent = wp_validate_boolean( get_post_field_value( $post_id, 'page_settings', 'transparent_header', false ) );
 
-	$decls = array();
+	$decls                    = array();
+	$submenu_color_reset      = false;
 
 	if ( ! $transparent ) {
 		$bg_raw = get_post_field_value( $post_id, 'page_settings', 'header_background_color', null );
@@ -160,7 +173,8 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 	if ( null !== $text_raw && '' !== (string) $text_raw ) {
 		$c = \Trove\Customizer\sanitize_css_color( $text_raw );
 		if ( '' !== $c ) {
-			$decls[] = '--trove-header-text:' . esc_attr( $c );
+			$decls[]               = '--trove-header-text:' . esc_attr( $c );
+			$submenu_color_reset = true;
 		}
 	}
 
@@ -168,7 +182,8 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 	if ( null !== $link_raw && '' !== (string) $link_raw ) {
 		$c = \Trove\Customizer\sanitize_css_color( $link_raw );
 		if ( '' !== $c ) {
-			$decls[] = '--trove-header-link:' . esc_attr( $c );
+			$decls[]               = '--trove-header-link:' . esc_attr( $c );
+			$submenu_color_reset = true;
 		}
 	}
 
@@ -176,7 +191,8 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 	if ( null !== $link_hover_raw && '' !== (string) $link_hover_raw ) {
 		$c = \Trove\Customizer\sanitize_css_color( $link_hover_raw );
 		if ( '' !== $c ) {
-			$decls[] = '--trove-header-link-hover:' . esc_attr( $c );
+			$decls[]               = '--trove-header-link-hover:' . esc_attr( $c );
+			$submenu_color_reset = true;
 		}
 	}
 
@@ -197,7 +213,13 @@ function build_page_header_color_override_css( $post_id, $selector ) {
 		return '';
 	}
 
-	return $selector . '{' . implode( ';', $decls ) . '}';
+	$css = $selector . '{' . implode( ';', $decls ) . '}';
+
+	if ( $submenu_color_reset ) {
+		$css .= build_page_header_submenu_color_reset_css();
+	}
+
+	return $css;
 }
 
 /**

@@ -137,7 +137,7 @@ function get_free_shipping_bar_html( $subtotal = null ) {
 }
 
 /**
- * Prepend bar to mini-cart drawer only (not the cart page).
+ * Prepend bar above the cart block (alignwide) and in the mini-cart drawer.
  *
  * @param string $block_content Block HTML.
  * @param array  $block         Block data.
@@ -148,11 +148,17 @@ function prepend_free_shipping_bar_to_blocks( $block_content, $block ) {
 		return $block_content;
 	}
 
+	// Cart page: do not prepend on woocommerce/cart — that yields a sibling bar node
+	// (data-block-name="woocommerce/cart") outside .wp-block-woocommerce-cart. JS places one bar inside the cart root.
 	$targets = array(
 		'woocommerce/mini-cart-items-block',
 	);
 
 	if ( ! in_array( $block['blockName'], $targets, true ) ) {
+		return $block_content;
+	}
+
+	if ( false !== strpos( $block_content, 'trove-free-shipping-bar' ) ) {
 		return $block_content;
 	}
 

@@ -520,6 +520,18 @@ ul.wp-block-categories-list li::before {
 	text-decoration: underline;
 }
 
+header.site-header.trove-header--transparent ~ .trove-page-banner .trove-page-banner__breadcrumb {
+	top: auto;
+}
+
+header.site-header.trove-header--transparent ~ .trove-page-banner .trove-page-banner__inner {
+	padding: 8.4rem var(--trove-content-horizontal-spacing) 2rem;
+}
+
+.trove-page-banner--has-breadcrumb + .site-main {
+	padding-top: 0;
+}
+
 .trove-page-banner__inner {
 	position: relative;
 	z-index: 1;
@@ -717,23 +729,26 @@ ul.wp-block-categories-list li::before {
 }
 
 .site-header {
-	--trove-header-height: 85px;
+	--trove-header-height: 84px;
 	height: var(--trove-header-height);
 	background-color: var(--trove-header-background, #111827);
 	color: var(--trove-header-text, rgba(255, 255, 255, 0.92));
 }
 
+/* Pull page content up so it sits under the transparent header bar. */
 .site-header.trove-header--transparent {
 	background-color: transparent;
 	background-image: none;
-	margin-bottom: -85px;
-	margin-bottom: calc(-1 * var(--trove-header-height, 85px));
+	margin-bottom: calc(-1 * var(--trove-header-height, 84px));
 }
 
-.site-header.trove-header-sticky-always,
-.site-header.trove-header-sticky-on_scroll_up {
+.site-header.trove-header-sticky-always {
 	position: sticky;
 	top: 0;
+	z-index: 501;
+}
+
+.site-header.trove-header-sticky-on_scroll_up {
 	z-index: 501;
 }
 
@@ -743,21 +758,21 @@ ul.wp-block-categories-list li::before {
 	background-color: var(--trove-header-background, #111827);
 }
 
-/* Transparent + scroll-up bar: restore background once the bar is revealed over content. */
-.site-header.trove-header--transparent.trove-header-sticky-on_scroll_up.is-sticky-visible {
+/* Transparent + scroll-up: solid bar when fixed header is revealed. */
+.site-header.trove-header--transparent.trove-header-sticky-on_scroll_up.is-header-fixed.is-sticky-visible:not(.is-at-top) {
 	background-color: var(--trove-header-background, #111827);
 	margin-bottom: 0;
 }
 
-/* Avoid overlapping WordPress admin bar when logged in. */
-body.admin-bar .site-header.trove-header-sticky-always,
-body.admin-bar .site-header.trove-header-sticky-on_scroll_up {
+/* Avoid overlapping WordPress admin bar when stuck (initial / natural scroll stays top: 0). */
+body.admin-bar .site-header.trove-header-sticky-always:not(.is-at-top),
+body.admin-bar .site-header.trove-header-sticky-on_scroll_up.is-header-fixed:not(.is-at-top) {
 	top: 32px;
 }
 
 @media (max-width: 782px) {
-	body.admin-bar .site-header.trove-header-sticky-always,
-	body.admin-bar .site-header.trove-header-sticky-on_scroll_up {
+	body.admin-bar .site-header.trove-header-sticky-always:not(.is-at-top),
+	body.admin-bar .site-header.trove-header-sticky-on_scroll_up.is-header-fixed:not(.is-at-top) {
 		top: 46px;
 	}
 }
@@ -767,7 +782,41 @@ body.admin-bar .site-header.trove-header-sticky-on_scroll_up {
 	will-change: transform;
 }
 
-.site-header.trove-header-sticky-on_scroll_up:not(.is-at-top):not(.is-sticky-visible) {
+/* Let the header scroll away with the page before fixed hide/show kicks in. */
+.site-header.trove-header-sticky-always.is-at-top {
+	top: 0;
+}
+
+.site-header.trove-header-sticky-on_scroll_up.is-at-top,
+.site-header.trove-header-sticky-on_scroll_up.is-natural-scroll,
+.site-header.trove-header-sticky-on_scroll_up:not(.is-header-fixed):not(.is-at-top) {
+	position: relative;
+	top: 0;
+}
+
+/* Past header height, before first scroll-up reveal: stay off-screen in document flow. */
+.site-header.trove-header-sticky-on_scroll_up:not(.is-header-fixed):not(.is-natural-scroll):not(.is-at-top) {
+	transform: translateY(-100%);
+	opacity: 0;
+	pointer-events: none;
+}
+
+.site-header.trove-header-sticky-on_scroll_up.is-header-fixed {
+	position: fixed;
+	left: 0;
+	right: 0;
+	width: 100%;
+	top: 0;
+}
+
+.site-header.trove-header-sticky-on_scroll_up.is-natural-scroll,
+.site-header.trove-header-sticky-on_scroll_up.is-header-fixed.is-sticky-visible {
+	transform: none;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.site-header.trove-header-sticky-on_scroll_up.is-header-fixed:not(.is-sticky-visible) {
 	transform: translateY(-100%);
 	opacity: 0;
 	pointer-events: none;
