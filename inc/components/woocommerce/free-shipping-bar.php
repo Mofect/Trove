@@ -137,23 +137,7 @@ function get_free_shipping_bar_html( $subtotal = null ) {
 }
 
 /**
- * Classic cart: sidebar only, above cart totals.
- *
- * @return void
- */
-function output_free_shipping_bar_before_cart_totals() {
-	if ( ! is_cart() ) {
-		return;
-	}
-	$html = get_free_shipping_bar_html();
-	if ( '' !== $html ) {
-		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	}
-}
-add_action( 'woocommerce_before_cart_totals', __NAMESPACE__ . '\\output_free_shipping_bar_before_cart_totals', 5 );
-
-/**
- * Prepend bar to cart page sidebar and mini-cart drawer.
+ * Prepend bar to mini-cart drawer only (not the cart page).
  *
  * @param string $block_content Block HTML.
  * @param array  $block         Block data.
@@ -166,7 +150,6 @@ function prepend_free_shipping_bar_to_blocks( $block_content, $block ) {
 
 	$targets = array(
 		'woocommerce/mini-cart-items-block',
-		'woocommerce/cart-order-summary-block',
 	);
 
 	if ( ! in_array( $block['blockName'], $targets, true ) ) {

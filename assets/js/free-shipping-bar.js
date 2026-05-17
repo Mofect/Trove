@@ -1,5 +1,5 @@
 /**
- * Free shipping progress bar: sync with cart subtotal on cart page and mini-cart drawer.
+ * Free shipping progress bar: sync with cart subtotal in the mini-cart drawer.
  */
 ( function () {
 	'use strict';
@@ -237,6 +237,22 @@
 		bar.setAttribute( 'data-subtotal', String( subtotal ) );
 	}
 
+	function isOnCartPageBlock( bar ) {
+		return !! (
+			bar &&
+			bar.closest &&
+			bar.closest( '.wp-block-woocommerce-cart' )
+		);
+	}
+
+	function removeCartPageBars() {
+		getAllBars().forEach( function ( bar ) {
+			if ( isOnCartPageBlock( bar ) ) {
+				bar.remove();
+			}
+		} );
+	}
+
 	function getAllBars() {
 		return queryAllInShadow( document, '.trove-free-shipping-bar', [] );
 	}
@@ -312,7 +328,11 @@
 			typeof subtotalOverride === 'number' && ! isNaN( subtotalOverride )
 				? subtotalOverride
 				: getSubtotal();
+		removeCartPageBars();
 		getAllBars().forEach( function ( bar ) {
+			if ( isOnCartPageBlock( bar ) ) {
+				return;
+			}
 			updateBarElement( bar, subtotal );
 		} );
 		ensureDrawerBar( subtotal );
@@ -350,6 +370,7 @@
 	}
 
 	function init() {
+		removeCartPageBars();
 		var cart = getCartFromStore();
 		lastCartSignature = getCartSignature( cart );
 		refreshAllBars();

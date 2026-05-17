@@ -2547,9 +2547,9 @@ body.single-product .woocommerce form.cart .add_to_cart_button.added::before {
 	padding: 0;
 }
 
-.wp-block-woocommerce-cart-order-summary-block > .trove-free-shipping-bar {
-	margin: 0 0 1.25rem;
-	padding: 0;
+/* Cart page: bar is mini-cart drawer only. */
+body.woocommerce-cart .wp-block-woocommerce-cart .trove-free-shipping-bar {
+	display: none !important;
 }
 
 .trove-free-shipping-bar__message {
