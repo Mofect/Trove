@@ -189,14 +189,14 @@ class TroveTheme {
 		}
 		add_editor_style( $editor_base );
 		if ( class_exists( 'WooCommerce' ) ) {
-			$editor_shop = 'assets/css/shop.css';
+			$editor_woo = 'assets/css/woo.css';
 			if ( self::should_load_minified_assets() ) {
-				$min_shop = 'assets/css/shop.min.css';
-				if ( is_file( \TROVE_DIR . '/' . $min_shop ) ) {
-					$editor_shop = $min_shop;
+				$min_woo = 'assets/css/woo.min.css';
+				if ( is_file( \TROVE_DIR . '/' . $min_woo ) ) {
+					$editor_woo = $min_woo;
 				}
 			}
-			add_editor_style( $editor_shop );
+			add_editor_style( $editor_woo );
 		}
 	}
 
@@ -259,7 +259,7 @@ class TroveTheme {
 		if ( class_exists( 'WooCommerce' ) ) {
 			wp_enqueue_style(
 				'trove-woocommerce',
-				self::asset_url( 'assets/css/shop.css' ),
+				self::asset_url( 'assets/css/woo.css' ),
 				array( 'trove-style' ),
 				TROVE_THEME_VERSION
 			);
@@ -303,7 +303,7 @@ class TroveTheme {
 			if ( is_product() || $woo_shop_sidebar ) {
 				wp_enqueue_script(
 					'sticksy',
-					\TROVE_URI . '/assets/js/sticksy.min.js',
+					\TROVE_URI . '/assets/vendor/sticksy.min.js',
 					array(),
 					TROVE_THEME_VERSION,
 					true
@@ -334,7 +334,7 @@ class TroveTheme {
 
 				wp_enqueue_script(
 					'trove-product-ajax-cart',
-					self::asset_url( 'assets/js/shop.js' ),
+					self::asset_url( 'assets/js/woo.js' ),
 					array_values( array_unique( $ajax_cart_deps ) ),
 					TROVE_THEME_VERSION,
 					true
@@ -358,16 +358,8 @@ class TroveTheme {
 			} elseif ( $woo_shop_sidebar ) {
 				wp_enqueue_script(
 					'trove-product-ajax-cart',
-					self::asset_url( 'assets/js/shop.js' ),
+					self::asset_url( 'assets/js/woo.js' ),
 					array( 'jquery', 'sticksy' ),
-					TROVE_THEME_VERSION,
-					true
-				);
-			} elseif ( function_exists( 'is_cart' ) && is_cart() && \Trove\woo_cart_enable_cross_sells() ) {
-				wp_enqueue_script(
-					'trove-cart-cross-sells',
-					self::asset_url( 'assets/js/shop.js' ),
-					array( 'jquery' ),
 					TROVE_THEME_VERSION,
 					true
 				);

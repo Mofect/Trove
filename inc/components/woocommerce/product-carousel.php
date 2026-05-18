@@ -10,6 +10,98 @@ namespace Trove;
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * @return bool
+ */
+function is_rendering_product_carousel() {
+	return ! empty( $GLOBALS['trove_rendering_product_carousel'] );
+}
+
+/**
+ * @return bool
+ */
+function should_load_product_carousel_assets() {
+	if ( ! class_exists( 'WooCommerce' ) ) {
+		return false;
+	}
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		return true;
+	}
+	if ( function_exists( 'is_cart' ) && is_cart() && woo_cart_enable_cross_sells() ) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * @return void
+ */
+function enqueue_product_carousel_assets() {
+	if ( ! should_load_product_carousel_assets() ) {
+		return;
+	}
+
+	$swiper_version = '11.2.10';
+
+	wp_enqueue_style(
+		'swiper',
+		\Trove\TroveTheme::asset_url( 'assets/vendor/swiper/swiper-bundle.min.css' ),
+		array(),
+		$swiper_version
+	);
+
+	wp_enqueue_script(
+		'swiper',
+		\Trove\TroveTheme::asset_url( 'assets/vendor/swiper/swiper-bundle.min.js' ),
+		array(),
+		$swiper_version,
+		true
+	);
+
+	wp_enqueue_script(
+		'trove-product-carousel',
+		\Trove\TroveTheme::asset_url( 'assets/js/product-carousel.js' ),
+		array( 'swiper' ),
+		TROVE_THEME_VERSION,
+		true
+	);
+}
+add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_product_carousel_assets', 25 );
+
+/**
+ * @param string $html Loop start markup.
+ * @return string
+ */
+function filter_product_loop_start_swiper( $html ) {
+	if ( ! is_rendering_product_carousel() ) {
+		return $html;
+	}
+	if ( false !== strpos( $html, 'swiper-wrapper' ) ) {
+		return $html;
+	}
+	return (string) preg_replace(
+		'/class="([^"]*\bproducts\b[^"]*)"/',
+		'class="$1 swiper-wrapper"',
+		$html,
+		1
+	);
+}
+add_filter( 'woocommerce_product_loop_start', __NAMESPACE__ . '\\filter_product_loop_start_swiper', 20 );
+
+/**
+ * @param string[]    $classes Product post classes.
+ * @param \WC_Product $product Product object.
+ * @return string[]
+ */
+function filter_product_carousel_slide_class( $classes, $product ) {
+	unset( $product );
+	if ( is_rendering_product_carousel() ) {
+		$classes[] = 'swiper-slide';
+	}
+	return $classes;
+}
+add_filter( 'woocommerce_post_class', __NAMESPACE__ . '\\filter_product_carousel_slide_class', 20, 2 );
+
+/**
  * Products visible in the carousel viewport.
  *
  * @param string $context related|upsells|cross-sells.

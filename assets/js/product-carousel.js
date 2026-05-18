@@ -1,0 +1,133 @@
+/**
+ * WooCommerce product loop carousels (related, upsells, cross-sells) via Swiper.
+ */
+( function () {
+	'use strict';
+
+	function getSlidesPerView( swiper ) {
+		var params = swiper.params;
+		var bp = swiper.currentBreakpoint;
+
+		if ( bp && params.breakpoints && params.breakpoints[ bp ] ) {
+			var bpParams = params.breakpoints[ bp ];
+			if ( typeof bpParams.slidesPerView === 'number' ) {
+				return bpParams.slidesPerView;
+			}
+		}
+
+		return typeof params.slidesPerView === 'number' ? params.slidesPerView : 2;
+	}
+
+	function syncCustomNav( swiper, prev, next ) {
+		if ( ! prev || ! next ) {
+			return;
+		}
+		var show = swiper.slides.length > getSlidesPerView( swiper );
+		prev.hidden = ! show;
+		next.hidden = ! show;
+	}
+
+	function initProductCarousels( scope ) {
+		if ( typeof window.Swiper === 'undefined' ) {
+			return;
+		}
+
+		var roots;
+		if ( scope && scope.querySelectorAll ) {
+			roots = [ scope ];
+		} else {
+			roots = [ document ];
+		}
+
+		roots.forEach( function ( root ) {
+			root.querySelectorAll( '[data-trove-woo-product-carousel]' ).forEach( function ( el ) {
+				if ( el.getAttribute( 'data-trove-woo-product-carousel-init' ) === '1' ) {
+					return;
+				}
+
+				var wrapper = el.querySelector( '.products.swiper-wrapper' );
+				if ( ! wrapper || ! wrapper.querySelector( 'li.product' ) ) {
+					return;
+				}
+
+				el.setAttribute( 'data-trove-woo-product-carousel-init', '1' );
+
+				var desktop = parseInt( el.getAttribute( 'data-visible' ), 10 );
+				var mobile = parseInt( el.getAttribute( 'data-visible-mobile' ), 10 );
+				if ( isNaN( desktop ) || desktop < 1 ) {
+					desktop = 2;
+				}
+				if ( isNaN( mobile ) || mobile < 1 ) {
+					mobile = desktop;
+				}
+
+				var prev = el.querySelector( '.trove-woo-product-carousel__nav--prev' );
+				var next = el.querySelector( '.trove-woo-product-carousel__nav--next' );
+				var gap = 20;
+
+				var swiper = new window.Swiper( el, {
+					wrapperClass: 'products',
+					slideClass: 'product',
+					slidesPerView: mobile,
+					slidesPerGroup: 1,
+					spaceBetween: gap,
+					speed: 400,
+					watchOverflow: true,
+					grabCursor: true,
+					preventClicks: true,
+					preventClicksPropagation: true,
+					a11y: {
+						enabled: true,
+						prevSlideMessage: 'Previous products',
+						nextSlideMessage: 'Next products',
+					},
+					navigation:
+						prev && next
+							? {
+									prevEl: prev,
+									nextEl: next,
+							  }
+							: false,
+					breakpoints: {
+						783: {
+							slidesPerView: desktop,
+							spaceBetween: gap,
+						},
+					},
+					on: {
+						init: function ( sw ) {
+							syncCustomNav( sw, prev, next );
+						},
+						resize: function ( sw ) {
+							syncCustomNav( sw, prev, next );
+						},
+						breakpoint: function ( sw ) {
+							syncCustomNav( sw, prev, next );
+						},
+					},
+				} );
+
+				el.troveSwiper = swiper;
+			} );
+		} );
+	}
+
+	function init() {
+		initProductCarousels();
+		window.addEventListener(
+			'load',
+			function () {
+				initProductCarousels();
+			},
+			{ once: true }
+		);
+	}
+
+	if ( document.readyState === 'loading' ) {
+		document.addEventListener( 'DOMContentLoaded', init );
+	} else {
+		init();
+	}
+
+	window.troveInitProductCarousels = initProductCarousels;
+} )();
