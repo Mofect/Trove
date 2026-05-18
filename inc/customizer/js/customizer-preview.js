@@ -300,7 +300,7 @@
 			[ 'trove_input_field_height', '--trove-input-field-height', 28, 80, 42 ],
 			[ 'trove_input_field_text_size', '--trove-input-field-text-size', 10, 24, 16 ],
 			[ 'trove_input_field_border_width', '--trove-input-field-border-width', 0, 8, 1 ],
-			[ 'trove_input_field_border_radius', '--trove-input-field-border-radius', 0, 32, 3 ],
+			[ 'trove_input_field_border_radius', '--trove-input-field-border-radius', 0, 32, 6 ],
 			[ 'trove_textarea_field_height', '--trove-textarea-field-height', 60, 400, 120 ],
 			[ 'trove_textarea_field_text_size', '--trove-textarea-field-text-size', 10, 24, 16 ],
 			[ 'trove_textarea_field_border_width', '--trove-textarea-field-border-width', 0, 8, 1 ],

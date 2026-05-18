@@ -1,0 +1,498 @@
+/* WooCommerce product reviews (single product, reviews enabled). */
+
+/* Single product — reviews: heading row + modal review form */
+.woocommerce div.product .woocommerce-Reviews-heading-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem 1rem;
+	margin-bottom: 3.25rem;
+}
+
+.woocommerce div.product .woocommerce-Reviews-heading-row .woocommerce-Reviews-title {
+	margin: 0;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.woocommerce div.product .button.trove-woo-review-dialog-open {
+	flex-shrink: 0;
+	background-color: var(--trove-button-secondary-bg, transparent);
+	border-width: 1px;
+	border-style: solid;
+	border-color: var(--trove-button-secondary-border, #111111);
+	color: var(--trove-button-secondary-text, #111111);
+}
+
+.woocommerce div.product .button.trove-woo-review-dialog-open:hover,
+.woocommerce div.product .button.trove-woo-review-dialog-open:focus-visible {
+	background-color: var(--trove-button-secondary-bg-hover, #111111);
+	border-color: var(--trove-button-secondary-border-hover, #111111);
+	color: var(--trove-button-secondary-text-hover, #ffffff);
+}
+
+@media (max-width: 480px) {
+	.woocommerce div.product .woocommerce-Reviews-heading-row .button.trove-woo-review-dialog-open {
+		width: 100%;
+		text-align: center;
+	}
+}
+
+.trove-woo-review-dialog:not([open]) {
+	display: none;
+}
+
+.trove-woo-review-dialog {
+	width: min(100% - 2rem, 52rem);
+	max-height: 90vh;
+	height: fit-content;
+	padding: 0;
+	border: 0;
+	border-radius: 5px;
+	background: #fff;
+	color: #111;
+	box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.12);
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.trove-woo-review-dialog::backdrop {
+	background: rgba(0, 0, 0, 0.45);
+}
+
+.trove-woo-review-dialog__inner {
+	padding: 2.5rem;
+}
+
+.trove-woo-review-dialog__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid var(--trove-border, rgba(17, 17, 17, 0.12));
+}
+
+.trove-woo-review-dialog__title {
+	margin: 0;
+	font-size: 1.15em;
+	font-weight: 600;
+	line-height: 1.3;
+	padding-right: 0.5rem;
+}
+
+.trove-woo-review-dialog-close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin: -0.25rem -0.25rem 0 0;
+	padding: 0.4rem;
+	border: 0;
+	background: transparent;
+	color: #111;
+	cursor: pointer;
+	border-radius: 0;
+	line-height: 0;
+}
+
+.trove-woo-review-dialog-close:hover,
+.trove-woo-review-dialog-close:focus-visible {
+	transform: scale(1.1);
+	transition: transform 0.3s ease-in-out;
+	background: transparent;
+	color: #111;
+}
+
+.trove-woo-review-dialog #review_form_wrapper {
+	margin: 0;
+	padding: 0;
+}
+
+.trove-woo-review-dialog #commentform,
+.trove-woo-review-dialog form.comment-form {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.75rem 1rem;
+	align-items: start;
+}
+
+.trove-woo-review-dialog #commentform > p {
+	margin: 0 !important;
+}
+
+.trove-woo-review-dialog #commentform > *:not(.comment-form-author):not(.comment-form-email) {
+	grid-column: 1 / -1;
+}
+
+.trove-woo-review-dialog #commentform .comment-form-author input,
+.trove-woo-review-dialog #commentform .comment-form-email input {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.comment-form-cookies-consent {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+.comment-form-cookies-consent input[type="checkbox"] {
+	flex-shrink: 0;
+	margin: 0.5em 0 0;
+}
+
+.comment-form-cookies-consent label {
+	flex: 1;
+	min-width: 0;
+}
+
+/* Review form: Submit + Add photo (same row / equal height) */
+.trove-review-form-actions {
+	grid-column: 1 / -1;
+	margin: 0;
+}
+
+.trove-review-form-actions__buttons {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+	gap: 0.75rem;
+}
+
+.woocommerce .trove-review-form-actions__buttons input[type="submit"] {
+	align-self: stretch;
+	min-height: 2.75rem;
+	box-sizing: border-box;
+	height: auto;
+	vertical-align: middle;
+}
+
+.woocommerce .button.trove-review-add-photo {
+	margin-bottom: 0;
+}
+
+.woocommerce .trove-review-add-photo-field {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	min-width: 0;
+	max-width: min(100%, 24rem);
+	flex: 0 1 auto;
+	position: relative;
+}
+
+.woocommerce .trove-review-add-photo-field .trove-review-add-photo {
+	flex: 1 1 auto;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.woocommerce .trove-review-add-photo__text {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.woocommerce .trove-review-add-photo__icon {
+	display: block;
+	flex-shrink: 0;
+	width: 1.15em;
+	height: 1.15em;
+	margin-right: 0.45em;
+}
+
+.woocommerce .trove-review-add-photo {
+	cursor: pointer;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	align-self: stretch;
+	box-sizing: border-box;
+	min-height: 2.75rem;
+	padding: var(--trove-button-padding-top, 13px) var(--trove-button-padding-right, 15px) var(--trove-button-padding-bottom, 13px) var(--trove-button-padding-left, 15px);
+	font-size: var(--trove-button-font-size, 15px);
+	font-weight: 500;
+	line-height: 1.2;
+	border-radius: var(--trove-button-border-radius, 6px);
+	background-color: #eee;
+	border: 0;
+	color: #111;
+}
+
+.woocommerce .trove-review-add-photo:hover,
+.woocommerce .trove-review-add-photo:focus-visible {
+	background-color: #ddd;
+	color: #111;
+}
+
+.trove-review-add-photo-field .trove-review-media-input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+	opacity: 0;
+}
+
+.woocommerce .trove-review-add-photo-clear {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	min-height: 2.25rem;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	border: 0;
+	background-color: transparent;
+	color: var(--trove-button-secondary-text, #111111);
+	cursor: pointer;
+	line-height: 1;
+	font-size: 2rem;
+	font-weight: 400;
+	border-radius: 50px;
+}
+
+.woocommerce .trove-review-add-photo-clear:hover,
+.woocommerce .trove-review-add-photo-clear:focus-visible {
+	background-color: var(--trove-button-secondary-bg-hover, #111111);
+	border-color: var(--trove-button-secondary-border-hover, #111111);
+	color: var(--trove-button-secondary-text-hover, #ffffff);
+}
+
+.woocommerce .trove-review-add-photo-clear[hidden] {
+	display: none !important;
+}
+
+.comment-notes,
+.comment-form-cookies-consent {
+	opacity: 0.5;
+	font-size: 1.4rem;
+}
+
+@media (max-width: 28rem) {
+	.trove-woo-review-dialog #commentform,
+	.trove-woo-review-dialog form.comment-form {
+		grid-template-columns: 1fr;
+	}
+
+	.trove-woo-review-dialog #commentform .comment-form-author,
+	.trove-woo-review-dialog #commentform .comment-form-email {
+		grid-column: 1 / -1;
+	}
+}
+
+.comment-reply-title {
+	font-weight: 600;
+	display: block;
+	margin-bottom: 1.5rem;
+}
+
+.comment-form label {
+	margin-bottom: 1rem;
+	display: block;
+}
+
+.woocommerce #reviews #comments ol.commentlist {
+	padding: 0;
+}
+
+.woocommerce #reviews #comments ol.commentlist li {
+	border: 0;
+	background: #f9f9f9;
+    width: 49%;
+    padding: 1rem;
+    border-radius: 5px;
+	float: left;
+}
+
+.woocommerce #reviews #comments ol.commentlist li:nth-child(2n+2) {
+	float: right;
+}
+
+.woocommerce #reviews #comments ol.commentlist li img.avatar {
+	padding: 0;
+	border-radius: 50%;
+	width: 40px;
+	top: 1rem;
+    left: 1rem;
+}
+
+.woocommerce #reviews #comments ol.commentlist li .comment-text p.meta {
+	font-size: 1.6rem;
+	color: var(--trove-text);
+}
+
+.woocommerce #reviews #comments ol.commentlist li .comment-text {
+	border: 0;
+	padding: .6em 0 0;
+}
+
+/* Review body: text left, uploaded photos right */
+.woocommerce #reviews #comments ol.commentlist li .comment-text .trove-review-body {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem 1.25rem;
+	flex-wrap: wrap;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.woocommerce #reviews #comments ol.commentlist li .comment-text .trove-review-body .description {
+	flex: 1 1 10rem;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.woocommerce #reviews #comments ol.commentlist li .comment-text .trove-review-media {
+	flex: 0 1 auto;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	justify-content: flex-end;
+	align-items: flex-start;
+	align-self: flex-start;
+	max-width: min(45%, 11rem);
+	margin: 0;
+	padding: 0;
+}
+
+.woocommerce #reviews .trove-review-media__item {
+	margin: 0;
+	padding: 0;
+	line-height: 0;
+}
+
+.woocommerce #reviews .trove-review-media__link {
+	display: block;
+	line-height: 0;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.woocommerce #reviews .trove-review-media__img {
+	display: block;
+	width: auto;
+	height: auto;
+	max-width: 10rem;
+	max-height: 10rem;
+	object-fit: cover;
+	vertical-align: top;
+	cursor: zoom-in;
+}
+
+@media (max-width: 520px) {
+	.woocommerce #reviews #comments ol.commentlist li .comment-text .trove-review-body {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.woocommerce #reviews #comments ol.commentlist li .comment-text .trove-review-media {
+		max-width: 100%;
+		justify-content: flex-start;
+	}
+}
+
+/* Review photo lightbox (full-size image overlay) */
+.trove-review-lightbox {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+	box-sizing: border-box;
+}
+
+.trove-review-lightbox.is-open {
+	display: flex;
+}
+
+.trove-review-lightbox__backdrop {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	cursor: pointer;
+	background: rgba(0, 0, 0, 0.88);
+}
+
+.trove-review-lightbox__backdrop:hover {
+	background: rgba(0, 0, 0, 0.88);
+}
+
+.trove-review-lightbox__inner {
+	position: relative;
+	z-index: 1;
+	max-width: min(96vw, 72rem);
+	max-height: min(92vh, 56rem);
+	margin: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.trove-review-lightbox__close {
+	position: absolute;
+	top: -1rem;
+	right: -1rem;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	padding: 0;
+	border: 0;
+	border-radius: 50px;
+	background: rgba(255, 255, 255, 0.95);
+	color: #000;
+	cursor: pointer;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+	line-height: 0;
+	transition: transform 0.3s ease-in-out;
+}
+
+.trove-review-lightbox__close:hover,
+.trove-review-lightbox__close:focus-visible {
+	background: #fff;
+	color: #000;
+	transform: scale(1.1);
+	transition: transform 0.3s ease-in-out;
+}
+
+.trove-review-lightbox__close svg {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.trove-review-lightbox__img {
+	display: block;
+	max-width: 100%;
+	max-height: min(92vh, 56rem);
+	width: auto;
+	height: auto;
+	object-fit: contain;
+	border-radius: 4px;
+	box-shadow: 0 8px 48px rgba(0, 0, 0, 0.45);
+}

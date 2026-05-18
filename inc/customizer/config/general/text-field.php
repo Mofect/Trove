@@ -59,7 +59,7 @@ return array(
 		'type'              => 'range_number',
 		'transport'         => 'postMessage',
 		'unit'              => 'px',
-		'default'           => (int) customizer_default( 'trove_input_field_border_radius', 3 ),
+		'default'           => (int) customizer_default( 'trove_input_field_border_radius', 6 ),
 		'input_attrs'       => array( 'min' => 0, 'max' => 32, 'step' => 1 ),
 		'sanitize_callback' => 'absint',
 		'priority'          => 5,

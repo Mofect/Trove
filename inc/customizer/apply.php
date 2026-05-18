@@ -793,7 +793,7 @@ function button_color_theme_mod_definitions() {
 	);
 	$fallbacks = array(
 		'trove_button_background'         => '#111111',
-		'trove_button_background_hover'   => '#064FFF',
+		'trove_button_background_hover'   => '#1daa9e',
 		'trove_button_text_color'         => '#ffffff',
 		'trove_button_text_color_hover'   => '#ffffff',
 		'trove_button_border_color'       => '#111111',
@@ -973,9 +973,9 @@ function get_button_secondary_text_font_size_px() {
  */
 function default_button_padding_sides() {
 	return array(
-		'top'    => 5,
+		'top'    => 13,
 		'right'  => 20,
-		'bottom' => 5,
+		'bottom' => 13,
 		'left'   => 20,
 	);
 }
@@ -1164,7 +1164,7 @@ function build_theme_variable_css( $selector = ':root', $include_responsive_cont
 	$root_parts[] = '--trove-input-field-height:' . get_int_theme_mod_in_range( 'trove_input_field_height', 42, 28, 80 ) . 'px';
 	$root_parts[] = '--trove-input-field-text-size:' . get_int_theme_mod_in_range( 'trove_input_field_text_size', 16, 10, 24 ) . 'px';
 	$root_parts[] = '--trove-input-field-border-width:' . get_int_theme_mod_in_range( 'trove_input_field_border_width', 1, 0, 8 ) . 'px';
-	$root_parts[] = '--trove-input-field-border-radius:' . get_int_theme_mod_in_range( 'trove_input_field_border_radius', 3, 0, 32 ) . 'px';
+	$root_parts[] = '--trove-input-field-border-radius:' . get_int_theme_mod_in_range( 'trove_input_field_border_radius', 6, 0, 32 ) . 'px';
 	$root_parts[] = '--trove-textarea-field-height:' . get_int_theme_mod_in_range( 'trove_textarea_field_height', 120, 60, 400 ) . 'px';
 	$root_parts[] = '--trove-textarea-field-text-size:' . get_int_theme_mod_in_range( 'trove_textarea_field_text_size', 16, 10, 24 ) . 'px';
 	$root_parts[] = '--trove-textarea-field-border-width:' . get_int_theme_mod_in_range( 'trove_textarea_field_border_width', 1, 0, 8 ) . 'px';
@@ -1280,14 +1280,8 @@ function build_theme_variable_css( $selector = ':root', $include_responsive_cont
 		$css .= '.site-header{--trove-header-height:' . $header_min . 'px;min-height:' . $header_min . 'px;height:var(--trove-header-height);}';
 	}
 
-	$ann_enabled = get_responsive_mod_values(
-		'trove_announcement_enabled',
-		array_replace(
-			array( 'pc' => true, 'tablet' => true, 'phone' => true ),
-			(array) customizer_default( 'trove_announcement_enabled', array() )
-		)
-	);
-	$css .= announcement_bar_responsive_visibility_css( $ann_enabled, $bp );
+	$ann_enabled = \Trove\get_announcement_enabled_by_device();
+	$css        .= announcement_bar_responsive_visibility_css( $ann_enabled, $bp );
 
 	return $css;
 }

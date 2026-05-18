@@ -78,7 +78,7 @@ $colors = array(
 			),
 			'right' => array(
 				'setting' => 'trove_color_link_hover',
-				'default' => customizer_default( 'trove_color_link_hover', '#064FFF' ),
+				'default' => customizer_default( 'trove_color_link_hover', '#1daa9e' ),
 			),
 		),
 	),
@@ -117,7 +117,7 @@ $colors = array(
 	'trove_color_accent'  => array(
 		'label'             => __( 'Accent', 'trove' ),
 		'type'              => 'color',
-		'default'           => customizer_default( 'trove_color_accent', '#064FFF' ),
+		'default'           => customizer_default( 'trove_color_accent', '#1daa9e' ),
 		'priority'          => 6,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',
@@ -133,7 +133,7 @@ $colors = array(
 	'trove_announcement_background' => array(
 		'label'             => __( 'Background', 'trove' ),
 		'type'              => 'color',
-		'default'           => customizer_default( 'trove_announcement_background', '#064fff' ),
+		'default'           => customizer_default( 'trove_announcement_background', '#1daa9e' ),
 		'priority'          => 8,
 		'transport'         => 'postMessage',
 		'sanitize_callback' => 'sanitize_hex_color',

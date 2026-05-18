@@ -40,7 +40,7 @@ return array(
 			),
 			'right' => array(
 				'setting' => 'trove_button_background_hover',
-				'default' => (string) customizer_default( 'trove_button_background_hover', '#064FFF' ),
+				'default' => (string) customizer_default( 'trove_button_background_hover', '#1daa9e' ),
 			),
 		),
 	),
@@ -146,9 +146,9 @@ return array(
 			'phone'  => __( 'Mobile', 'trove' ),
 		),
 		'default'            => array(
-			'pc'     => array( 'top' => 10, 'right' => 15, 'bottom' => 10, 'left' => 15 ),
-			'tablet' => array( 'top' => 10, 'right' => 15, 'bottom' => 10, 'left' => 15 ),
-			'phone'  => array( 'top' => 10, 'right' => 15, 'bottom' => 10, 'left' => 15 ),
+			'pc'     => array( 'top' => 13, 'right' => 15, 'bottom' => 13, 'left' => 15 ),
+			'tablet' => array( 'top' => 13, 'right' => 15, 'bottom' => 13, 'left' => 15 ),
+			'phone'  => array( 'top' => 13, 'right' => 15, 'bottom' => 13, 'left' => 15 ),
 		),
 		'input_attrs'        => array(
 			'min'  => 0,
@@ -286,9 +286,9 @@ return array(
 			'phone'  => __( 'Mobile', 'trove' ),
 		),
 		'default'            => array(
-			'pc'     => array( 'top' => 5, 'right' => 20, 'bottom' => 5, 'left' => 20 ),
-			'tablet' => array( 'top' => 5, 'right' => 20, 'bottom' => 5, 'left' => 20 ),
-			'phone'  => array( 'top' => 5, 'right' => 20, 'bottom' => 5, 'left' => 20 ),
+			'pc'     => array( 'top' => 13, 'right' => 20, 'bottom' => 13, 'left' => 20 ),
+			'tablet' => array( 'top' => 13, 'right' => 20, 'bottom' => 13, 'left' => 20 ),
+			'phone'  => array( 'top' => 13, 'right' => 20, 'bottom' => 13, 'left' => 20 ),
 		),
 		'input_attrs'        => array(
 			'min'  => 0,

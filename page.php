@@ -26,7 +26,12 @@ $banner_covers_title = \Trove\Metabox\page_banner_shows_entry_title( (int) get_q
 				</div>
 			<?php endif; ?>
 			<div class="entry-content">
-				<?php the_content(); ?>
+				<?php
+				if ( function_exists( '\\Trove\\should_enqueue_checkout_styles' ) && \Trove\should_enqueue_checkout_styles() ) {
+					do_action( 'trove_entry_content_top' );
+				}
+				the_content();
+				?>
 				<?php
 				wp_link_pages(
 					array(

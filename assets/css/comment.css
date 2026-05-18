@@ -1,0 +1,22 @@
+/* Comments (conditional load: single post or page with comments open). */
+
+.comments-area {
+	margin-top: 3rem;
+	padding-top: 2rem;
+	border-top: 1px solid var(--trove-border);
+}
+
+.comment-list {
+	list-style: none;
+	margin: 0 0 1.5rem;
+	padding: 0;
+}
+
+.comment-list .children {
+	list-style: none;
+	margin-left: 1.5rem;
+}
+
+.comment-body {
+	margin-bottom: 1.5rem;
+}

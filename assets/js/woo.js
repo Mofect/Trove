@@ -1,5 +1,5 @@
 /**
- * Single product AJAX add-to-cart + sync block mini-cart + open drawer.
+ * Woo AJAX add-to-cart: single product forms + shop/archive loop buttons; sync block mini-cart.
  */
 ( function () {
 	'use strict';
@@ -1028,6 +1028,11 @@
 		observer.observe( document.body, { childList: true, subtree: true } );
 	}
 
+	function shouldOpenMiniCartDrawerAfterAdd() {
+		var cfg = getConfig();
+		return cfg.openDrawerAfterAdd !== false;
+	}
+
 	function openMiniCartDrawer() {
 		var controls = findAll( '.wc-block-mini-cart__button' );
 		var miniCartButton = controls.length ? controls[ 0 ] : null;
@@ -1040,6 +1045,12 @@
 		}
 		miniCartButton.click();
 		moveMiniCartQuantitySelectorIntoTotal( root || document );
+	}
+
+	function openMiniCartDrawerIfEnabled() {
+		if ( shouldOpenMiniCartDrawerAfterAdd() ) {
+			openMiniCartDrawer();
+		}
 	}
 
 	function replaceFragments( fragments ) {
@@ -1061,8 +1072,20 @@
 	/**
 	 * WooCommerce core injects a "View cart" link and `.added` (check) on the button; we use the mini-cart instead.
 	 */
+	function stripCatalogAddToCartUi( button ) {
+		if ( button && button.classList ) {
+			button.classList.remove( 'added' );
+		}
+		document
+			.querySelectorAll( 'ul.products a.added_to_cart, .woocommerce ul.products .added_to_cart' )
+			.forEach( function ( el ) {
+				el.remove();
+			} );
+	}
+
 	function stripWooAddSuccessUi( form ) {
 		if ( ! form ) {
+			stripCatalogAddToCartUi( null );
 			return;
 		}
 		var scope = form.closest( '.summary' ) || form;
@@ -1132,8 +1155,8 @@
 	/**
 	 * jQuery + native: Blocks bridge listens to jQuery and mirrors to wc-blocks_*.
 	 */
-	function triggerWooAddToCartEvents( fragments, cartHash, button, preserveCartData ) {
-		if ( window.jQuery ) {
+	function triggerWooAddToCartEvents( fragments, cartHash, button, preserveCartData, skipJqueryAddedToCart ) {
+		if ( ! skipJqueryAddedToCart && window.jQuery ) {
 			window.jQuery( document.body ).trigger( 'added_to_cart', [ fragments, cartHash, window.jQuery( button ) ] );
 			window.jQuery( document.body ).trigger( 'wc_fragment_refresh' );
 		}
@@ -1228,10 +1251,10 @@
 	/**
 	 * After add_to_cart: update UI immediately, then correct via Store API (second request).
 	 */
-	function afterAddSuccess( data, button, form ) {
-		var fragments = data && data.fragments ? data.fragments : {};
-		var hash = data && data.cart_hash ? data.cart_hash : '';
-		onAddToCartResponseImmediate( data, form );
+	function syncCartUiAfterAdd( fragments, hash, button, form, options ) {
+		var opts = options || {};
+		var skipJqueryAddedToCart = !! opts.skipJqueryAddedToCart;
+		onAddToCartResponseImmediate( { fragments: fragments, cart_hash: hash }, form );
 
 		return fetch( getStoreCartUrl(), {
 			method: 'GET',
@@ -1250,17 +1273,44 @@
 				setBadgeAndSnapshot( count, hash );
 				pushCartToBlocksStore( cart, function ( hydrated ) {
 					/* true: blocks will not re-fetch the cart (avoids a second, slow request). */
-					triggerWooAddToCartEvents( fragments, hash, button, !! hydrated );
+					triggerWooAddToCartEvents( fragments, hash, button, !! hydrated, skipJqueryAddedToCart );
 					scheduleStripWooAddSuccess( form );
-					openMiniCartDrawer();
+					openMiniCartDrawerIfEnabled();
 				} );
 			} )
 			.catch( function ( err ) {
 				window.console.error( '[Trove] Store cart sync:', err );
-				triggerWooAddToCartEvents( fragments, hash, button, false );
+				triggerWooAddToCartEvents( fragments, hash, button, false, skipJqueryAddedToCart );
 				scheduleStripWooAddSuccess( form );
-				openMiniCartDrawer();
+				openMiniCartDrawerIfEnabled();
 			} );
+	}
+
+	function afterAddSuccess( data, button, form ) {
+		var fragments = data && data.fragments ? data.fragments : {};
+		var hash = data && data.cart_hash ? data.cart_hash : '';
+		return syncCartUiAfterAdd( fragments, hash, button, form );
+	}
+
+	/**
+	 * Shop / archive: Woo core `wc-add-to-cart` fires `added_to_cart`; sync block mini-cart here.
+	 */
+	function initCatalogAddToCartSync() {
+		if ( ! window.jQuery ) {
+			return;
+		}
+		window.jQuery( document.body ).on( 'added_to_cart', function ( event, fragments, cartHash, $button ) {
+			if ( document.body.classList.contains( 'single-product' ) ) {
+				return;
+			}
+			var button = $button && $button.length ? $button[ 0 ] : null;
+			if ( ! button || ! button.classList || ! button.classList.contains( 'add_to_cart_button' ) ) {
+				return;
+			}
+			syncCartUiAfterAdd( fragments || {}, cartHash || '', button, null, {
+				skipJqueryAddedToCart: true,
+			} );
+		} );
 	}
 
 	function onFormSubmit( event ) {
@@ -1319,6 +1369,7 @@
 		hydrateBadgeFromCartSnapshot();
 		initMiniCartRemoveOptimisticBadge();
 		initMiniCartQuantitySelectorIntoTotal();
+		initCatalogAddToCartSync();
 		initSingleProductQtyButtons();
 		initSingleProductSummarySticksy();
 		initWooShopSidebarSticksy();
@@ -1347,11 +1398,7 @@
 				}
 			);
 		}
-		var forms = document.querySelectorAll( '.single-product form.cart' );
-		if ( ! forms.length ) {
-			return;
-		}
-		forms.forEach( function ( form ) {
+		document.querySelectorAll( '.single-product form.cart' ).forEach( function ( form ) {
 			form.addEventListener( 'submit', onFormSubmit );
 		} );
 	}

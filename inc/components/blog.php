@@ -28,6 +28,21 @@ function is_blog_listing_view() {
 }
 
 /**
+ * Whether blog.css should load on the current request.
+ *
+ * @return bool
+ */
+function should_enqueue_blog_styles() {
+	if ( is_search() || is_home() || is_category() || is_author() ) {
+		return true;
+	}
+	if ( is_singular( 'post' ) ) {
+		return true;
+	}
+	return is_page();
+}
+
+/**
  * Listing context key used by Blog/Search/Author/Archive page options.
  *
  * @return string blog|search_page|author_page|archive_page

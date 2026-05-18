@@ -38,6 +38,29 @@ class TroveTheme {
 		require_once \TROVE_DIR . '/inc/components/woocommerce/free-shipping-bar.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/cart-cross-sells.php';
 		require_once \TROVE_DIR . '/inc/components/woocommerce/product-carousel.php';
+
+		if ( self::should_load_admin() ) {
+			require_once \TROVE_DIR . '/inc/admin/admin.php';
+		}
+	}
+
+	/**
+	 * Whether to load TroveWP admin (wp-admin screens and plugin AJAX).
+	 *
+	 * @return bool
+	 */
+	private static function should_load_admin() {
+		if ( is_admin() ) {
+			return true;
+		}
+
+		if ( empty( $_REQUEST['action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return false;
+		}
+
+		$action = sanitize_key( wp_unslash( $_REQUEST['action'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		return 'trovewp_plugin_action' === $action;
 	}
 
 	/**
@@ -235,6 +258,58 @@ class TroveTheme {
 	}
 
 	/**
+	 * Enqueues woo.js with Woo/block mini-cart dependencies for AJAX add-to-cart sync.
+	 *
+	 * @param bool $include_sticksy Whether sticksy is a script dependency.
+	 * @return void
+	 */
+	private static function enqueue_woo_ajax_cart_script( $include_sticksy = false ) {
+		$deps = array( 'jquery' );
+		if ( $include_sticksy ) {
+			$deps[] = 'sticksy';
+		}
+		if ( wp_script_is( 'wc-add-to-cart', 'registered' ) ) {
+			wp_enqueue_script( 'wc-add-to-cart' );
+			$deps[] = 'wc-add-to-cart';
+		}
+		if ( wp_script_is( 'wc-cart-fragments', 'registered' ) ) {
+			wp_enqueue_script( 'wc-cart-fragments' );
+			$deps[] = 'wc-cart-fragments';
+		}
+		if ( wp_script_is( 'wp-data', 'registered' ) ) {
+			wp_enqueue_script( 'wp-data' );
+			$deps[] = 'wp-data';
+		}
+		if ( wp_script_is( 'wc-block-mini-cart', 'registered' ) ) {
+			wp_enqueue_script( 'wc-block-mini-cart' );
+			$deps[] = 'wc-block-mini-cart';
+		}
+
+		wp_enqueue_script(
+			'trove-product-ajax-cart',
+			self::asset_url( 'assets/js/woo.js' ),
+			array_values( array_unique( $deps ) ),
+			TROVE_THEME_VERSION,
+			true
+		);
+		wp_localize_script(
+			'trove-product-ajax-cart',
+			'troveProductAjaxCart',
+			array(
+				'ajaxUrl'            => \WC_AJAX::get_endpoint( 'add_to_cart' ),
+				'storeCartUrl'       => rest_url( 'wc/store/v1/cart' ),
+				'storeApiNonce'      => wp_create_nonce( 'wc_store_api' ),
+				'openDrawerAfterAdd' => wp_validate_boolean(
+					get_theme_mod(
+						'trove_woo_cart_open_drawer_after_add',
+						(bool) \Trove\Customizer\customizer_default( 'trove_woo_cart_open_drawer_after_add', true )
+					)
+				),
+			)
+		);
+	}
+
+	/**
 	 * Enqueues theme styles/scripts.
 	 *
 	 * @return void
@@ -256,10 +331,87 @@ class TroveTheme {
 			$deps,
 			TROVE_THEME_VERSION
 		);
+
 		if ( class_exists( 'WooCommerce' ) ) {
 			wp_enqueue_style(
 				'trove-woocommerce',
 				self::asset_url( 'assets/css/woo.css' ),
+				array( 'trove-style' ),
+				TROVE_THEME_VERSION
+			);
+
+			if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+				wp_enqueue_style(
+					'trove-woocommerce-account',
+					self::asset_url( 'assets/css/account.css' ),
+					array( 'trove-woocommerce' ),
+					TROVE_THEME_VERSION
+				);
+			}
+
+			if ( function_exists( 'is_cart' ) && is_cart() ) {
+				wp_enqueue_style(
+					'trove-woocommerce-cart',
+					self::asset_url( 'assets/css/cart.css' ),
+					array( 'trove-woocommerce' ),
+					TROVE_THEME_VERSION
+				);
+			}
+
+			if ( \Trove\should_enqueue_checkout_styles() ) {
+				wp_enqueue_style(
+					'trove-woocommerce-checkout',
+					self::asset_url( 'assets/css/checkout.css' ),
+					array( 'trove-woocommerce' ),
+					TROVE_THEME_VERSION
+				);
+			}
+
+			if ( function_exists( 'is_product' ) && is_product() ) {
+				wp_enqueue_style(
+					'trove-woocommerce-product',
+					self::asset_url( 'assets/css/product.css' ),
+					array( 'trove-woocommerce' ),
+					TROVE_THEME_VERSION
+				);
+			}
+
+			if ( \Trove\is_single_product_reviews_enabled() ) {
+				wp_enqueue_style(
+					'trove-woocommerce-review',
+					self::asset_url( 'assets/css/review.css' ),
+					array( 'trove-woocommerce' ),
+					TROVE_THEME_VERSION
+				);
+			}
+		}
+
+		if ( \Trove\should_enqueue_widgets_styles() ) {
+			$widget_deps = array( 'trove-style' );
+			if ( class_exists( 'WooCommerce' ) ) {
+				$widget_deps[] = 'trove-woocommerce';
+			}
+			wp_enqueue_style(
+				'trove-widgets',
+				self::asset_url( 'assets/css/widgets.css' ),
+				$widget_deps,
+				TROVE_THEME_VERSION
+			);
+		}
+
+		if ( \Trove\should_enqueue_blog_styles() ) {
+			wp_enqueue_style(
+				'trove-blog',
+				self::asset_url( 'assets/css/blog.css' ),
+				array( 'trove-style' ),
+				TROVE_THEME_VERSION
+			);
+		}
+
+		if ( \Trove\should_enqueue_comment_styles() ) {
+			wp_enqueue_style(
+				'trove-comment',
+				self::asset_url( 'assets/css/comment.css' ),
 				array( 'trove-style' ),
 				TROVE_THEME_VERSION
 			);
@@ -299,8 +451,9 @@ class TroveTheme {
 
 		if ( class_exists( 'WooCommerce' ) && function_exists( 'is_product' ) ) {
 			$woo_shop_sidebar = \Trove\is_woo_shop_filter_sidebar_enabled();
+			$needs_sticksy    = is_product() || $woo_shop_sidebar;
 
-			if ( is_product() || $woo_shop_sidebar ) {
+			if ( $needs_sticksy ) {
 				wp_enqueue_script(
 					'sticksy',
 					\TROVE_URI . '/assets/vendor/sticksy.min.js',
@@ -310,56 +463,15 @@ class TroveTheme {
 				);
 			}
 
-			if ( is_product() ) {
-				$ajax_cart_deps = array( 'jquery' );
-				$ajax_cart_deps[] = 'sticksy';
-				// Let Woo add localized params; ensures fragment + legacy events behave like core.
-				if ( wp_script_is( 'wc-add-to-cart', 'registered' ) ) {
-					wp_enqueue_script( 'wc-add-to-cart' );
-					$ajax_cart_deps[] = 'wc-add-to-cart';
-				}
-				if ( wp_script_is( 'wc-cart-fragments', 'registered' ) ) {
-					wp_enqueue_script( 'wc-cart-fragments' );
-					$ajax_cart_deps[] = 'wc-cart-fragments';
-				}
-				if ( wp_script_is( 'wp-data', 'registered' ) ) {
-					wp_enqueue_script( 'wp-data' );
-					$ajax_cart_deps[] = 'wp-data';
-				}
-				// After Woo (loads wp-data + block cart store when mini-cart is present).
-				if ( wp_script_is( 'wc-block-mini-cart', 'registered' ) ) {
-					wp_enqueue_script( 'wc-block-mini-cart' );
-					$ajax_cart_deps[] = 'wc-block-mini-cart';
-				}
+			if ( \Trove\should_enqueue_woo_ajax_cart_assets() ) {
+				self::enqueue_woo_ajax_cart_script( $needs_sticksy );
+			}
 
-				wp_enqueue_script(
-					'trove-product-ajax-cart',
-					self::asset_url( 'assets/js/woo.js' ),
-					array_values( array_unique( $ajax_cart_deps ) ),
-					TROVE_THEME_VERSION,
-					true
-				);
+			if ( is_product() ) {
 				wp_enqueue_script(
 					'trove-product-review-dialog',
 					self::asset_url( 'assets/js/product-review-dialog.js' ),
 					array(),
-					TROVE_THEME_VERSION,
-					true
-				);
-				wp_localize_script(
-					'trove-product-ajax-cart',
-					'troveProductAjaxCart',
-					array(
-						'ajaxUrl'       => \WC_AJAX::get_endpoint( 'add_to_cart' ),
-						'storeCartUrl'  => rest_url( 'wc/store/v1/cart' ),
-						'storeApiNonce' => wp_create_nonce( 'wc_store_api' ),
-					)
-				);
-			} elseif ( $woo_shop_sidebar ) {
-				wp_enqueue_script(
-					'trove-product-ajax-cart',
-					self::asset_url( 'assets/js/woo.js' ),
-					array( 'jquery', 'sticksy' ),
 					TROVE_THEME_VERSION,
 					true
 				);

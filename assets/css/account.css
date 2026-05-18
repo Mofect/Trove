@@ -1,0 +1,245 @@
+/* WooCommerce My Account (loaded only on account pages). */
+
+/* My Account > Edit Account > Password change fieldset. */
+.woocommerce-account .woocommerce .woocommerce-MyAccount-content form.woocommerce-EditAccountForm.edit-account fieldset {
+	border: var(--trove-input-field-border-width, 1px) solid var(--trove-input-field-border-color, var(--trove-border));
+}
+
+.woocommerce-EditAccountForm.edit-account em {
+	font-size: 1.2rem;
+	margin-top: 0.5rem;
+}
+
+/* WooCommerce My Account layout: horizontal nav on top, content below. */
+.woocommerce-account .woocommerce {
+	display: block;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation,
+.woocommerce-account .woocommerce-MyAccount-content {
+	float: none;
+	width: 100%;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation {
+	margin: 0 0 3.6rem;
+	border-top: 1px solid var(--trove-border, rgba(17, 17, 17, 0.12));
+	border-bottom: 1px solid var(--trove-border, rgba(17, 17, 17, 0.12));
+	padding: 1.2rem 0;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4rem;
+	margin: 0;
+	padding: 0;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li {
+	margin: 0;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li a {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	position: relative;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li a::after {
+	content: '';
+	position: absolute;
+	bottom: -1.5rem;
+	left: 0;
+	width: 0;
+	height: 1px;
+	background-color: var(--trove-text);
+	transition: width 0.3s ease-in-out;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li.is-active a::after,
+.woocommerce-account .woocommerce-MyAccount-navigation li a:hover::after {
+	width: 100%;
+	transition: width 0.3s ease-in-out;
+}
+.woocommerce-account .woocommerce-MyAccount-navigation li.is-active a {
+	font-weight: 600;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li a::before {
+	content: "";
+	display: inline-block;
+	width: 1.6rem;
+	height: 1.6rem;
+	background-color: currentColor;
+	-webkit-mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-size: contain;
+	mask-repeat: no-repeat;
+	mask-position: center;
+	opacity: 0.9;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation-link--dashboard a::before {
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5.5v-6h-5v6H4a1 1 0 0 1-1-1v-8.5Z' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5.5v-6h-5v6H4a1 1 0 0 1-1-1v-8.5Z' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	transform: translateY(-1px);
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation-link--orders a::before {
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation-link--downloads a::before {
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3Cpath d='M5 21h14'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3Cpath d='M5 21h14'/%3E%3C/svg%3E");
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation-link--edit-address a::before {
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z'/%3E%3Ccircle cx='12' cy='10' r='2.5'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z'/%3E%3Ccircle cx='12' cy='10' r='2.5'/%3E%3C/svg%3E");
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation-link--payment-methods a::before {
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='6' width='20' height='12' rx='2'/%3E%3Cpath d='M2 11h20'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='6' width='20' height='12' rx='2'/%3E%3Cpath d='M2 11h20'/%3E%3C/svg%3E");
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation-link--edit-account a::before {
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z'/%3E%3Cpath d='M4 21a8 8 0 0 1 16 0'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z'/%3E%3Cpath d='M4 21a8 8 0 0 1 16 0'/%3E%3C/svg%3E");
+	transform: translateY(-1px);
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation-link--customer-logout a::before {
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/%3E%3Cpath d='M16 17l5-5-5-5'/%3E%3Cpath d='M21 12H9'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/%3E%3Cpath d='M16 17l5-5-5-5'/%3E%3Cpath d='M21 12H9'/%3E%3C/svg%3E");
+}
+
+.woocommerce-account .trove-my-account-recent-orders__table th,
+.woocommerce-account .trove-my-account-recent-orders__table td {
+	padding-top: 1.2rem;
+	padding-bottom: 1.2rem;
+}
+
+.woocommerce-account .trove-my-account-recent-orders {
+	margin-top: 6rem;
+}
+
+.woocommerce-account .woocommerce-orders-table thead th,
+.woocommerce-account .trove-my-account-recent-orders__table thead th {
+	padding-top: 1.6rem;
+	padding-bottom: 1.6rem;
+}
+
+.woocommerce-account .trove-my-account-order-item-thumb {
+	width: 36px;
+	height: 36px;
+	object-fit: cover;
+	border-radius: 4px;
+	margin-right: 6px;
+	margin-top: 6px;
+}
+
+.woocommerce-account .woocommerce-orders-table__header-order-actions,
+.woocommerce-account .woocommerce-orders-table__cell-order-actions {
+	text-align: right;
+}
+
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button {
+	text-decoration: none;
+	margin-left: 5px;
+}
+
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button:first-child {
+	margin-left: 0;
+}
+
+/* Pay button: primary style */
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.pay {
+	background-color: var(--trove-button-bg, #111111);
+	border-color: var(--trove-button-border, #111111);
+	color: var(--trove-button-text, #ffffff);
+}
+
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.pay:hover,
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.pay:focus-visible {
+	background-color: var(--trove-button-bg-hover, #333333);
+	border-color: var(--trove-button-border-hover, #333333);
+	color: var(--trove-button-text-hover, #ffffff);
+}
+
+/* View/Cancel buttons: secondary style */
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.view,
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.cancel,
+.woocommerce-account .cancel.order-actions-button {
+	background-color: var(--trove-button-secondary-bg, transparent);
+	border-width: 1px;
+	border-style: solid;
+	border-color: var(--trove-button-secondary-border, #111111);
+	color: var(--trove-button-secondary-text, #111111);
+}
+
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.view:hover,
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.view:focus-visible,
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.cancel:hover,
+.woocommerce-account .woocommerce-orders-table__cell-order-actions .button.cancel:focus-visible,
+.woocommerce-account .cancel.order-actions-button:hover,
+.woocommerce-account .cancel.order-actions-button:focus-visible {
+	background-color: var(--trove-button-secondary-bg-hover, #111111);
+	border-color: var(--trove-button-secondary-border-hover, #111111);
+	color: var(--trove-button-secondary-text-hover, #ffffff);
+}
+
+.woocommerce-account .woocommerce-orders-table__cell-order-status {
+	font-weight: 600;
+}
+
+.woocommerce-account .woocommerce-orders-table__cell-order-status > span {
+	display: inline-block;
+	padding: 0.35rem 0.8rem;
+	border-radius: 3px;
+	line-height: 1.2;
+	font-size: 1.2rem;
+}
+
+/* Failed: pink */
+.woocommerce-account .woocommerce-orders-table__row--status-failed .woocommerce-orders-table__cell-order-status > span {
+	background-color: #ffe6ef;
+	color: #b42352;
+}
+
+/* Pending: orange-yellow */
+.woocommerce-account .woocommerce-orders-table__row--status-pending .woocommerce-orders-table__cell-order-status > span,
+.woocommerce-account .woocommerce-orders-table__row--status-pending-payment .woocommerce-orders-table__cell-order-status > span {
+	background-color: #fff3d6;
+	color: #9a6700;
+}
+
+/* On hold: orange-red */
+.woocommerce-account .woocommerce-orders-table__row--status-on-hold .woocommerce-orders-table__cell-order-status > span {
+	background-color: #ffe8de;
+	color: #b54708;
+}
+
+/* Success: light green */
+.woocommerce-account .woocommerce-orders-table__row--status-processing .woocommerce-orders-table__cell-order-status > span {
+	background-color: #e9f8ec;
+	color: #216e39;
+}
+
+/* Completed: light blue */
+.woocommerce-account .woocommerce-orders-table__row--status-completed .woocommerce-orders-table__cell-order-status > span {
+	background-color: #def0fa;
+	color: #349cbc;
+}
+
+/* Draft: gray */
+.woocommerce-account .woocommerce-orders-table__row--status-checkout-draft .woocommerce-orders-table__cell-order-status > span {
+	background: #dedede;
+	color: #000;
+}

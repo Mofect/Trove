@@ -27,12 +27,35 @@ function get_default_announcement_lines_json() {
 }
 
 /**
+ * Raw theme_mods array for the active stylesheet.
+ *
+ * @return array<string, mixed>
+ */
+function get_theme_mods_raw() {
+	$mods = get_option( 'theme_mods_' . get_stylesheet(), array() );
+	return is_array( $mods ) ? $mods : array();
+}
+
+/**
+ * Whether a theme_mod key exists in the database (not just a get_theme_mod default).
+ *
+ * @param string $key Theme mod key.
+ * @return bool
+ */
+function theme_mod_is_saved( $key ) {
+	return array_key_exists( $key, get_theme_mods_raw() );
+}
+
+/**
  * Announcement bar lines from Customizer (JSON theme_mod), at most 10 non-empty strings.
  *
  * @return array<int, string>
  */
 function get_announcement_lines() {
-	$raw = get_theme_mod( 'trove_announcement_lines', get_default_announcement_lines_json() );
+	$raw = theme_mod_is_saved( 'trove_announcement_lines' )
+		? get_theme_mod( 'trove_announcement_lines', '' )
+		: get_default_announcement_lines_json();
+
 	if ( ! is_string( $raw ) ) {
 		return array();
 	}
@@ -51,11 +74,51 @@ function get_announcement_lines() {
 }
 
 /**
- * Whether the announcement bar is enabled for at least one breakpoint (Customizer).
+ * Coerce a Customizer “show bar” value to boolean (guards against legacy array mods).
+ *
+ * @param mixed $value Theme mod value.
+ * @return bool
+ */
+function is_announcement_bar_enabled_value( $value ) {
+	if ( is_array( $value ) ) {
+		return false;
+	}
+	if ( is_string( $value ) ) {
+		$value = strtolower( trim( $value ) );
+		if ( in_array( $value, array( '', '0', 'false', 'off', 'no' ), true ) ) {
+			return false;
+		}
+	}
+	return wp_validate_boolean( $value );
+}
+
+/**
+ * Whether any announcement “Show bar” theme_mod has been saved.
  *
  * @return bool
  */
-function is_announcement_bar_enabled() {
+function announcement_enabled_settings_exist() {
+	$keys = array(
+		'trove_announcement_enabled',
+		'trove_announcement_enabled_pc',
+		'trove_announcement_enabled_tablet',
+		'trove_announcement_enabled_phone',
+	);
+	foreach ( $keys as $key ) {
+		if ( theme_mod_is_saved( $key ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Per-device “Show bar” values from saved theme_mods (matches Customizer preview logic).
+ *
+ * @return array{pc: mixed, tablet: mixed, phone: mixed}
+ */
+function get_announcement_enabled_by_device() {
+	$devices  = array( 'pc', 'tablet', 'phone' );
 	$fallback = array(
 		'pc'     => true,
 		'tablet' => true,
@@ -65,10 +128,67 @@ function is_announcement_bar_enabled() {
 	if ( ! is_array( $defaults ) ) {
 		$defaults = $fallback;
 	}
-	$v = \Trove\Customizer\get_responsive_mod_values( 'trove_announcement_enabled', $defaults );
-	return wp_validate_boolean( $v['pc'] )
-		|| wp_validate_boolean( $v['tablet'] )
-		|| wp_validate_boolean( $v['phone'] );
+
+	$mods       = get_theme_mods_raw();
+	$legacy     = isset( $mods['trove_announcement_enabled'] ) ? $mods['trove_announcement_enabled'] : null;
+	$legacy_map = array();
+	if ( is_array( $legacy ) ) {
+		foreach ( $devices as $dev ) {
+			if ( array_key_exists( $dev, $legacy ) ) {
+				$legacy_map[ $dev ] = $legacy[ $dev ];
+			}
+		}
+	} elseif ( ! is_array( $legacy ) && null !== $legacy ) {
+		$legacy_map['pc'] = $legacy;
+	}
+
+	$initialized = announcement_enabled_settings_exist();
+	$out         = array();
+
+	foreach ( $devices as $dev ) {
+		$key = 'trove_announcement_enabled_' . $dev;
+		if ( array_key_exists( $key, $mods ) ) {
+			$val = $mods[ $key ];
+		} elseif ( array_key_exists( $dev, $legacy_map ) ) {
+			$val = $legacy_map[ $dev ];
+		} elseif ( ! $initialized ) {
+			// Fresh install: defaults on. After lines are saved but “Show bar” was never stored, treat as off.
+			if ( theme_mod_is_saved( 'trove_announcement_lines' ) ) {
+				$val = false;
+			} else {
+				$val = array_key_exists( $dev, $defaults ) ? $defaults[ $dev ] : true;
+			}
+		} else {
+			// User has saved announcement settings; unsuffixed device defaults to visible.
+			$val = true;
+		}
+		$out[ $dev ] = $val;
+	}
+
+	return $out;
+}
+
+/**
+ * Whether the announcement bar is enabled for at least one breakpoint (Customizer).
+ *
+ * @return bool
+ */
+function is_announcement_bar_enabled() {
+	foreach ( get_announcement_enabled_by_device() as $value ) {
+		if ( is_announcement_bar_enabled_value( $value ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Whether announcement bar markup and assets should load on this request.
+ *
+ * @return bool
+ */
+function should_load_announcement_bar() {
+	return is_announcement_bar_enabled() && ! empty( get_announcement_lines() );
 }
 
 /**
@@ -127,13 +247,10 @@ function announcement_text_size_slug_to_css( $slug ) {
  * @return void
  */
 function render_announcement_bar() {
-	if ( ! is_announcement_bar_enabled() ) {
+	if ( ! should_load_announcement_bar() ) {
 		return;
 	}
 	$lines = get_announcement_lines();
-	if ( empty( $lines ) ) {
-		return;
-	}
 	$n        = count( $lines );
 	$nav_hide = $n <= 1;
 	$anim     = get_announcement_bar_animation();
@@ -196,30 +313,79 @@ function render_announcement_bar() {
 add_action( 'trove_announcement_bar', __NAMESPACE__ . '\\render_announcement_bar' );
 
 /**
- * Front-end script for announcement carousel (only when lines exist).
+ * Front-end assets for the announcement bar (when enabled and lines exist).
  *
  * @return void
  */
-function enqueue_announcement_carousel_script() {
-	if ( is_customize_preview() ) {
-		wp_enqueue_script(
-			'trove-announcement-carousel',
-			\Trove\TroveTheme::asset_url( 'assets/js/announcement-carousel.js' ),
-			array(),
-			defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0',
-			true
-		);
+function enqueue_announcement_bar_assets() {
+	if ( ! should_load_announcement_bar() ) {
 		return;
 	}
-	if ( ! is_announcement_bar_enabled() || empty( get_announcement_lines() ) ) {
-		return;
-	}
+
+	$version = defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0';
+
+	wp_enqueue_style(
+		'trove-announcement-bar',
+		\Trove\TroveTheme::asset_url( 'assets/css/announcement-bar.css' ),
+		array( 'trove-style' ),
+		$version
+	);
 	wp_enqueue_script(
 		'trove-announcement-carousel',
 		\Trove\TroveTheme::asset_url( 'assets/js/announcement-carousel.js' ),
 		array(),
-		defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0',
+		$version,
 		true
 	);
 }
-add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_announcement_carousel_script', 20 );
+add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_announcement_bar_assets', 20 );
+
+/**
+ * Remove queued announcement assets when the bar should not load.
+ *
+ * @return void
+ */
+function dequeue_announcement_bar_assets_when_disabled() {
+	if ( should_load_announcement_bar() ) {
+		return;
+	}
+
+	wp_dequeue_style( 'trove-announcement-bar' );
+	wp_deregister_style( 'trove-announcement-bar' );
+	wp_dequeue_script( 'trove-announcement-carousel' );
+	wp_deregister_script( 'trove-announcement-carousel' );
+}
+
+/**
+ * Block announcement stylesheet URL when the bar is off.
+ *
+ * @param string|false $src    Style src.
+ * @param string       $handle Style handle.
+ * @return string|false
+ */
+function block_announcement_bar_style_when_disabled( $src, $handle ) {
+	if ( 'trove-announcement-bar' === $handle && ! should_load_announcement_bar() ) {
+		return false;
+	}
+	return $src;
+}
+
+/**
+ * Block announcement script URL when the bar is off.
+ *
+ * @param string|false $src    Script src.
+ * @param string       $handle Script handle.
+ * @return string|false
+ */
+function block_announcement_bar_script_when_disabled( $src, $handle ) {
+	if ( 'trove-announcement-carousel' === $handle && ! should_load_announcement_bar() ) {
+		return false;
+	}
+	return $src;
+}
+
+add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\dequeue_announcement_bar_assets_when_disabled', 999 );
+add_action( 'wp_print_styles', __NAMESPACE__ . '\\dequeue_announcement_bar_assets_when_disabled', 0 );
+add_action( 'wp_print_scripts', __NAMESPACE__ . '\\dequeue_announcement_bar_assets_when_disabled', 0 );
+add_filter( 'style_loader_src', __NAMESPACE__ . '\\block_announcement_bar_style_when_disabled', 10, 2 );
+add_filter( 'script_loader_src', __NAMESPACE__ . '\\block_announcement_bar_script_when_disabled', 10, 2 );

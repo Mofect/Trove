@@ -198,6 +198,13 @@ function enqueue_free_shipping_bar_assets() {
 		$deps[] = 'wc-blocks-middleware';
 	}
 
+	wp_enqueue_style(
+		'trove-free-shipping-bar',
+		\Trove\TroveTheme::asset_url( 'assets/css/free-shipping-bar.css' ),
+		array( 'trove-woocommerce' ),
+		defined( 'TROVE_THEME_VERSION' ) ? TROVE_THEME_VERSION : '1.0.0'
+	);
+
 	wp_enqueue_script(
 		'trove-free-shipping-bar',
 		\TROVE_URI . '/assets/js/free-shipping-bar.js',

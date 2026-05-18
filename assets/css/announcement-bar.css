@@ -1,0 +1,139 @@
+/* Announcement bar (conditional load). */
+
+.trove-announcement-bar {
+	--trove-announcement-total: 1;
+	--trove-announcement-index: 0;
+	font-size: var(--trove-announcement-font-size, 16px);
+	line-height: 1.4;
+	min-height: var(--trove-announcement-min-height, auto);
+	display: flex;
+	align-items: center;
+	padding: 0.5em 0.25rem;
+	background-color: var(--trove-announcement-background, var(--trove-accent, #000));
+	color: var(--trove-announcement-text, var(--trove-header-text, rgba(255, 255, 255, 0.92)));
+	border-bottom: 1px solid var(--trove-header-border, var(--trove-border, rgba(255, 255, 255, 0.12)));
+	position: relative;
+	z-index: 800;
+	outline: none;
+}
+
+.trove-announcement-bar a {
+	color: var(--trove-announcement-link, var(--trove-header-link, var(--trove-link)));
+	text-decoration-thickness: 1px;
+}
+
+.trove-announcement-bar a:hover,
+.trove-announcement-bar a:focus {
+	color: var(
+		--trove-announcement-link-hover,
+		var(--trove-announcement-link, var(--trove-header-link-hover, var(--trove-link-hover)))
+	);
+}
+
+.trove-announcement-bar:focus-visible {
+	box-shadow: inset 0 0 0 2px var(--trove-accent, #3b82f6);
+}
+
+.trove-announcement-bar__inner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.15rem;
+	width: 100%;
+	max-width: var(--trove-content-wide-width);
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: var(--trove-content-horizontal-spacing);
+	padding-right: var(--trove-content-horizontal-spacing);
+}
+
+.trove-announcement-bar__viewport {
+	overflow: hidden;
+	flex: 1;
+	min-width: 0;
+}
+
+.trove-announcement-bar__track {
+	display: flex;
+	width: calc(var(--trove-announcement-total, 1) * 100%);
+	transition: transform 0.28s ease;
+	transform: translateX(
+		calc(
+			-100% * var(--trove-announcement-index, 0) / var(--trove-announcement-total, 1)
+		)
+	);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.trove-announcement-bar__track {
+		transition: none;
+	}
+}
+
+.trove-announcement-bar__slide {
+	flex: 0 0 calc(100% / var(--trove-announcement-total, 1));
+	box-sizing: border-box;
+	padding: 0.1em 0.35em;
+	text-align: center;
+}
+
+/* Fade animation: stacked slides in one grid cell */
+.trove-announcement-bar--fade .trove-announcement-bar__track {
+	display: grid;
+	grid-template-columns: 1fr;
+	width: 100% !important;
+	transform: none !important;
+	transition: none;
+}
+
+.trove-announcement-bar--fade .trove-announcement-bar__slide {
+	grid-column: 1;
+	grid-row: 1;
+	min-width: 0;
+	flex: none;
+	opacity: 0;
+	transition: opacity 0.35s ease;
+	z-index: 0;
+}
+
+.trove-announcement-bar--fade .trove-announcement-bar__slide.is-active {
+	opacity: 1;
+	z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.trove-announcement-bar--fade .trove-announcement-bar__slide {
+		transition: none;
+	}
+}
+
+.trove-announcement-bar__nav {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25em;
+	height: 2.25em;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	opacity: 0.88;
+	border-radius: 3px;
+}
+
+.trove-announcement-bar__nav:hover,
+.trove-announcement-bar__nav:focus-visible {
+	opacity: 1;
+}
+
+.trove-announcement-bar__nav:focus-visible {
+	outline: 2px solid var(--trove-accent, #3b82f6);
+	outline-offset: 2px;
+}
+
+.trove-announcement-bar__nav[disabled],
+.trove-announcement-bar__nav[hidden] {
+	display: none;
+}

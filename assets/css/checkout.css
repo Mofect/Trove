@@ -1,0 +1,123 @@
+/* Classic checkout ([woocommerce_checkout]): billing + additional left, #order_summary right. */
+
+.entry--page .entry-content {
+	padding-top: 5rem;
+}
+
+.woocommerce-billing-fields h3 {
+	margin-top: 0;
+}
+
+/* Express checkout (Stripe): top of .entry-content, above checkout form. */
+.entry-content > #wc-stripe-express-checkout-element {
+	margin-top: 0;
+	margin-bottom: 1.25rem;
+}
+
+.entry-content > #wc-stripe-express-checkout-button-separator {
+	margin-top: 0;
+	margin-bottom: 1.5rem;
+}
+
+.woocommerce form.woocommerce-checkout {
+	display: grid;
+	grid-template-columns: minmax(0, 4fr) minmax(0, 3fr);
+	column-gap: clamp(2rem, 5vw, 4.5rem);
+	row-gap: 1.5rem;
+	align-items: start;
+}
+
+.woocommerce form.woocommerce-checkout #customer_details {
+	grid-column: 1;
+	grid-row: 1;
+	display: flex;
+	flex-direction: column;
+	gap: clamp(2rem, 4vw, 3rem);
+	width: 100%;
+	float: none;
+	margin: 0;
+}
+
+.woocommerce form.woocommerce-checkout #customer_details::before,
+.woocommerce form.woocommerce-checkout #customer_details::after {
+	display: none;
+}
+
+.woocommerce form.woocommerce-checkout #customer_details .col-1,
+.woocommerce form.woocommerce-checkout #customer_details .col-2 {
+	width: 100%;
+	float: none;
+	clear: both;
+	margin: 0;
+}
+
+.woocommerce form.woocommerce-checkout #order_summary {
+	grid-column: 2;
+	grid-row: 1;
+	align-self: start;
+	width: 100%;
+	min-width: 0;
+}
+
+.woocommerce form.woocommerce-checkout #order_summary #order_review_heading {
+	margin: 0 0 1rem;
+}
+
+.woocommerce form.woocommerce-checkout #order_summary #order_review {
+	width: 100%;
+	float: none;
+}
+
+/* Coupon form: below order table, no top “Have a coupon?” bar. */
+.woocommerce-checkout .woocommerce-form-coupon-toggle {
+	display: none !important;
+}
+
+.woocommerce form.woocommerce-checkout .trove-checkout-coupon {
+	margin: 0 0 1.5rem;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.woocommerce form.woocommerce-checkout .trove-checkout-coupon .checkout_coupon {
+	display: contents;
+}
+
+.woocommerce form.woocommerce-checkout .trove-checkout-coupon .form-row-first {
+	width: calc(70% - 10px);
+	float: none;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.woocommerce form.woocommerce-checkout .trove-checkout-coupon .form-row-first .input-text {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.woocommerce form.woocommerce-checkout .trove-checkout-coupon .form-row-last {
+	width: 30%;
+	float: none;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.woocommerce form.woocommerce-checkout .trove-checkout-coupon .clear {
+	width: 100%;
+}
+
+@media (max-width: 900px) {
+	.woocommerce form.woocommerce-checkout {
+		grid-template-columns: 1fr;
+	}
+
+	.woocommerce form.woocommerce-checkout #customer_details,
+	.woocommerce form.woocommerce-checkout #order_summary {
+		grid-column: 1;
+		grid-row: auto;
+	}
+}

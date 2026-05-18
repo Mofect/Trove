@@ -10,6 +10,39 @@ namespace Trove;
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Whether widgets.css should load (sidebar enabled for the view or active widget areas).
+ *
+ * @return bool
+ */
+function should_enqueue_widgets_styles() {
+	if ( is_posts_listing_sidebar_enabled() ) {
+		return true;
+	}
+
+	if ( function_exists( 'is_woocommerce' ) && is_woocommerce() ) {
+		if ( function_exists( __NAMESPACE__ . '\\is_woo_shop_filter_sidebar_enabled' ) && is_woo_shop_filter_sidebar_enabled() ) {
+			return true;
+		}
+		// Single product, cart, checkout, etc. do not use shop filter / listing widget styles.
+		return false;
+	}
+
+	return is_active_sidebar( 'blog-sidebar' );
+}
+
+/**
+ * Whether comment.css should load on the current request.
+ *
+ * @return bool
+ */
+function should_enqueue_comment_styles() {
+	if ( ! is_singular( array( 'post', 'page' ) ) ) {
+		return false;
+	}
+	return comments_open();
+}
+
+/**
  * Page settings: transparent header class on singular posts/pages/products.
  *
  * @param string[] $classes Header class names.
